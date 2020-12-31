@@ -33,6 +33,6 @@
     ]
   },
   "devDependencies": {
-    "cross-env-file": "^1.0.0",
+    "cross-env-file": "^1.0.0"
   }
 }
