@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { HTTP_API_URL } from "./utils/Constants";
 
 export default class Actions extends Component {
   constructor(props) {
@@ -11,7 +12,7 @@ export default class Actions extends Component {
     };
   }
   componentDidUpdate() {
-    axios.get("api/commands").then((res) => {
+    axios.get(HTTP_API_URL).then((res) => {
       res.data.forEach((obj) => {
         if (
           obj.command === this.props.selected &&
@@ -77,7 +78,7 @@ export default class Actions extends Component {
       actions: this.state.actions,
     };
     console.log(updatedAction);
-    axios.put("api/commands/" + this.state.currentID + "/", updatedAction);
+    axios.put(HTTP_API_URL + this.state.currentID + "/", updatedAction);
   };
 
   render() {

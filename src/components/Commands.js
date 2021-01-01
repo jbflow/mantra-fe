@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import axios from "axios";
+import { HTTP_API_URL } from "./utils/Constants";
 
 export default class Commands extends React.Component {
   constructor(props) {
@@ -67,12 +68,12 @@ export default class Commands extends React.Component {
     this.setState({ [command]: true });
     delete this.state[oldCommand];
 
-    axios.get('api/commands').then((res => {
-      res.data.forEach((obj =>{ 
+    axios.get(HTTP_API_URL).then((res => {
+      res.data.forEach((obj => {
 
-        if (obj.command === this.state.editing){
+        if (obj.command === this.state.editing) {
           obj.command = command
-          axios.put('api/commands/' + obj.id + '/', obj)
+          axios.put(HTTP_API_URL + obj.id + '/', obj)
         }
       }))
     }))
@@ -126,22 +127,22 @@ export default class Commands extends React.Component {
       ],
     };
 
-    axios.post("api/commands/", emptyCommand);
+    axios.post(HTTP_API_URL, emptyCommand);
   };
 
   deleteCommand = (command) => {
-    axios.get("api/commands").then((res) => {
+    axios.get(HTTP_API_URL).then((res) => {
       res.data.forEach((action) => {
         const id = action.id;
         if (action.command === command) {
-          axios.delete("api/commands/" + id);
+          axios.delete(HTTP_API_URL + id);
         }
       });
     });
   };
 
   getCommands = () => {
-    axios.get("api/commands").then((res) => {
+    axios.get(HTTP_API_URL).then((res) => {
       res.data.forEach((action) => {
         this.setState({ [action.command]: true });
         this.setState({ rows: [...this.state.rows, action.command] });
@@ -157,7 +158,7 @@ export default class Commands extends React.Component {
           <table className="table table-sm table-light">
             <tbody>
               {this.state.rows.map((command) => (
-                
+
                 <tr key={command}>
                   {this.state[command] ? (
                     <Fragment>
@@ -178,31 +179,31 @@ export default class Commands extends React.Component {
                       </td>
                     </Fragment>
                   ) : (
-                    <Fragment>
-                      <td>
-                        <form onSubmit={this.handleEditRow}>
-                          <input
-                            className="form-control-commands"
-                            type="text"
-                            autoFocus
-                            defaultValue={command}
-                            ref={(input) => {
-                              this.editedInput = input;
-                            }}
-                            onFocus={this.handleFocus}
-                          ></input>
-                        </form>
-                      </td>
-                      <td className="button-cell">
-                        <button
-                          className="btn btn-sm btn-warning"
-                          onClick={() => this.handleCancelEdit(command)}
-                        >
-                          Cancel
+                      <Fragment>
+                        <td>
+                          <form onSubmit={this.handleEditRow}>
+                            <input
+                              className="form-control-commands"
+                              type="text"
+                              autoFocus
+                              defaultValue={command}
+                              ref={(input) => {
+                                this.editedInput = input;
+                              }}
+                              onFocus={this.handleFocus}
+                            ></input>
+                          </form>
+                        </td>
+                        <td className="button-cell">
+                          <button
+                            className="btn btn-sm btn-warning"
+                            onClick={() => this.handleCancelEdit(command)}
+                          >
+                            Cancel
                         </button>
-                      </td>
-                    </Fragment>
-                  )}
+                        </td>
+                      </Fragment>
+                    )}
                 </tr>
               ))}
               <tr>
@@ -214,31 +215,31 @@ export default class Commands extends React.Component {
                     <td className="button-cell" />
                   </Fragment>
                 ) : (
-                  <Fragment>
-                    <td>
-                      <form onSubmit={this.handleAddRow}>
-                        <input
-                          className="form-control-commands"
-                          type="text"
-                          autoFocus
-                          placeholder="Type voice command..."
-                          ref={(input) => {
-                            this.commandInput = input;
-                          }}
-                        ></input>
-                      </form>
-                    </td>
+                    <Fragment>
+                      <td>
+                        <form onSubmit={this.handleAddRow}>
+                          <input
+                            className="form-control-commands"
+                            type="text"
+                            autoFocus
+                            placeholder="Type voice command..."
+                            ref={(input) => {
+                              this.commandInput = input;
+                            }}
+                          ></input>
+                        </form>
+                      </td>
 
-                    <td className="button-cell">
-                      <button
-                        className="btn btn-sm btn-warning"
-                        onClick={this.handleCancelCreate}
-                      >
-                        Cancel
+                      <td className="button-cell">
+                        <button
+                          className="btn btn-sm btn-warning"
+                          onClick={this.handleCancelCreate}
+                        >
+                          Cancel
                       </button>
-                    </td>
-                  </Fragment>
-                )}
+                      </td>
+                    </Fragment>
+                  )}
               </tr>
             </tbody>
           </table>

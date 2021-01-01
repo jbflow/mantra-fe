@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import MIDIComponent from "./MIDIComponent";
 import SpeechComponent from "./SpeechComponent";
+import { WEBSOCKET_API_URL } from "./utils/Constants";
 
 export default class Socket extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ export default class Socket extends Component {
    * This function establishes the connect with the websocket and also ensures constant reconnection if connection closes
    */
   connect = () => {
-    var ws = new WebSocket("ws://127.0.0.1:8000/ws/assistant/user/");
+    var ws = new WebSocket(WEBSOCKET_API_URL);
     let that = this; // cache the this
     var connectInterval;
 
