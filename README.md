@@ -1,3 +1,9 @@
+TALKBACK FRONTEND
+
+Commits to main branch will get deployed via AWS amplify.
+
+ReactJS app, this is broken down in to a number of components. Some components render nothing but handle the Speech, MIDI and Websocket connection. The Websocket is passed via props to both the MIDI and speech components so that they can both send stuff to the open socket. Then there are components that take care of the GUI for the command builder. This will be expanded to include further pages, preferences, other features etc. Inside this app the public folder contains all of the files for the porcupine/bumblebee hotword detection - at some stage this will be replaced with the custom hotword, Talkback, (currently it uses the in built 'hey eddison' phrase). Currently the frontend app is using the class components as it was easier for me to learn, I may look at converting them to functional components and use hooks at some stage.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
