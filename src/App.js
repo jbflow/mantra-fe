@@ -2,8 +2,8 @@ import './App.css';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useEffect, useState } from 'react';
 
-// const WS_URL = "ws://localhost:3001";
-const WS_URL = "wss://qe73m358t4.execute-api.eu-west-2.amazonaws.com/dev";
+const WS_URL = "ws://localhost:3001";
+// const WS_URL = "wss://qe73m358t4.execute-api.eu-west-2.amazonaws.com/dev";
 
 const username = "user-" + Math.floor(Math.random() * 100000)
 console.log('username: ', username);
