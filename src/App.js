@@ -3,9 +3,10 @@ import Socket from './components/Socket'
 import CommandBuilder from './components/CommandBuilder'
 
 function App() {
+  console.log('test redeploy');
   return (
     <Fragment>
-      <Socket /> 
+      <Socket />
       <CommandBuilder />
     </Fragment>
   )
