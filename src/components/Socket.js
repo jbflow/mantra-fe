@@ -17,6 +17,26 @@ export default class Socket extends Component {
     this.connect();
   }
 
+
+
+  testCommand = () => {
+    this.state.ws.send(
+      JSON.stringify({
+        message: "a string command",
+        action: "command",
+      })
+    );
+  }
+
+  testconfig = () => {
+    this.state.ws.send(
+      JSON.stringify({
+        message: "a midi config",
+        action: "config",
+      })
+    );
+  }
+
   timeout = 250;
 
   /**
@@ -36,8 +56,11 @@ export default class Socket extends Component {
     };
 
     ws.onmessage = (e) => {
+      console.log('e: ', e);
       const data = JSON.parse(e.data);
+      console.log('data: ', data);
       var midi = data["command"];
+      console.log('midi: ', midi);
       this.setState({ midi: midi });
     };
 
@@ -79,6 +102,7 @@ export default class Socket extends Component {
     const { ws, midi } = this.state;
     return (
       <Fragment>
+        <button onClick={this.testCommand}>test command</button>
         <MIDIComponent websocket={ws} midi={midi} />
         <SpeechComponent websocket={ws} />
       </Fragment>

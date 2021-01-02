@@ -36,13 +36,8 @@ export default class MIDIComponent extends React.Component {
   };
 
   getMIDIMessage = (msg) => {
-    const config_payload = { message: [240, 0, 0, 0, 0, 0, 127, 247], type: "config" }; // no response
-    const command_payload = { message: "sometext", type: "command" }; // respond with command_response below
-    const commmand_response = { message: [240, 1, 0, 0, 0, 0, 127, 247], type: "midi_command" }; // reponse from command
-
-
     this.props.websocket.send(
-      JSON.stringify(config_payload)
+      JSON.stringify({ message: Array.from(msg.data), type: "config" })
     );
   };
 
