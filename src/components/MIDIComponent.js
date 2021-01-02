@@ -37,7 +37,7 @@ export default class MIDIComponent extends React.Component {
 
   getMIDIMessage = (msg) => {
     this.props.websocket.send(
-      JSON.stringify({ message: Array.from(msg.data), type: "config" })
+      JSON.stringify({ message: Array.from(msg.data), action: "config" })
     );
   };
 

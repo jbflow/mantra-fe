@@ -36,13 +36,13 @@ export default class SpeechComponent extends React.Component {
 
 
 
-      const command_payload = { message: "sometext", type: "command" }; // respond with command_response below
-      const commmand_response = { message: [240, 1, 0, 0, 0, 0, 127, 247], type: "midi_command" }; // reponse from command
+      const command_payload = { message: "sometext", action: "command" }; // respond with command_response below
+      const commmand_response = { message: [240, 1, 0, 0, 0, 0, 127, 247], action: "midi_command" }; // reponse from command
 
       this.props.websocket.send(
         JSON.stringify({
           message: transcript,
-          type: "command",
+          action: "command",
         })
       );
     };

@@ -28,7 +28,7 @@ export default class Socket extends Component {
     );
   }
 
-  testconfig = () => {
+  testConfig = () => {
     this.state.ws.send(
       JSON.stringify({
         message: "a midi config",
@@ -103,6 +103,7 @@ export default class Socket extends Component {
     return (
       <Fragment>
         <button onClick={this.testCommand}>test command</button>
+        <button onClick={this.testConfig}>test config</button>
         <MIDIComponent websocket={ws} midi={midi} />
         <SpeechComponent websocket={ws} />
       </Fragment>
