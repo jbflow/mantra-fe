@@ -15,6 +15,11 @@ const SEL_MAP = {
 	10: 'sel_device'
 }
 
+export const VERBS = {
+	'select': 3,
+	'delete': 4	
+}
+
 export const MidiToJson = (midiArray, config) => {
 	if (midiArray[0] !== 240) return;  // If the message isn't a SysEx message
 	config = config || {
