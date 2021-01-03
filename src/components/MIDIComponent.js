@@ -26,8 +26,8 @@ export default class MIDIComponent extends React.Component {
   };
 
   onMIDISuccess = (midiAccess) => {
-    const midiInput = Array.from(midiAccess.inputs.values())[0];
-    this.setState({ midiOutput: Array.from(midiAccess.outputs.values())[1] });
+    const midiInput = Array.from(midiAccess.inputs.values())[1];
+    this.setState({ midiOutput: Array.from(midiAccess.outputs.values())[0] });
     midiInput.onmidimessage = this.getMIDIMessage;
   };
 
@@ -36,6 +36,7 @@ export default class MIDIComponent extends React.Component {
   };
 
   getMIDIMessage = (msg) => {
+    console.log(Array.from(msg.data))
     this.props.websocket.send(
       JSON.stringify({ message: Array.from(msg.data), action: "config" })
     );
