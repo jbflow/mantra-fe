@@ -15,29 +15,6 @@ const SEL_MAP = {
 	10: 'sel_device'
 }
 
-export const VERBS = {
-	'rename': 1,
-	'load': 2,
-	'create': 2,
-	'make': 2,
-	'add': 2,
-	'insert': 2,
-	'instantiate': 2,
-	'select': 3,
-	'grab': 3,
-	'delete': 4,
-	'duplicate': 5,
-	'arm': 6,
-	'unarm': 7,
-	'solo': 8,
-	'unsolo': 9,
-	'mute': 10,
-	'unmute': 11,
-	'increase': 12,
-	'decrease': 13,
-	'set': 14
-}
-
 export const MidiToJson = (midiArray, config) => {
 	if (midiArray[0] !== 240) return;  // If the message isn't a SysEx message
 	config = config || {
