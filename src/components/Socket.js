@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import MIDIComponent from "./MIDIComponent";
 import SpeechComponent from "./SpeechComponent";
 import { WEBSOCKET_API_URL } from "./utils/Constants";
+import { MidiToJson } from './utils/MidiToJson';
 
 export default class Socket extends Component {
   constructor(props) {
@@ -10,6 +11,7 @@ export default class Socket extends Component {
     this.state = {
       ws: null,
       midi: null,
+      config: null, // Keeping config in state
     };
   }
 
@@ -17,6 +19,10 @@ export default class Socket extends Component {
     this.connect();
   }
 
+  // Created function to set the config
+  setConfig = (midi) => {
+    this.setState({config: MidiToJson(midi, this.state.config)})
+  }
 
 
   testCommand = () => {
@@ -104,8 +110,8 @@ export default class Socket extends Component {
       <Fragment>
         <button onClick={this.testCommand}>test command</button>
         <button onClick={this.testConfig}>test config</button>
-        <MIDIComponent websocket={ws} midi={midi} />
-        <SpeechComponent websocket={ws} />
+        <MIDIComponent setConfig={this.setConfig} midi={midi} />
+        <SpeechComponent websocket={ws} config={this.state.config} />
       </Fragment>
     );
   }
