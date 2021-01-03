@@ -27,6 +27,10 @@ export default class MIDIComponent extends React.Component {
 
   onMIDISuccess = (midiAccess) => {
     const midiInput = Array.from(midiAccess.inputs.values())[0];
+    if (!midiInput) {
+      alert("No MIDI ports connected! Start LoopMIDI")
+      return;
+    }
     this.setState({ midiOutput: Array.from(midiAccess.outputs.values())[1] });
     midiInput.onmidimessage = this.getMIDIMessage;
   };
