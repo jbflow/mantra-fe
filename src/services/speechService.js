@@ -11,7 +11,7 @@ bumblebee.setSensitivity(0.5);
 
 // Setup webspeech API
 const SpeechRecognition =
-	window.SpeechRecognition || window.webkitSpeechRecognition;
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.continuous = true;
 recognition.lang = "en-GB";
@@ -19,48 +19,49 @@ recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
 recognition.onresult = (event) => {
-	var transcript = "";
-	for (var i = event.resultIndex; i < event.results.length; ++i) {
-		transcript += event.results[i][0].transcript;
-	}
-	console.log(transcript);
-	if (transcript.includes("stop listening")) {
-		recognition.stop();
-	}
-	if (transcript) {
-		console.log('transcript: ', transcript);
-	}
-	console.log('websocket', websocket);
-	console.log('config', config);
-	websocket.send(
-		JSON.stringify({
-			message: transcript,
-			action: "command",
-			config: config
-		})
-	);
+  var transcript = "";
+  for (var i = event.resultIndex; i < event.results.length; ++i) {
+    transcript += event.results[i][0].transcript;
+  }
+  console.log(transcript);
+  if (transcript.includes("stop listening")) {
+    recognition.stop();
+  }
+  if (transcript) {
+    console.log("transcript: ", transcript);
+  }
+  console.log("websocket", websocket);
+  console.log("config", config);
+  websocket.send(
+    JSON.stringify({
+      message: transcript,
+      action: "command",
+      config: config,
+    })
+  );
 };
 
 recognition.onspeechend = () => {
-	recognition.stop();
+  recognition.stop();
 };
 
 bumblebee.on("hotword", (hotword) => {
-	// Having to catch the error as this function is triggered twice - needs sorting...
-	try {
-		recognition.start();
-	} catch (err) {
-		console.log(err);
-	}
+  // Having to catch the error as this function is triggered twice - needs sorting...
+  try {
+    recognition.start();
+    console.log("listening...");
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 bumblebee.start();
 
 export const setConfig = (newconfig) => {
-	// console.log('setConfig: ', newconfig);
-	config = newconfig;
-}
+  // console.log('setConfig: ', newconfig);
+  config = newconfig;
+};
 export const setWebsocket = (ws) => {
-	console.log('setWebsocket: ', ws);
-	websocket = ws;
-}
+  console.log("setWebsocket: ", ws);
+  websocket = ws;
+};

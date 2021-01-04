@@ -5,7 +5,7 @@ export default function NavBar() {
   return (
     <Fragment>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a className="navbar-brand" href="#">
+        <a className="navbar-brand" href="tb">
           TalkBack
         </a>
         <button
