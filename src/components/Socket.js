@@ -21,7 +21,7 @@ export default class Socket extends Component {
 
   // Created function to set the config
   setConfig = (midi) => {
-    this.setState({config: MidiToJson(midi, this.state.config)})
+    this.setState({ config: MidiToJson(midi, this.state.config) })
   }
 
 

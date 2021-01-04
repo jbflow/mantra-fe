@@ -43,6 +43,7 @@ export default class SpeechComponent extends React.Component {
         JSON.stringify({
           message: transcript,
           action: "command",
+          config: this.props.config
         })
       );
     };

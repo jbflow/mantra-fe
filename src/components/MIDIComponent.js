@@ -33,6 +33,7 @@ export default class MIDIComponent extends React.Component {
       return;
     }
     this.setState({ midiOutput: Array.from(midiAccess.outputs.values())[0] });
+    this.state.midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
     midiInput.onmidimessage = this.getMIDIMessage;
   };
 
