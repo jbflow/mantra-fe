@@ -16,13 +16,12 @@ export default class CommandBuilder extends Component {
   render() {
     return (
       <Fragment>
-        <div style={{width: "600px", paddingLeft: "25px" }}><h1>Command Builder Prototype</h1></div>
         <div className="rowC">
           <div style={{ height: "100vh", width: "600px", margin: "10px" }}>
             <Commands updateSelected={this.updateSelected} />
           </div>
 
-          <div style={{width: "100%", margin: "10px" }}>
+          <div style={{ width: "100%", margin: "10px" }}>
             <Actions selected={this.state.selected} />
           </div>
         </div>
