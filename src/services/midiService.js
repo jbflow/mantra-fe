@@ -20,7 +20,12 @@ export const getMIDIMessage = (msg) => {
 export const sendMIDIMessage = (msg) => {
 	console.log('sendMIDIMessage: ', msg);
 	// console.log(msg)
-	midiOutput.send(msg);
+	try {
+		midiOutput.send(msg);
+	} catch (error) {
+		console.log('error sending midi: ', error);
+
+	}
 };
 
 const onMIDISuccess = (midiAccess) => {
