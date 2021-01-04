@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react';
-import Socket from './components/Socket'
 import CommandBuilder from './components/CommandBuilder'
+import './services/main'
 
 function App() {
   return (
     <Fragment>
-      <Socket />
       <CommandBuilder />
     </Fragment>
   )
