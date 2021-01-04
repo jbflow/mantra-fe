@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import Socket from './components/Socket'
 import CommandBuilder from './components/CommandBuilder'
-import { MidiToJson } from './components/utils/MidiToJson';
+import { MidiToJson } from './utils/MidiToJson';
 
 const composeMidiSysEx = (input) => {
   return [...[240, 0, 0, 0, 0, 0], ...input, ...[247]]

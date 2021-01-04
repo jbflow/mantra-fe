@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from "react";
 import MIDIComponent from "./MIDIComponent";
 import SpeechComponent from "./SpeechComponent";
-import { WEBSOCKET_API_URL } from "./utils/Constants";
-import { MidiToJson } from './utils/MidiToJson';
+import { WEBSOCKET_API_URL } from "../utils/Constants";
+import { MidiToJson } from '../utils/MidiToJson';
 
 export default class Socket extends Component {
   constructor(props) {

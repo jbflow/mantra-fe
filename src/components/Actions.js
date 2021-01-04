@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { HTTP_API_URL } from "./utils/Constants";
+import { HTTP_API_URL } from "../utils/Constants";
 
 export default class Actions extends Component {
   constructor(props) {
