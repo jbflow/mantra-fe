@@ -3,9 +3,19 @@ import "../styles/App.css";
 
 export default class BetaArea extends Component {
   send_intent = () => {
-    const command_to_test = document.getElementById("intent_test").value;
-    console.log(command_to_test);
+    const transcript = document.getElementById("intent_test").value;
+    const websocket = this.props.ws;
+    const config = this.props.getConfig()
+    console.log(transcript, config);
+    websocket.send(
+      JSON.stringify({
+        message: transcript,
+        action: "command",
+        config: config,
+      })
+    );
   };
+  
   render() {
     return (
       <Fragment>

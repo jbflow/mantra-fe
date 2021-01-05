@@ -19,7 +19,9 @@ function App() {
           <CommandBuilder {...props} ws={getWebSocket()} getConfig={getConfigFunction} />
         )} />
         <Route path="/lessons" component={LessonBuilder} />
-        <Route path="/beta" component={BetaArea} />
+        <Route path="/beta" render={(props) => (
+          <BetaArea {...props} ws={getWebSocket()} getConfig={getConfigFunction} />
+        )} />
       </BrowserRouter>
     </Fragment>
   );
