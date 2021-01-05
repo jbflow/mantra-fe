@@ -1,4 +1,4 @@
-const isLocal = false; // window.location.hostname === "localhost"
+const isLocal = true; // window.location.hostname === "localhost"
 export const WEBSOCKET_API_URL = isLocal
   ? "ws://localhost:3001"
   : "wss://b6ot8bzgl7.execute-api.eu-west-2.amazonaws.com/dev";
