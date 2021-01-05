@@ -28,22 +28,12 @@ export default class Actions extends Component {
 
   onChange = (event, index) => {
     const newActions = this.state.actions;
-    newActions[index][event.target.name] = event.target.value;
+    newActions[index] = event.target.value;
     this.setState({ actions: newActions });
   };
 
   handleAddAction = () => {
-    const emptyAction = {
-      verb: "",
-      noun1: "",
-      adj1: "",
-      noun2: "",
-      adj2: "",
-      noun3: "",
-      adj3: "",
-      adverb: "",
-    };
-    this.setState({ actions: [...this.state.actions, emptyAction] });
+    this.setState({ actions: [...this.state.actions, ""] });
   };
 
   handleDeleteAction = (index) => {
@@ -57,18 +47,7 @@ export default class Actions extends Component {
     const { verb, noun1, adj1, noun2, adj2, noun3, adj3, adverb } = actions[
       index
     ];
-
-    const action = {
-      verb: verb,
-      noun1: noun1,
-      adj1: adj1,
-      noun2: noun2,
-      adj2: adj2,
-      noun3: noun3,
-      adj3: adj3,
-      adverb: adverb,
-    };
-    actions.splice(index, 0, action);
+    actions.splice(index, 0, "");
     this.setState({ actions: actions });
   };
 
@@ -78,7 +57,7 @@ export default class Actions extends Component {
       actions: this.state.actions,
     };
     console.log(updatedAction);
-    axios.put(HTTP_API_URL + this.state.currentID + "/", updatedAction);
+    axios.post(HTTP_API_URL, updatedAction);
   };
 
   render() {
@@ -93,80 +72,10 @@ export default class Actions extends Component {
                   <td>
                     <input
                       type="text"
-                      value={action.verb}
-                      name="verb"
+                      value={action}
+                      name="action"
                       className="form-control"
-                      placeholder="Action"
-                      onChange={(event) => this.onChange(event, index)}
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={action.noun1}
-                      name="noun1"
-                      className="form-control"
-                      placeholder="Object"
-                      onChange={(event) => this.onChange(event, index)}
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={action.adj1}
-                      name="adj1"
-                      className="form-control"
-                      placeholder="ID"
-                      onChange={(event) => this.onChange(event, index)}
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={action.noun2}
-                      name="noun2"
-                      className="form-control"
-                      placeholder="Object"
-                      onChange={(event) => this.onChange(event, index)}
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={action.adj2}
-                      name="adj2"
-                      className="form-control"
-                      placeholder="ID"
-                      onChange={(event) => this.onChange(event, index)}
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={action.noun3}
-                      name="noun3"
-                      className="form-control"
-                      placeholder="Object"
-                      onChange={(event) => this.onChange(event, index)}
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={action.adj3}
-                      name="adj3"
-                      className="form-control"
-                      placeholder="ID"
-                      onChange={(event) => this.onChange(event, index)}
-                    ></input>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={action.adverb}
-                      name="adverb"
-                      className="form-control"
-                      placeholder="Quant"
+                      placeholder="Enter voice action..."
                       onChange={(event) => this.onChange(event, index)}
                     ></input>
                   </td>

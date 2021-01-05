@@ -113,32 +113,15 @@ export default class Commands extends React.Component {
   postCommand = (command) => {
     const emptyCommand = {
       command: command,
-      actions: [
-        {
-          verb: "",
-          noun1: "",
-          adj1: "",
-          noun2: "",
-          adj2: "",
-          noun3: "",
-          adj3: "",
-          adverb: "",
-        },
-      ],
+      actions: [""],
     };
 
     axios.post(HTTP_API_URL, emptyCommand);
   };
 
   deleteCommand = (command) => {
-    axios.get(HTTP_API_URL).then((res) => {
-      res.data.forEach((action) => {
-        const id = action.id;
-        if (action.command === command) {
-          axios.delete(HTTP_API_URL + id);
-        }
-      });
-    });
+    console.log(command)
+    axios.delete(HTTP_API_URL, { data: {"command": command}});
   };
 
   getCommands = () => {
