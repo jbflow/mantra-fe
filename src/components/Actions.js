@@ -44,10 +44,10 @@ export default class Actions extends Component {
 
   handleDuplicateAction = (index) => {
     const actions = this.state.actions;
-    const { verb, noun1, adj1, noun2, adj2, noun3, adj3, adverb } = actions[
+    const action = actions[
       index
     ];
-    actions.splice(index, 0, "");
+    actions.splice(index, 0, action);
     this.setState({ actions: actions });
   };
 
