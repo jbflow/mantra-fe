@@ -121,7 +121,7 @@ export default class Commands extends React.Component {
 
   deleteCommand = (command) => {
     console.log(command)
-    axios.delete(HTTP_API_URL, { data: {"command": command}});
+    axios.delete(HTTP_API_URL + "?command=" + command);
   };
 
   getCommands = () => {
