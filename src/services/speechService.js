@@ -58,8 +58,10 @@ bumblebee.on("hotword", (hotword) => {
 bumblebee.start();
 
 export const setConfig = (newconfig) => {
-  // console.log('setConfig: ', newconfig);
   config = newconfig;
+};
+export const getConfig = () => {
+  return config;
 };
 export const setWebsocket = (ws) => {
   console.log("setWebsocket: ", ws);
