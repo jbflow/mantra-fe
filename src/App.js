@@ -6,7 +6,7 @@ import CommandBuilder from "./components/CommandBuilder";
 import LessonBuilder from "./components/LessonBuilder";
 import BetaArea from "./components/BetaArea";
 import NavBar from "./components/NavBar";
-import "./services/main";
+import { getWebSocket } from "./services/main";
 
 function App() {
   return (
@@ -15,7 +15,9 @@ function App() {
         <NavBar />
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/prefs" component={Preferences} />
-        <Route path="/commands" component={CommandBuilder} />
+        <Route path="/commands" render={(props) => (
+          <CommandBuilder {...props} ws={getWebSocket()} />
+        )} />
         <Route path="/lessons" component={LessonBuilder} />
         <Route path="/beta" component={BetaArea} />
       </BrowserRouter>
