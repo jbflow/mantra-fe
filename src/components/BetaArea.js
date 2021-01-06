@@ -1,12 +1,13 @@
+import Axios from "axios";
 import React, { Component, Fragment } from "react";
 import "../styles/App.css";
+import { HTTP_API_URL } from "../utils/Constants";
 
 export default class BetaArea extends Component {
-  send_intent = () => {
+  sendIntent = () => {
     const transcript = document.getElementById("intent_test").value;
     const websocket = this.props.ws;
-    const config = this.props.getConfig()
-    console.log(transcript, config);
+    const config = this.props.getConfig();
     websocket.send(
       JSON.stringify({
         message: transcript,
@@ -15,7 +16,12 @@ export default class BetaArea extends Component {
       })
     );
   };
-  
+
+  submitReport = () => {
+    const message = document.getElementById("betaMessage").value;
+    Axios.post(HTTP_API_URL + "/beta", { message: message });
+  };
+
   render() {
     return (
       <Fragment>
@@ -26,8 +32,7 @@ export default class BetaArea extends Component {
           <br />
           <p className="lead">
             Please watch the video below for further instruction on setup and
-            usage, then use the form at the bottom of this page to submit bug
-            reports and feature requests.
+            usage.
           </p>
           <hr className="my-4" />
 
@@ -48,8 +53,7 @@ export default class BetaArea extends Component {
                 </td>
                 <td style={{ width: "20%" }}>
                   <button
-                    onClick={this.send_intent}
-                    onKeyDown={this.send_intent}
+                    onClick={this.sendIntent}
                     type="button"
                     className="btn btn-outline-primary"
                   >
@@ -59,6 +63,27 @@ export default class BetaArea extends Component {
               </tr>
             </tbody>
           </table>
+          <p className="lead">
+            Please use this form to submit bug reports and feature requests.
+          </p>
+
+          <div className="form-group" style={{ width: "50%" }}>
+            <textarea
+              className="form-control"
+              id="betaMessage"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <button
+            onClick={this.submitReport}
+            type="button"
+            className="btn btn-outline-primary"
+            style={{ width: "10%" }}
+          >
+            Submit
+          </button>
+          <br />
           <br />
           <p>Thank you for your participation!</p>
         </div>

@@ -68,15 +68,14 @@ export default class Commands extends React.Component {
     this.setState({ [command]: true });
     delete this.state[oldCommand];
 
-    axios.get(HTTP_API_URL).then((res => {
-      res.data.forEach((obj => {
-
+    axios.get(HTTP_API_URL + "/commands").then((res) => {
+      res.data.forEach((obj) => {
         if (obj.command === this.state.editing) {
-          obj.command = command
-          axios.put(HTTP_API_URL + obj.id + '/', obj)
+          obj.command = command;
+          axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj);
         }
-      }))
-    }))
+      });
+    });
   };
 
   handleSelection = (selection) => {
@@ -116,16 +115,16 @@ export default class Commands extends React.Component {
       actions: [""],
     };
 
-    axios.post(HTTP_API_URL, emptyCommand);
+    axios.post(HTTP_API_URL + "/commands", emptyCommand);
   };
 
   deleteCommand = (command) => {
-    console.log(command)
-    axios.delete(HTTP_API_URL + "?command=" + command);
+    console.log(command);
+    axios.delete(HTTP_API_URL + "/commands" + "?command=" + command);
   };
 
   getCommands = () => {
-    axios.get(HTTP_API_URL).then((res) => {
+    axios.get(HTTP_API_URL + "/commands").then((res) => {
       res.data.forEach((action) => {
         this.setState({ [action.command]: true });
         this.setState({ rows: [...this.state.rows, action.command] });
@@ -141,7 +140,6 @@ export default class Commands extends React.Component {
           <table className="table table-sm table-light">
             <tbody>
               {this.state.rows.map((command) => (
-
                 <tr key={command}>
                   {this.state[command] ? (
                     <Fragment>
@@ -162,31 +160,31 @@ export default class Commands extends React.Component {
                       </td>
                     </Fragment>
                   ) : (
-                      <Fragment>
-                        <td>
-                          <form onSubmit={this.handleEditRow}>
-                            <input
-                              className="form-control-commands"
-                              type="text"
-                              autoFocus
-                              defaultValue={command}
-                              ref={(input) => {
-                                this.editedInput = input;
-                              }}
-                              onFocus={this.handleFocus}
-                            ></input>
-                          </form>
-                        </td>
-                        <td className="button-cell">
-                          <button
-                            className="btn btn-sm btn-warning"
-                            onClick={() => this.handleCancelEdit(command)}
-                          >
-                            Cancel
+                    <Fragment>
+                      <td>
+                        <form onSubmit={this.handleEditRow}>
+                          <input
+                            className="form-control-commands"
+                            type="text"
+                            autoFocus
+                            defaultValue={command}
+                            ref={(input) => {
+                              this.editedInput = input;
+                            }}
+                            onFocus={this.handleFocus}
+                          ></input>
+                        </form>
+                      </td>
+                      <td className="button-cell">
+                        <button
+                          className="btn btn-sm btn-warning"
+                          onClick={() => this.handleCancelEdit(command)}
+                        >
+                          Cancel
                         </button>
-                        </td>
-                      </Fragment>
-                    )}
+                      </td>
+                    </Fragment>
+                  )}
                 </tr>
               ))}
               <tr>
@@ -198,31 +196,31 @@ export default class Commands extends React.Component {
                     <td className="button-cell" />
                   </Fragment>
                 ) : (
-                    <Fragment>
-                      <td>
-                        <form onSubmit={this.handleAddRow}>
-                          <input
-                            className="form-control-commands"
-                            type="text"
-                            autoFocus
-                            placeholder="Type voice command..."
-                            ref={(input) => {
-                              this.commandInput = input;
-                            }}
-                          ></input>
-                        </form>
-                      </td>
+                  <Fragment>
+                    <td>
+                      <form onSubmit={this.handleAddRow}>
+                        <input
+                          className="form-control-commands"
+                          type="text"
+                          autoFocus
+                          placeholder="Type voice command..."
+                          ref={(input) => {
+                            this.commandInput = input;
+                          }}
+                        ></input>
+                      </form>
+                    </td>
 
-                      <td className="button-cell">
-                        <button
-                          className="btn btn-sm btn-warning"
-                          onClick={this.handleCancelCreate}
-                        >
-                          Cancel
+                    <td className="button-cell">
+                      <button
+                        className="btn btn-sm btn-warning"
+                        onClick={this.handleCancelCreate}
+                      >
+                        Cancel
                       </button>
-                      </td>
-                    </Fragment>
-                  )}
+                    </td>
+                  </Fragment>
+                )}
               </tr>
             </tbody>
           </table>
