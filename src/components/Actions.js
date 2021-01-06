@@ -12,7 +12,7 @@ export default class Actions extends Component {
     };
   }
   componentDidUpdate() {
-    axios.get(HTTP_API_URL).then((res) => {
+    axios.get(HTTP_API_URL + "/commands").then((res) => {
       res.data.forEach((obj) => {
         if (
           obj.command === this.props.selected &&
@@ -44,9 +44,7 @@ export default class Actions extends Component {
 
   handleDuplicateAction = (index) => {
     const actions = this.state.actions;
-    const action = actions[
-      index
-    ];
+    const action = actions[index];
     actions.splice(index, 0, action);
     this.setState({ actions: actions });
   };
@@ -57,7 +55,7 @@ export default class Actions extends Component {
       actions: this.state.actions,
     };
     console.log(updatedAction);
-    axios.post(HTTP_API_URL, updatedAction);
+    axios.post(HTTP_API_URL + "/commands", updatedAction);
   };
 
   render() {

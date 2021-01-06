@@ -72,7 +72,7 @@ export default class Commands extends React.Component {
       res.data.forEach((obj) => {
         if (obj.command === this.state.editing) {
           obj.command = command;
-          axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj);
+          axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj); // NEEDS FIXING
         }
       });
     });
