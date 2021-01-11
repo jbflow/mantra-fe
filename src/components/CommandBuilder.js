@@ -6,8 +6,7 @@ import Actions from "./Actions";
 export default class CommandBuilder extends Component {
   constructor(props) {
     super(props);
-    const { ws } = props;
-    console.log('ws: ', ws);
+    const { ws, getConfig } = props;
     this.state = { selected: null };
   }
 
