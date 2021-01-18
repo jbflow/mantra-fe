@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { HTTP_API_URL } from "../utils/Constants";
+import { API } from 'aws-amplify';
 
 export default class Actions extends Component {
   constructor(props) {
@@ -12,8 +13,8 @@ export default class Actions extends Component {
     };
   }
   componentDidUpdate() {
-    axios.get(HTTP_API_URL + "/commands").then((res) => {
-      res.data.forEach((obj) => {
+    API.get("talkbackBE", "/commands").then((res) => {
+      res.forEach((obj) => {
         if (
           obj.command === this.props.selected &&
           this.state.selected !== this.props.selected
@@ -55,7 +56,7 @@ export default class Actions extends Component {
       actions: this.state.actions,
     };
     console.log(updatedAction);
-    axios.post(HTTP_API_URL + "/commands", updatedAction);
+    API.post("talkbackBE", "/commands", { body: updatedAction })
   };
 
   render() {
