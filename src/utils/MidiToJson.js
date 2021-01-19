@@ -1,6 +1,8 @@
 import { NOUN_MAP, SUB_NOUNS, VERBS } from "./MidiConstants";
 
 const make_paths = (noun_adj, noun, config) => {
+  // JB I think the error is in here somewhere, it's not erroring out anymore but the path is getting sent through wrong
+
   console.log("make_paths: noun_adj, noun, config: ", noun_adj, noun, config);
   // Used to navigate to the correct parent list in the config for inserting, moving, renaming and deleting items
   let path = config[NOUN_MAP[noun]]; // Set the path to the correct list in the config with noun
@@ -11,7 +13,7 @@ const make_paths = (noun_adj, noun, config) => {
     const index = convert_bytes(noun_adj.slice(i, i + 2)) - 1; // convert the bytes into an index
     console.log("index:", index);
     if (typeof path[index] != "undefined") {
-      // Try catch wasn't working here, path = path[index] was just setting path to undefined
+      // JB Try catch wasn't working here, path = path[index] was just setting path to undefined
       path = path[index]; // Set the path
     } else {
       // Unless it doesn't exist
@@ -37,7 +39,7 @@ const make_sub_paths = (noun_adj, noun, config) => {
       sub_paths.push(make_paths(noun_adj, sub_noun, config)); // make the paths and append them as sub paths
     });
   }
-  // Removed try, catch here
+  // JB Removed try catch here too in favour of if noun in SUB_NOUNS
   return sub_paths;
 };
 const get_all_paths = (noun_adj, noun, config) => {
