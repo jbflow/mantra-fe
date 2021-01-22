@@ -52,10 +52,7 @@ export const NOUN_MAP = {
   41: "midi_devices",
 };
 
-export const SUB_NOUNS2 = {
-  3: [10, 11, 18, 19, 20, 39, 40, 41],
-  10: [22],
-};
+
 
 export const SUB_NOUNS = {
   3: [10, 11, 22],
