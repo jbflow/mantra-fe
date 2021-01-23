@@ -1,6 +1,13 @@
 import { MidiToJson } from "../utils/MidiToJson";
 
 let config;
+
+let midiOutputs;
+let midiInputs;
+
+let inPortName;
+let outPortName;
+
 let midiOutput;
 let midiInput;
 var setConfigOnSpeech;
@@ -24,15 +31,25 @@ export const sendMIDIMessage = (msg) => {
   }
 };
 
+export const setportNames = (input, output) => {
+  console.log(output);
+  inPortName = input;
+  outPortName = output;
+};
+
 const onMIDISuccess = (midiAccess) => {
-  midiInput = Array.from(midiAccess.inputs.values())[1];
+  midiInputs = Array.from(midiAccess.inputs.values());
+  midiInput = midiInputs[1];
   if (!midiInput) {
     alert("No MIDI ports connected! Start LoopMIDI");
     return;
   }
-  midiOutput = Array.from(midiAccess.outputs.values())[0];
+  midiOutputs = Array.from(midiAccess.outputs.values());
+  midiOutput = midiOutputs[0];
   midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
   midiInput.onmidimessage = getMIDIMessage;
+
+  window.Preferences.setMidiPorts(midiInputs, midiOutputs); // set the ports in the prefs componenet to render them in drop downs
 };
 
 const onMIDIFailure = () => {
