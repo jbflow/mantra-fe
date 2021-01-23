@@ -42,14 +42,14 @@ export const NOUNS = {
 };
 
 export const NOUN_MAP = {
-  3: "tracks",
-  5: "scenes",
-  10: "devices",
-  11: "clips",
-  22: "parameters",
-  39: "instruments",
-  40: "audio_devices",
-  41: "midi_devices",
+  3: "track",
+  5: "scene",
+  10: "device",
+  11: "clip",
+  22: "parameter",
+  39: "instrument",
+  40: "audio_device",
+  41: "midi_device",
 };
 
 

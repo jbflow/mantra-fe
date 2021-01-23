@@ -4,11 +4,7 @@ const make_paths = (noun_adj, noun, config) => {
   let path = config[NOUN_MAP[noun]];
   if (noun == noun_adj[0]){return path}
   for (let i = 1; i < noun_adj.length; i += 3) {
-    console.log('noun_adj:', noun_adj)
-    console.log('noun_adj slice:', noun_adj.slice(i, i + 2))
     const index = convert_bytes(noun_adj.slice(i, i + 2)) - 1;
-    console.log('index:',index)
-    console.log('path:', path)
     if (typeof path[index] !== 'undefined') { 
       path = path[index];
     }
@@ -16,11 +12,10 @@ const make_paths = (noun_adj, noun, config) => {
       path.splice(index, 0, []);
       path = path[index];
     }
-    console.log('noun:', noun)
-    console.log('path', path)
   }
   return path;
 };
+
 const make_sub_paths = (noun_adj, noun, config) => {
   const sub_paths = [];
   if (noun in SUB_NOUNS) {
@@ -30,15 +25,12 @@ const make_sub_paths = (noun_adj, noun, config) => {
   }
   return sub_paths;
 };
+
 const get_all_paths = (noun_adj, noun, config) => {
   const index = convert_bytes(noun_adj.slice(-2)) - 1;
-  console.log('index slice:', noun_adj.slice(-2))
-  console.log('index:',index)
-  
   noun_adj = noun_adj.slice(0, noun_adj.length - 3)
   const path = make_paths(noun_adj, noun, config);
-  const sub_paths = make_sub_paths(noun_adj, noun,config);
-  
+  const sub_paths = make_sub_paths(noun_adj, noun,config); 
   return { path, sub_paths, index };
 };
 
@@ -111,14 +103,14 @@ const convert_bytes = (byteArray) => {
 export const MidiToJson = (midiArray, config) => {
   if (midiArray[0] !== 240) return; // If the message isn't a SysEx message
   config = config || {
-    tracks: [],
-    scenes: [],
-    devices: [],
-    clips: [],
-    parameters: [],
-    instruments: [],
-    audio_devices: [],
-    midi_devices: [],
+    track: [],
+    scene: [],
+    device: [],
+    clip: [],
+    parameter: [],
+    instrument: [],
+    audio_device: [],
+    midi_device: [],
     sel_track: null,
     sel_device: null,
   };
@@ -127,11 +119,8 @@ export const MidiToJson = (midiArray, config) => {
 };
 
 const updateConfig = (midiArray, config) => {
-  console.log('midi in:', midiArray)
-
   const quantity = midiArray[0]; 
   const noun_adj = midiArray.slice(1, quantity * 3 + 1); 
-  console.log('orig noun_adj:', noun_adj)
   const noun = noun_adj[noun_adj.length - 3]; 
   const verb = midiArray[quantity * 3 + 1];
 
