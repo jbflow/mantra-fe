@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import axios from "axios";
-import { HTTP_API_URL } from "../utils/Constants";
+import { HTTP_API_URL } from "../../utils/Constants";
 
 export default class Commands extends React.Component {
   constructor(props) {
