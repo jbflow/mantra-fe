@@ -55,8 +55,17 @@ export default class Actions extends Component {
       command: this.state.selected,
       actions: this.state.actions,
     };
-    console.log(updatedAction);
     axios.post(HTTP_API_URL + "/commands", updatedAction);
+  };
+
+  handleOneDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+    const items = Array.from(this.state.actions);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    this.setState({ actions: items });
   };
 
   render() {
@@ -64,68 +73,48 @@ export default class Actions extends Component {
       <div className="card border-primary mb-3">
         <div className="card-header">Actions</div>
         <div className="card-body">
-          <DragDropContext>
+          <DragDropContext onDragEnd={this.handleOneDragEnd}>
             <Droppable droppableId="actions">
               {(provided) => (
-                <table {...provided.droppableProps} ref={provided.innerRef}>
-                  <tbody>
-                    {this.state.actions.map((action, index) => (
-                      <tr className="table table-sm" key={index}>
-                        <td>
-                          <input
-                            type="text"
-                            value={action}
-                            name="action"
-                            className="form-control"
-                            placeholder="Enter voice action..."
-                            onChange={(event) => this.onChange(event, index)}
-                          ></input>
-                        </td>
-
-                        <td style={{ width: "5%" }}>
-                          {this.state.actions.length !== 1 && (
-                            <button
-                              className="btn btn-sm btn-outline-danger"
-                              onClick={() => {
-                                this.handleDeleteAction(index);
-                              }}
-                            >
-                              Remove
-                            </button>
-                          )}
-                        </td>
-
-                        <td style={{ width: "5%" }}>
-                          <button
-                            className="btn btn-sm btn-outline-primary"
-                            onClick={() => {
-                              this.handleDuplicateAction(index);
-                            }}
+                <ul
+                  style={{ listStyle: "none" }}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {this.state.actions.map((action, index) => {
+                    return (
+                      <Draggable
+                        key={index}
+                        draggableId={index.toString()}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <li
+                            className="rowC"
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
                           >
-                            Duplicate
-                          </button>
-                        </td>
-
-                        <td style={{ width: "5%" }}>
-                          {this.state.actions.length - 1 === index && (
-                            <button
-                              className="btn btn-sm btn-outline-success"
-                              onClick={() => {
-                                this.handleAddAction();
-                              }}
-                            >
-                              Add
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            <p>X</p>
+                            <input
+                              type="text"
+                              value={action}
+                              name="action"
+                              className="form-control"
+                              placeholder="Enter voice action..."
+                              onChange={(event) => this.onChange(event, index)}
+                              style={{ width: "75%" }}
+                            ></input>
+                          </li>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </ul>
               )}
             </Droppable>
           </DragDropContext>
-
           {this.state.selected && (
             <div className="modal-footer">
               <button
@@ -143,9 +132,7 @@ export default class Actions extends Component {
                 style={{ width: "15%" }}
                 type="button"
                 className="btn btn-lg btn-primary"
-                onClick={() => {
-                  console.log("test");
-                }}
+                onClick={() => {}}
               >
                 Test
               </button>
