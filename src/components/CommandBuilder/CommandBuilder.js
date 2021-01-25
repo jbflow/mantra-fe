@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import "../../styles/App.css";
 import Commands from "./Commands";
 import Actions from "./Actions";
+import { Container, Row, Col } from "react-bootstrap";
 
 export default class CommandBuilder extends Component {
   constructor(props) {
@@ -16,17 +17,17 @@ export default class CommandBuilder extends Component {
 
   render() {
     return (
-      <Fragment>
-        <div className="rowC">
-          <div style={{ height: "100vh", width: "600px", margin: "10px" }}>
+      <Container fluid>
+        <Row>
+          <Col sm={3}>
             <Commands updateSelected={this.updateSelected} />
-          </div>
+          </Col>
 
-          <div style={{ width: "100%", margin: "10px" }}>
+          <Col sm={9}>
             <Actions selected={this.state.selected} />
-          </div>
-        </div>
-      </Fragment>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }

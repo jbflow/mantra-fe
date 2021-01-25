@@ -4,6 +4,8 @@ import { HTTP_API_URL } from "../../utils/Constants";
 import { GrFormTrash } from "react-icons/gr";
 import { IconContext } from "react-icons";
 
+import { Container, Row, Col, Table } from "react-bootstrap";
+
 export default class Commands extends React.Component {
   constructor(props) {
     super(props);
@@ -136,102 +138,101 @@ export default class Commands extends React.Component {
 
   render() {
     return (
-      <div className="card border-primary mb-3">
-        <div className="card-header">Commands</div>
-        <div className="card-body">
-          <table className="table table-sm table-light">
-            <tbody>
-              {this.state.rows.map((command) => (
-                <tr key={command}>
-                  {this.state[command] ? (
-                    <Fragment>
-                      <td
-                        className={this.getSelected(command)}
-                        onDoubleClick={() => this.editCommand(command)}
-                        onClick={() => this.handleSelection(command)}
-                      >
-                        {command}
-                      </td>
-                      <td className="button-cell table-light">
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => this.handleDeleteRow(command)}
-                        >
-                          <IconContext.Provider
-                            value={{ style: { fontSize: "30px" } }}
-                          >
-                            <GrFormTrash />
-                          </IconContext.Provider>
-                        </button>
-                      </td>
-                    </Fragment>
-                  ) : (
-                    <Fragment>
-                      <td>
-                        <form onSubmit={this.handleEditRow}>
-                          <input
-                            className="form-control-commands"
-                            type="text"
-                            autoFocus
-                            defaultValue={command}
-                            ref={(input) => {
-                              this.editedInput = input;
-                            }}
-                            onFocus={this.handleFocus}
-                          ></input>
-                        </form>
-                      </td>
-                      <td className="button-cell">
-                        <button
-                          className="btn btn-sm btn-warning"
-                          onClick={() => this.handleCancelEdit(command)}
-                        >
-                          Cancel
-                        </button>
-                      </td>
-                    </Fragment>
-                  )}
-                </tr>
-              ))}
-              <tr>
-                {this.state.showCreate ? (
-                  <Fragment>
-                    <td className="table-light" onClick={this.createCommand}>
-                      Click here to add new voice command
-                    </td>
-                    <td className="button-cell" />
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    <td>
-                      <form onSubmit={this.handleAddRow}>
-                        <input
-                          className="form-control-commands"
-                          type="text"
-                          autoFocus
-                          placeholder="Type voice command..."
-                          ref={(input) => {
-                            this.commandInput = input;
-                          }}
-                        ></input>
-                      </form>
+      <Container className="border-right vh-100">
+        {this.state.rows.map((command) => (
+          <Row key={command}>
+            {this.state[command] ? (
+              <Table active striped bordered size="sm">
+                <tbody>
+                  <tr>
+                    <td
+                      className={this.getSelected(command)}
+                      onDoubleClick={() => this.editCommand(command)}
+                      onClick={() => this.handleSelection(command)}
+                    >
+                      {command}
                     </td>
 
-                    <td className="button-cell">
-                      <button
-                        className="btn btn-sm btn-warning"
-                        onClick={this.handleCancelCreate}
+                    <td className="w-25">
+                      {/* <button
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => this.handleDeleteRow(command)}
+                  > */}
+                      <IconContext.Provider
+                        value={{ style: { fontSize: "30px" } }}
                       >
-                        Cancel
-                      </button>
+                        <GrFormTrash
+                          onClick={() => this.handleDeleteRow(command)}
+                        />
+                      </IconContext.Provider>
                     </td>
-                  </Fragment>
-                )}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+                  </tr>
+                </tbody>
+              </Table>
+            ) : (
+              <Fragment>
+                <td>
+                  <form onSubmit={this.handleEditRow}>
+                    <input
+                      className="form-control-commands"
+                      type="text"
+                      autoFocus
+                      defaultValue={command}
+                      ref={(input) => {
+                        this.editedInput = input;
+                      }}
+                      onFocus={this.handleFocus}
+                    ></input>
+                  </form>
+                </td>
+                <td className="button-cell">
+                  <button
+                    className="btn btn-sm btn-warning"
+                    onClick={() => this.handleCancelEdit(command)}
+                  >
+                    Cancel
+                  </button>
+                </td>
+              </Fragment>
+            )}
+          </Row>
+        ))}
+        <Row>
+          {this.state.showCreate ? (
+            <Fragment>
+              <td className="table-light" onClick={this.createCommand}>
+                Click here to add new voice command
+              </td>
+              <td className="button-cell" />
+            </Fragment>
+          ) : (
+            <Fragment>
+              <td>
+                <form onSubmit={this.handleAddRow}>
+                  <input
+                    className="form-control-commands"
+                    type="text"
+                    autoFocus
+                    placeholder="Type voice command..."
+                    ref={(input) => {
+                      this.commandInput = input;
+                    }}
+                  ></input>
+                </form>
+              </td>
+
+              <td className="button-cell">
+                <button
+                  className="btn btn-sm btn-warning"
+                  onClick={this.handleCancelCreate}
+                >
+                  Cancel
+                </button>
+              </td>
+            </Fragment>
+          )}
+        </Row>
+      </Container>
     );
   }
 }

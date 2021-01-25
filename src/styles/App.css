@@ -1856,9 +1856,7 @@ pre code {
   border-top: 0px 
 }
 
-.button-cell {
-  width: 25%;
-}
+
 
 .table thead th {
   vertical-align: bottom;
@@ -10558,10 +10556,4 @@ body {
 .progress .progress-bar {
   font-size: 8px;
   line-height: 8px;
-}
-
-.rowC{
-  display:flex; 
-  flex-direction:row;
-  padding: 10px 10px;
 }

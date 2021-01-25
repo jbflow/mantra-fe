@@ -1,4 +1,6 @@
 import React, { Fragment } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+// import "./styles/App.scss";
 import { Route, BrowserRouter } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Preferences from "./components/Preferences";
