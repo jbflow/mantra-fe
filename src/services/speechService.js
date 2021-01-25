@@ -10,9 +10,15 @@ bumblebee.setHotword("hey_edison");
 bumblebee.setSensitivity(0.5);
 
 // Setup webspeech API
-const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition = window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
+
+var grammar =
+  "#JSGF V1.0; grammar phrases; public <phrase> = select the bass | track 1 | track 2 | arm track 1 | bass | arm | arm track;";
+const SpeechGrammarList = window.webkitSpeechGrammarList;
+var speechRecognitionList = new SpeechGrammarList();
+speechRecognitionList.addFromString(grammar, 1);
+
 recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
@@ -46,13 +52,8 @@ recognition.onspeechend = () => {
 };
 
 bumblebee.on("hotword", (hotword) => {
-  // Having to catch the error as this function is triggered twice - needs sorting...
-  try {
-    recognition.start();
-    console.log("listening...");
-  } catch (err) {
-    console.log(err);
-  }
+  recognition.start();
+  console.log("listening...");
 });
 
 bumblebee.start();

@@ -1,99 +1,19 @@
 import { MidiToJson } from "./MidiToJson";
+import { testmidi2 } from "./testMidiData";
 
 const composeMidiSysEx = (input) => {
 	return [...[240, 0, 0, 0, 0, 0], ...input, ...[247]]
 }
 
-const messages = [
-	[1, 3, 0, 0, 4, 0, 0],
-	[1, 3, 1, 0, 1, 100, 114, 117, 109, 115],
-	[1, 3, 2, 0, 1, 98, 97, 115, 115],
-	[1, 3, 3, 0, 1, 51, 45, 65, 117, 100, 105, 111],
-	[1, 3, 4, 0, 1, 52, 45, 65, 117, 100, 105, 111],
-	[1, 5, 0, 0, 4, 0, 0],
-	[1, 5, 1, 0, 1, 32, 49],
-	[1, 5, 2, 0, 1, 32, 50],
-	[1, 5, 3, 0, 1, 32, 51],
-	[1, 5, 4, 0, 1, 32, 52],
-	[1, 5, 5, 0, 1, 32, 53],
-	[1, 5, 6, 0, 1, 32, 54],
-	[1, 5, 7, 0, 1, 32, 55],
-	[1, 5, 8, 0, 1, 32, 56],
-	[1, 10, 0, 0, 4, 0, 0],
-	[1, 11, 0, 0, 4, 0, 0],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 11, 1, 0, 1, 69, 109, 112, 116, 121],
-	[1, 3, 1, 0, 3, 0, 0],
-	[1, 22, 0, 0, 4, 0, 0],
-	[1, 39, 0, 0, 1, 65, 110, 97, 108, 111, 103],
-	[1, 39, 1, 0, 1, 67, 111, 108, 108, 105, 115, 105, 111, 110],
-	[1, 39, 2, 0, 1, 68, 114, 117, 109, 32, 82, 97, 99, 107],
-	[1, 39, 3, 0, 1, 69, 108, 101, 99, 116, 114, 105, 99],
-	[1, 39, 4, 0, 1, 69, 120, 116, 101, 114, 110, 97, 108, 32, 73, 110, 115, 116, 114, 117, 109, 101, 110, 116],
-	[1, 39, 5, 0, 1, 73, 109, 112, 117, 108, 115, 101],
-	[1, 39, 6, 0, 1, 73, 110, 115, 116, 114, 117, 109, 101, 110, 116, 32, 82, 97, 99, 107],
-	[1, 39, 7, 0, 1, 79, 112, 101, 114, 97, 116, 111, 114],
-	[1, 39, 8, 0, 1, 83, 97, 109, 112, 108, 101, 114],
-	[1, 39, 9, 0, 1, 83, 105, 109, 112, 108, 101, 114],
-	[1, 39, 10, 0, 1, 84, 101, 110, 115, 105, 111, 110],
-	[1, 39, 11, 0, 1, 87, 97, 118, 101, 116, 97, 98, 108, 101],
-	[1, 40, 0, 0, 1, 65, 109, 112],
-	[1, 40, 1, 0, 1, 65, 117, 100, 105, 111, 32, 69, 102, 102, 101, 99, 116, 32, 82, 97, 99, 107],
-	[1, 40, 2, 0, 1, 65, 117, 116, 111, 32, 70, 105, 108, 116, 101, 114],
-	[1, 40, 3, 0, 1, 65, 117, 116, 111, 32, 80, 97, 110],
-	[1, 40, 4, 0, 1, 66, 101, 97, 116, 32, 82, 101, 112, 101, 97, 116],
-	[1, 40, 5, 0, 1, 67, 97, 98, 105, 110, 101, 116],
-	[1, 40, 6, 0, 1, 67, 104, 97, 110, 110, 101, 108, 32, 69, 81],
-	[1, 40, 7, 0, 1, 67, 104, 111, 114, 117, 115],
-	[1, 40, 8, 0, 1, 67, 111, 109, 112, 114, 101, 115, 115, 111, 114],
-	[1, 40, 9, 0, 1, 67, 111, 114, 112, 117, 115],
-	[1, 40, 10, 0, 1, 68, 101, 108, 97, 121],
-	[1, 40, 11, 0, 1, 68, 114, 117, 109, 32, 66, 117, 115, 115],
-	[1, 40, 12, 0, 1, 68, 121, 110, 97, 109, 105, 99, 32, 84, 117, 98, 101],
-	[1, 40, 13, 0, 1, 69, 99, 104, 111],
-	[1, 40, 14, 0, 1, 69, 81, 32, 69, 105, 103, 104, 116],
-	[1, 40, 15, 0, 1, 69, 81, 32, 84, 104, 114, 101, 101],
-	[1, 40, 16, 0, 1, 69, 114, 111, 115, 105, 111, 110],
-	[1, 40, 17, 0, 1, 69, 120, 116, 101, 114, 110, 97, 108, 32, 65, 117, 100, 105, 111, 32, 69, 102, 102, 101, 99, 116],
-	[1, 40, 18, 0, 1, 70, 105, 108, 116, 101, 114, 32, 68, 101, 108, 97, 121],
-	[1, 40, 19, 0, 1, 70, 108, 97, 110, 103, 101, 114],
-	[1, 40, 20, 0, 1, 70, 114, 101, 113, 117, 101, 110, 99, 121, 32, 83, 104, 105, 102, 116, 101, 114],
-	[1, 40, 21, 0, 1, 71, 97, 116, 101],
-	[1, 40, 22, 0, 1, 71, 108, 117, 101, 32, 67, 111, 109, 112, 114, 101, 115, 115, 111, 114],
-	[1, 40, 23, 0, 1, 71, 114, 97, 105, 110, 32, 68, 101, 108, 97, 121],
-	[1, 40, 24, 0, 1, 76, 105, 109, 105, 116, 101, 114],
-	[1, 40, 25, 0, 1, 76, 111, 111, 112, 101, 114],
-	[1, 40, 26, 0, 1, 77, 117, 108, 116, 105, 98, 97, 110, 100, 32, 68, 121, 110, 97, 109, 105, 99, 115],
-	[1, 40, 27, 0, 1, 79, 118, 101, 114, 100, 114, 105, 118, 101],
-	[1, 40, 28, 0, 1, 80, 101, 100, 97, 108],
-	[1, 40, 29, 0, 1, 80, 104, 97, 115, 101, 114],
-	[1, 40, 30, 0, 1, 82, 101, 100, 117, 120],
-	[1, 40, 31, 0, 1, 82, 101, 115, 111, 110, 97, 116, 111, 114, 115],
-	[1, 40, 32, 0, 1, 82, 101, 118, 101, 114, 98],
-	[1, 40, 33, 0, 1, 83, 97, 116, 117, 114, 97, 116, 111, 114],
-	[1, 40, 34, 0, 1, 83, 112, 101, 99, 116, 114, 117, 109],
-	[1, 40, 35, 0, 1, 84, 117, 110, 101, 114],
-	[1, 40, 36, 0, 1, 85, 116, 105, 108, 105, 116, 121],
-	[1, 40, 37, 0, 1, 86, 105, 110, 121, 108, 32, 68, 105, 115, 116, 111, 114, 116, 105, 111, 110],
-	[1, 40, 38, 0, 1, 86, 111, 99, 111, 100, 101, 114],
-	[1, 41, 0, 0, 1, 65, 114, 112, 101, 103, 103, 105, 97, 116, 111, 114],
-	[1, 41, 1, 0, 1, 67, 104, 111, 114, 100],
-	[1, 41, 2, 0, 1, 77, 73, 68, 73, 32, 69, 102, 102, 101, 99, 116, 32, 82, 97, 99, 107],
-	[1, 41, 3, 0, 1, 78, 111, 116, 101, 32, 76, 101, 110, 103, 116, 104],
-	[1, 41, 4, 0, 1, 80, 105, 116, 99, 104],
-	[1, 41, 5, 0, 1, 82, 97, 110, 100, 111, 109],
-	[1, 41, 6, 0, 1, 83, 99, 97, 108, 101],
-	[1, 41, 7, 0, 1, 86, 101, 108, 111, 99, 105, 116, 121]
-]
+// Removed test1 as data referred to old midiToJson script
 
-let lastConfig = null;
-messages.forEach(message => {
-	lastConfig = MidiToJson(composeMidiSysEx(message), lastConfig);
+let lastConfig2 = null;
+testmidi2.forEach(message => {
+	lastConfig2 = MidiToJson(composeMidiSysEx(message), lastConfig2);
 });
-console.log('lastConfig: ', lastConfig);
+
+const result2 = {"track": ["drums", "bass", "guitar", "violin", "synth"], "scene": [" 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8"], "device": [["Amp", "Cabinet"], ["Delay", "Corpus"], ["Compressor", "EQ Eight", "Chorus"], ["Compressor", "EQ Eight"], ["Ext. Audio Effect", "Filter Delay", "Compressor", "Limiter"]], "clip": [["intro", "chorus", "verse drum", "out drum", "Empty", "Empty", "Empty", "Empty"], ["bass intro", "bass chorus", "verse", "out", "Empty", "Empty", "Empty", "Empty"], ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"], ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"], ["Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty", "Empty"]], "parameter": [[["Device On", "Amp Type", "Bass", "Middle", "Treble", "Presence", "Gain", "Volume", "Dual Mono", "Dry/Wet"], ["Device On", "Cabinet Type", "Microphone Type", "Microphone Position", "Dual Mono", "Dry/Wet"]], [["Device On", "Delay Mode", "Link", "Ping Pong", "L Sync", "R Sync", "L Time", "R Time", "L 16th", "R 16th", "L Offset", "R Offset", "Feedback", "Freeze", "Filter On", "Filter Freq", "Filter Width", "Mod Freq", "Dly < Mod", "Filter < Mod", "Dry/Wet"], ["Device On", "Resonance Type", "Resonator Quality", "Tune", "Transpose", "Fine", "Spread", "Decay", "Material", "Radius", "Brightness", "Inharmonics", "Opening", "Ratio", "Hit", "Listening L", "Listening R", "LFO On/Off", "LFO Shape", "LFO Sync", "LFO Rate", "LFO Sync Rate", "LFO Stereo Mode", "Spin", "Phase", "Offset", "LFO Amount", "Filter On/Off", "Mid Freq", "Width", "MIDI Frequency", "MIDI Mode", "PB Range", "Note Off", "Off Decay", "Gain", "Width", "Bleed", "Dry Wet"]], [["Device On", "Threshold", "Ratio", "Expansion Ratio", "Attack", "Release", "Auto Release On/Off", "Output Gain", "Makeup", "Dry/Wet", "Model", "Env Mode", "Knee", "LookAhead", "S/C Listen", "S/C On", "S/C Gain", "S/C Mix", "S/C EQ Type", "S/C EQ On", "S/C EQ Freq", "S/C EQ Gain", "S/C EQ Q"], ["Device On", "Output Gain", "Scale", "Adaptive Q", "1 Filter On A", "1 Filter Type A", "1 Frequency A", "1 Gain A", "1 Resonance A", "1 Filter On B", "1 Filter Type B", "1 Frequency B", "1 Gain B", "1 Resonance B", "2 Filter On A", "2 Filter Type A", "2 Frequency A", "2 Gain A", "2 Resonance A", "2 Filter On B", "2 Filter Type B", "2 Frequency B", "2 Gain B", "2 Resonance B", "3 Filter On A", "3 Filter Type A", "3 Frequency A", "3 Gain A", "3 Resonance A", "3 Filter On B", "3 Filter Type B", "3 Frequency B", "3 Gain B", "3 Resonance B", "4 Filter On A", "4 Filter Type A", "4 Frequency A", "4 Gain A", "4 Resonance A", "4 Filter On B", "4 Filter Type B", "4 Frequency B", "4 Gain B", "4 Resonance B", "5 Filter On A", "5 Filter Type A", "5 Frequency A", "5 Gain A", "5 Resonance A", "5 Filter On B", "5 Filter Type B", "5 Frequency B", "5 Gain B", "5 Resonance B", "6 Filter On A", "6 Filter Type A", "6 Frequency A", "6 Gain A", "6 Resonance A", "6 Filter On B", "6 Filter Type B", "6 Frequency B", "6 Gain B", "6 Resonance B", "7 Filter On A", "7 Filter Type A", "7 Frequency A", "7 Gain A", "7 Resonance A", "7 Filter On B", "7 Filter Type B", "7 Frequency B", "7 Gain B", "7 Resonance B", "8 Filter On A", "8 Filter Type A", "8 Frequency A", "8 Gain A", "8 Resonance A", "8 Filter On B", "8 Filter Type B", "8 Frequency B", "8 Gain B", "8 Resonance B"], ["Device On", "Delay 1 Time", "Delay 1 HiPass", "Delay 2 Time", "Delay 2 Mode", "Link On", "LFO Amount", "LFO Rate", "LFO Extend On", "Feedback", "Polarity", "Dry/Wet"]], [["Device On", "Threshold", "Ratio", "Expansion Ratio", "Attack", "Release", "Auto Release On/Off", "Output Gain", "Makeup", "Dry/Wet", "Model", "Env Mode", "Knee", "LookAhead", "S/C Listen", "S/C On", "S/C Gain", "S/C Mix", "S/C EQ Type", "S/C EQ On", "S/C EQ Freq", "S/C EQ Gain", "S/C EQ Q"], ["Device On", "Output Gain", "Scale", "Adaptive Q", "1 Filter On A", "1 Filter Type A", "1 Frequency A", "1 Gain A", "1 Resonance A", "1 Filter On B", "1 Filter Type B", "1 Frequency B", "1 Gain B", "1 Resonance B", "2 Filter On A", "2 Filter Type A", "2 Frequency A", "2 Gain A", "2 Resonance A", "2 Filter On B", "2 Filter Type B", "2 Frequency B", "2 Gain B", "2 Resonance B", "3 Filter On A", "3 Filter Type A", "3 Frequency A", "3 Gain A", "3 Resonance A", "3 Filter On B", "3 Filter Type B", "3 Frequency B", "3 Gain B", "3 Resonance B", "4 Filter On A", "4 Filter Type A", "4 Frequency A", "4 Gain A", "4 Resonance A", "4 Filter On B", "4 Filter Type B", "4 Frequency B", "4 Gain B", "4 Resonance B", "5 Filter On A", "5 Filter Type A", "5 Frequency A", "5 Gain A", "5 Resonance A", "5 Filter On B", "5 Filter Type B", "5 Frequency B", "5 Gain B", "5 Resonance B", "6 Filter On A", "6 Filter Type A", "6 Frequency A", "6 Gain A", "6 Resonance A", "6 Filter On B", "6 Filter Type B", "6 Frequency B", "6 Gain B", "6 Resonance B", "7 Filter On A", "7 Filter Type A", "7 Frequency A", "7 Gain A", "7 Resonance A", "7 Filter On B", "7 Filter Type B", "7 Frequency B", "7 Gain B", "7 Resonance B", "8 Filter On A", "8 Filter Type A", "8 Frequency A", "8 Gain A", "8 Resonance A", "8 Filter On B", "8 Filter Type B", "8 Frequency B", "8 Gain B", "8 Resonance B"]], [["Device On", "Dry/Wet", "Output Gain", "Input Gain"], ["Device On", "1 Input On", "1 Filter On", "1 Filter Freq", "1 Filter Width", "1 Delay Mode", "1 Beat Delay", "1 Beat Swing", "1 Time Delay", "1 Feedback", "1 Pan", "1 Volume", "2 Input On", "2 Filter On", "2 Filter Freq", "2 Filter Width", "2 Delay Mode", "2 Beat Delay", "2 Beat Swing", "2 Time Delay", "2 Feedback", "2 Pan", "2 Volume", "3 Input On", "3 Filter On", "3 Filter Freq", "3 Filter Width", "3 Delay Mode", "3 Beat Delay", "3 Beat Swing", "3 Time Delay", "3 Feedback", "3 Pan", "3 Volume", "Dry"], ["Device On", "Threshold", "Ratio", "Expansion Ratio", "Attack", "Release", "Auto Release On/Off", "Output Gain", "Makeup", "Dry/Wet", "Model", "Env Mode", "Knee", "LookAhead", "S/C Listen", "S/C On", "S/C Gain", "S/C Mix", "S/C EQ Type", "S/C EQ On", "S/C EQ Freq", "S/C EQ Gain", "S/C EQ Q"], ["Device On", "Gain", "Ceiling", "Release time", "Auto", "Link Channels", "Lookahead"]]], "instrument": ["Analog", "Collision", "Drum Rack", "Electric", "External Instrument", "Impulse", "Instrument Rack", "Operator", "Sampler", "Simpler", "Tension", "Wavetable"], "audio_device": ["Amp", "Audio Effect Rack", "Auto Filter", "Auto Pan", "Beat Repeat", "Cabinet", "Channel EQ", "Chorus", "Compressor", "Corpus", "Delay", "Drum Buss", "Dynamic Tube", "Echo", "EQ Eight", "EQ Three", "Erosion", "External Audio Effect", "Filter Delay", "Flanger", "Frequency Shifter", "Gate", "Glue Compressor", "Grain Delay", "Limiter", "Looper", "Multiband Dynamics", "Overdrive", "Pedal", "Phaser", "Redux", "Resonators", "Reverb", "Saturator", "Spectrum", "Tuner", "Utility", "Vinyl Distortion", "Vocoder"], "midi_device": ["Arpeggiator", "Chord", "MIDI Effect Rack", "Note Length", "Pitch", "Random", "Scale", "Velocity"], "sel_track": 5, "sel_device": 1}
+
+console.log('result2: ', result2);
+console.log('lastConfig2: ', lastConfig2);
+console.log("passed2:", JSON.stringify(lastConfig2) === JSON.stringify(result2))

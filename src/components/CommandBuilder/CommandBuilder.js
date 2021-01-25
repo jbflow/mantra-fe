@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import "../styles/App.css";
+import "../../styles/App.css";
 import Commands from "./Commands";
 import Actions from "./Actions";
 

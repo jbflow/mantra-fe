@@ -1,7 +1,8 @@
 import React, { Fragment } from "react";
 import axios from "axios";
-import { HTTP_API_URL } from "../utils/Constants";
-import { API } from 'aws-amplify';
+import { HTTP_API_URL } from "../../utils/Constants";
+import { GrFormTrash } from "react-icons/gr";
+import { IconContext } from "react-icons";
 
 export default class Commands extends React.Component {
   constructor(props) {
@@ -68,11 +69,12 @@ export default class Commands extends React.Component {
     this.setState({ rows: newRows });
     this.setState({ [command]: true });
     delete this.state[oldCommand];
-    API.get("talkbackBE", "/commands").then((res) => {
-      res.forEach((obj) => {
+
+    axios.get(HTTP_API_URL + "/commands").then((res) => {
+      res.data.forEach((obj) => {
         if (obj.command === this.state.editing) {
           obj.command = command;
-          API.put("talkbackBE", "/commands" + obj.id + "/", { body: obj }); // NEEDS FIXING
+          axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj); // NEEDS FIXING
         }
       });
     });
@@ -114,18 +116,18 @@ export default class Commands extends React.Component {
       command: command,
       actions: [""],
     };
-    API.post("talkbackBE", "/commands", { body: emptyCommand })
+
+    axios.post(HTTP_API_URL + "/commands", emptyCommand);
   };
 
   deleteCommand = (command) => {
     console.log(command);
-    API.del("talkbackBE", "/commands?command=" + command);
+    axios.delete(HTTP_API_URL + "/commands" + "?command=" + command);
   };
 
   getCommands = () => {
-    API.get("talkbackBE", "/commands").then((res) => {
-      console.log('res: ', res);
-      res.forEach((action) => {
+    axios.get(HTTP_API_URL + "/commands").then((res) => {
+      res.data.forEach((action) => {
         this.setState({ [action.command]: true });
         this.setState({ rows: [...this.state.rows, action.command] });
       });
@@ -152,39 +154,43 @@ export default class Commands extends React.Component {
                       </td>
                       <td className="button-cell table-light">
                         <button
-                          className="btn btn-sm btn-danger"
+                          className="btn btn-sm btn-outline-danger"
                           onClick={() => this.handleDeleteRow(command)}
                         >
-                          Delete
+                          <IconContext.Provider
+                            value={{ style: { fontSize: "30px" } }}
+                          >
+                            <GrFormTrash />
+                          </IconContext.Provider>
                         </button>
                       </td>
                     </Fragment>
                   ) : (
-                      <Fragment>
-                        <td>
-                          <form onSubmit={this.handleEditRow}>
-                            <input
-                              className="form-control-commands"
-                              type="text"
-                              autoFocus
-                              defaultValue={command}
-                              ref={(input) => {
-                                this.editedInput = input;
-                              }}
-                              onFocus={this.handleFocus}
-                            ></input>
-                          </form>
-                        </td>
-                        <td className="button-cell">
-                          <button
-                            className="btn btn-sm btn-warning"
-                            onClick={() => this.handleCancelEdit(command)}
-                          >
-                            Cancel
+                    <Fragment>
+                      <td>
+                        <form onSubmit={this.handleEditRow}>
+                          <input
+                            className="form-control-commands"
+                            type="text"
+                            autoFocus
+                            defaultValue={command}
+                            ref={(input) => {
+                              this.editedInput = input;
+                            }}
+                            onFocus={this.handleFocus}
+                          ></input>
+                        </form>
+                      </td>
+                      <td className="button-cell">
+                        <button
+                          className="btn btn-sm btn-warning"
+                          onClick={() => this.handleCancelEdit(command)}
+                        >
+                          Cancel
                         </button>
-                        </td>
-                      </Fragment>
-                    )}
+                      </td>
+                    </Fragment>
+                  )}
                 </tr>
               ))}
               <tr>
@@ -196,31 +202,31 @@ export default class Commands extends React.Component {
                     <td className="button-cell" />
                   </Fragment>
                 ) : (
-                    <Fragment>
-                      <td>
-                        <form onSubmit={this.handleAddRow}>
-                          <input
-                            className="form-control-commands"
-                            type="text"
-                            autoFocus
-                            placeholder="Type voice command..."
-                            ref={(input) => {
-                              this.commandInput = input;
-                            }}
-                          ></input>
-                        </form>
-                      </td>
+                  <Fragment>
+                    <td>
+                      <form onSubmit={this.handleAddRow}>
+                        <input
+                          className="form-control-commands"
+                          type="text"
+                          autoFocus
+                          placeholder="Type voice command..."
+                          ref={(input) => {
+                            this.commandInput = input;
+                          }}
+                        ></input>
+                      </form>
+                    </td>
 
-                      <td className="button-cell">
-                        <button
-                          className="btn btn-sm btn-warning"
-                          onClick={this.handleCancelCreate}
-                        >
-                          Cancel
+                    <td className="button-cell">
+                      <button
+                        className="btn btn-sm btn-warning"
+                        onClick={this.handleCancelCreate}
+                      >
+                        Cancel
                       </button>
-                      </td>
-                    </Fragment>
-                  )}
+                    </td>
+                  </Fragment>
+                )}
               </tr>
             </tbody>
           </table>
