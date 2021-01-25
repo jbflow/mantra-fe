@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 import axios from "axios";
 import { HTTP_API_URL } from "../../utils/Constants";
+import { GrFormTrash } from "react-icons/gr";
+import { IconContext } from "react-icons";
 
 export default class Commands extends React.Component {
   constructor(props) {
@@ -152,10 +154,14 @@ export default class Commands extends React.Component {
                       </td>
                       <td className="button-cell table-light">
                         <button
-                          className="btn btn-sm btn-danger"
+                          className="btn btn-sm btn-outline-danger"
                           onClick={() => this.handleDeleteRow(command)}
                         >
-                          Delete
+                          <IconContext.Provider
+                            value={{ style: { fontSize: "30px" } }}
+                          >
+                            <GrFormTrash />
+                          </IconContext.Provider>
                         </button>
                       </td>
                     </Fragment>

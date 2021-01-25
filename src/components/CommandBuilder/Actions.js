@@ -2,6 +2,15 @@ import React, { Component } from "react";
 import axios from "axios";
 import { HTTP_API_URL } from "../../utils/Constants";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  GrDrag,
+  GrDuplicate,
+  GrFormTrash,
+  GrFormAdd,
+  GrKeyboard,
+} from "react-icons/gr";
+import { BiUserVoice } from "react-icons/bi";
+import { IconContext } from "react-icons";
 
 export default class Actions extends Component {
   constructor(props) {
@@ -90,21 +99,64 @@ export default class Actions extends Component {
                       >
                         {(provided) => (
                           <li
-                            className="rowC"
                             {...provided.draggableProps}
-                            {...provided.dragHandleProps}
                             ref={provided.innerRef}
                           >
-                            <p>X</p>
-                            <input
-                              type="text"
-                              value={action}
-                              name="action"
-                              className="form-control"
-                              placeholder="Enter voice action..."
-                              onChange={(event) => this.onChange(event, index)}
-                              style={{ width: "75%" }}
-                            ></input>
+                            <table className="table table-sm">
+                              <colgroup>
+                                <col span="1" style={{ width: "5%" }}></col>
+                                <col span="1" style={{ width: "80%" }}></col>
+                                <col span="1" style={{ width: "5%" }}></col>
+                                <col span="1" style={{ width: "5%" }}></col>
+                              </colgroup>
+                              <tbody>
+                                <tr>
+                                  <td {...provided.dragHandleProps}>
+                                    <IconContext.Provider
+                                      value={{
+                                        style: {
+                                          fontSize: "30px",
+                                          verticalAlign: "middle",
+                                        },
+                                      }}
+                                    >
+                                      <GrDrag />
+                                    </IconContext.Provider>
+                                  </td>
+                                  <td>
+                                    <input
+                                      type="text"
+                                      value={action}
+                                      name="action"
+                                      className="form-control"
+                                      placeholder="Enter voice action..."
+                                      onChange={(event) =>
+                                        this.onChange(event, index)
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <button className="btn btn-outline-primary">
+                                      <IconContext.Provider
+                                        value={{ style: { fontSize: "20px" } }}
+                                      >
+                                        <GrDuplicate />
+                                      </IconContext.Provider>
+                                    </button>
+                                  </td>
+
+                                  <td>
+                                    <button className="btn btn-outline-danger">
+                                      <IconContext.Provider
+                                        value={{ style: { fontSize: "20px" } }}
+                                      >
+                                        <GrFormTrash />
+                                      </IconContext.Provider>
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
                           </li>
                         )}
                       </Draggable>
@@ -115,27 +167,38 @@ export default class Actions extends Component {
               )}
             </Droppable>
           </DragDropContext>
-          {this.state.selected && (
-            <div className="modal-footer">
-              <button
-                style={{ width: "15%" }}
-                type="button"
-                className="btn btn-lg btn-primary"
-                onClick={() => {
-                  this.saveActions();
-                }}
-              >
-                Save
-              </button>
 
-              <button
-                style={{ width: "15%" }}
-                type="button"
-                className="btn btn-lg btn-primary"
-                onClick={() => {}}
-              >
-                Test
-              </button>
+          {this.state.selected && (
+            <div>
+              <div className="card-body">
+                <IconContext.Provider value={{ style: { fontSize: "80px" } }}>
+                  <BiUserVoice />
+                </IconContext.Provider>
+                <IconContext.Provider value={{ style: { fontSize: "80px" } }}>
+                  <GrKeyboard />
+                </IconContext.Provider>
+              </div>
+              <div className="modal-footer">
+                <button
+                  style={{ width: "15%" }}
+                  type="button"
+                  className="btn btn-lg btn-primary"
+                  onClick={() => {
+                    this.saveActions();
+                  }}
+                >
+                  Save
+                </button>
+
+                <button
+                  style={{ width: "15%" }}
+                  type="button"
+                  className="btn btn-lg btn-primary"
+                  onClick={() => {}}
+                >
+                  Test
+                </button>
+              </div>
             </div>
           )}
         </div>
