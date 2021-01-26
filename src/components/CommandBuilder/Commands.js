@@ -62,26 +62,26 @@ export default class Commands extends React.Component {
 
   handleEditRow = (e) => {
     console.table(e);
-    // e.preventDefault();
-    // const newRows = [...this.state.rows];
-    // const oldCommand = this.state.editing;
-    // const command = this.editedInput.value;
-    // var index = newRows.indexOf(oldCommand);
-    // if (index !== -1) {
-    //   newRows[index] = command;
-    // }
-    // this.setState({ rows: newRows });
-    // this.setState({ [command]: true });
-    // delete this.state[oldCommand];
+    e.preventDefault();
+    const newRows = [...this.state.rows];
+    const oldCommand = this.state.editing;
+    const command = this.editedInput.value;
+    var index = newRows.indexOf(oldCommand);
+    if (index !== -1) {
+      newRows[index] = command;
+    }
+    this.setState({ rows: newRows });
+    this.setState({ [command]: true });
+    delete this.state[oldCommand];
 
-    // axios.get(HTTP_API_URL + "/commands").then((res) => {
-    //   res.data.forEach((obj) => {
-    //     if (obj.command === this.state.editing) {
-    //       obj.command = command;
-    //       axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj); // NEEDS FIXING
-    //     }
-    //   });
-    // });
+    axios.get(HTTP_API_URL + "/commands").then((res) => {
+      res.data.forEach((obj) => {
+        if (obj.command === this.state.editing) {
+          obj.command = command;
+          axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj); // NEEDS FIXING
+        }
+      });
+    });
   };
 
   handleSelection = (selection) => {
@@ -135,7 +135,7 @@ export default class Commands extends React.Component {
       <>
         <Container className="min-vh-80 pre-scrollable">
           {this.state.rows.map((command) => (
-            <Form>
+            <Form onSubmit={this.handleEditRow}>
               <Form.Group
                 onMouseOver={() => {}}
                 as={Row}
@@ -175,6 +175,9 @@ export default class Commands extends React.Component {
                         plaintext
                         defaultValue={command}
                         className="form-control-commands"
+                        ref={(input) => {
+                          this.commandInput = input;
+                        }}
                       />
                     </Col>
                     <Col sm={1} className="mt-1">
