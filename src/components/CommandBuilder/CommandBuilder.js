@@ -17,15 +17,19 @@ export default class CommandBuilder extends Component {
 
   render() {
     return (
-      <Container fluid>
+      <Container fluid="s">
         <Row>
-          <Col sm={3}>
+          <Col
+            sm={3}
+            className="border-right border-secondary"
+            style={{ backgroundColor: "#e9ecef" }}
+          >
             <Commands updateSelected={this.updateSelected} />
           </Col>
 
-          <Col sm={9}>
+          {/* <Col sm={9}>
             <Actions selected={this.state.selected} />
-          </Col>
+          </Col> */}
         </Row>
       </Container>
     );

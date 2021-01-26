@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
 import axios from "axios";
 import { HTTP_API_URL } from "../../utils/Constants";
-import { GrFormTrash } from "react-icons/gr";
+import { GrFormTrash, GrFormClose } from "react-icons/gr";
+import { MdDone } from "react-icons/md";
 import { IconContext } from "react-icons";
 
-import { Container, Row, Col, Table } from "react-bootstrap";
+import { Container, Row, Col, Button, Table, Form } from "react-bootstrap";
 
 export default class Commands extends React.Component {
   constructor(props) {
@@ -60,26 +61,27 @@ export default class Commands extends React.Component {
   };
 
   handleEditRow = (e) => {
-    e.preventDefault();
-    const newRows = [...this.state.rows];
-    const oldCommand = this.state.editing;
-    const command = this.editedInput.value;
-    var index = newRows.indexOf(oldCommand);
-    if (index !== -1) {
-      newRows[index] = command;
-    }
-    this.setState({ rows: newRows });
-    this.setState({ [command]: true });
-    delete this.state[oldCommand];
+    console.table(e);
+    // e.preventDefault();
+    // const newRows = [...this.state.rows];
+    // const oldCommand = this.state.editing;
+    // const command = this.editedInput.value;
+    // var index = newRows.indexOf(oldCommand);
+    // if (index !== -1) {
+    //   newRows[index] = command;
+    // }
+    // this.setState({ rows: newRows });
+    // this.setState({ [command]: true });
+    // delete this.state[oldCommand];
 
-    axios.get(HTTP_API_URL + "/commands").then((res) => {
-      res.data.forEach((obj) => {
-        if (obj.command === this.state.editing) {
-          obj.command = command;
-          axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj); // NEEDS FIXING
-        }
-      });
-    });
+    // axios.get(HTTP_API_URL + "/commands").then((res) => {
+    //   res.data.forEach((obj) => {
+    //     if (obj.command === this.state.editing) {
+    //       obj.command = command;
+    //       axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj); // NEEDS FIXING
+    //     }
+    //   });
+    // });
   };
 
   handleSelection = (selection) => {
@@ -103,14 +105,6 @@ export default class Commands extends React.Component {
 
   handleCancelCreate = () => {
     this.setState({ showCreate: true });
-  };
-
-  getSelected = (command) => {
-    if (this.state.selected === command) {
-      return "table-primary";
-    } else {
-      return "table-light";
-    }
   };
 
   postCommand = (command) => {
@@ -138,101 +132,121 @@ export default class Commands extends React.Component {
 
   render() {
     return (
-      <Container className="border-right vh-100">
-        {this.state.rows.map((command) => (
-          <Row key={command}>
-            {this.state[command] ? (
-              <Table active striped bordered size="sm">
-                <tbody>
-                  <tr>
-                    <td
-                      className={this.getSelected(command)}
-                      onDoubleClick={() => this.editCommand(command)}
-                      onClick={() => this.handleSelection(command)}
-                    >
-                      {command}
-                    </td>
-
-                    <td className="w-25">
-                      {/* <button
-                    className="btn btn-sm btn-outline-danger"
-                    onClick={() => this.handleDeleteRow(command)}
-                  > */}
+      <>
+        <Container className="min-vh-80 pre-scrollable">
+          {this.state.rows.map((command) => (
+            <Form>
+              <Form.Group
+                onMouseOver={() => {}}
+                as={Row}
+                className="border rounded-pill border-secondary mt-3 ml-2 mr-1 bg-light"
+              >
+                {this.state[command] ? (
+                  <>
+                    <Col sm={10}>
+                      <Form.Control
+                        plaintext
+                        readOnly
+                        defaultValue={command}
+                        className="form-control-commands"
+                        onDoubleClick={() => this.editCommand(command)}
+                        onClick={() => this.handleSelection(command)}
+                      />
+                    </Col>
+                    <Col sm={2} className="text-right mt-1">
                       <IconContext.Provider
-                        value={{ style: { fontSize: "30px" } }}
+                        value={{
+                          style: {
+                            fontSize: "30px",
+                            cursor: "pointer",
+                          },
+                        }}
                       >
                         <GrFormTrash
                           onClick={() => this.handleDeleteRow(command)}
                         />
                       </IconContext.Provider>
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-            ) : (
-              <Fragment>
-                <td>
-                  <form onSubmit={this.handleEditRow}>
-                    <input
-                      className="form-control-commands"
-                      type="text"
-                      autoFocus
-                      defaultValue={command}
-                      ref={(input) => {
-                        this.editedInput = input;
-                      }}
-                      onFocus={this.handleFocus}
-                    ></input>
-                  </form>
-                </td>
-                <td className="button-cell">
-                  <button
-                    className="btn btn-sm btn-warning"
-                    onClick={() => this.handleCancelEdit(command)}
-                  >
-                    Cancel
-                  </button>
-                </td>
-              </Fragment>
-            )}
-          </Row>
-        ))}
-        <Row>
-          {this.state.showCreate ? (
-            <Fragment>
-              <td className="table-light" onClick={this.createCommand}>
-                Click here to add new voice command
-              </td>
-              <td className="button-cell" />
-            </Fragment>
-          ) : (
-            <Fragment>
-              <td>
-                <form onSubmit={this.handleAddRow}>
-                  <input
+                    </Col>
+                  </>
+                ) : (
+                  <>
+                    <Col sm={9}>
+                      <Form.Control
+                        plaintext
+                        defaultValue={command}
+                        className="form-control-commands"
+                      />
+                    </Col>
+                    <Col sm={1} className="mt-1">
+                      <IconContext.Provider
+                        value={{
+                          style: { fontSize: "30px", cursor: "pointer" },
+                        }}
+                      >
+                        <MdDone onClick={() => this.handleEditRow(command)} />
+                      </IconContext.Provider>
+                    </Col>
+                    <Col sm={2} className="text-right mt-1">
+                      <IconContext.Provider
+                        value={{
+                          style: { fontSize: "30px", cursor: "pointer" },
+                        }}
+                      >
+                        <GrFormClose
+                          onClick={() => this.handleCancelEdit(command)}
+                        />
+                      </IconContext.Provider>
+                    </Col>
+                  </>
+                )}
+              </Form.Group>
+            </Form>
+          ))}
+        </Container>
+        <Container>
+          <Form onSubmit={this.handleAddRow}>
+            <Form.Group
+              as={Row}
+              className="border rounded-pill border-secondary ml-2 mr-3 bg-light"
+            >
+              {this.state.showCreate ? (
+                <Col sm={10}>
+                  <Form.Control
                     className="form-control-commands"
                     type="text"
-                    autoFocus
-                    placeholder="Type voice command..."
-                    ref={(input) => {
-                      this.commandInput = input;
-                    }}
-                  ></input>
-                </form>
-              </td>
+                    plaintext
+                    readOnly
+                    placeholder="Click here to add command..."
+                    onClick={this.createCommand}
+                  />
+                </Col>
+              ) : (
+                <>
+                  <Col sm={10}>
+                    <Form.Control
+                      className="form-control-commands"
+                      type="text"
+                      plaintext
+                      placeholder="Type voice command..."
+                      ref={(input) => {
+                        this.commandInput = input;
+                      }}
+                    />
+                  </Col>
 
-              <td className="button-cell">
-                <button
-                  className="btn btn-sm btn-warning"
-                  onClick={this.handleCancelCreate}
-                >
-                  Cancel
-                </button>
-              </td>
-            </Fragment>
-          )}
-        </Row>
-      </Container>
+                  <Col sm={2} className="mt-1">
+                    <IconContext.Provider
+                      value={{ style: { fontSize: "30px" } }}
+                    >
+                      <GrFormClose onClick={this.handleCancelCreate} />
+                    </IconContext.Provider>
+                  </Col>
+                </>
+              )}
+            </Form.Group>
+          </Form>
+        </Container>
+      </>
     );
   }
 }

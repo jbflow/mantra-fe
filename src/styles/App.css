@@ -543,7 +543,7 @@ pre code {
 }
 
 .pre-scrollable {
-  max-height: 340px;
+ 
   overflow-y: scroll;
 }
 
@@ -2192,7 +2192,7 @@ pre code {
 .form-control-commands {
   display: block;
   width: 100%;
-  margin: auto;
+  margin: none;
   border: 0px
 }
 
@@ -8350,6 +8350,11 @@ button.bg-dark:focus {
           box-shadow: none !important;
 }
 
+
+.w-10 {
+  width: 10% !important;
+}
+
 .w-25 {
   width: 25% !important;
 }
@@ -8404,6 +8409,11 @@ button.bg-dark:focus {
 
 .min-vh-100 {
   min-height: 100vh !important;
+}
+
+
+.min-vh-80 {
+  min-height: 80vh !important;
 }
 
 .vw-100 {
@@ -10556,4 +10566,21 @@ body {
 .progress .progress-bar {
   font-size: 8px;
   line-height: 8px;
+}
+
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: f 0 0 6px var(--light); 
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: var(--secondary); 
 }
