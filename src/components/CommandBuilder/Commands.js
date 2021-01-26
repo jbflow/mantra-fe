@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
-import axios from "axios";
-import { HTTP_API_URL } from "../../utils/Constants";
+
+import { API } from "aws-amplify";
+
 import { GrFormTrash, GrFormClose } from "react-icons/gr";
 import { MdDone } from "react-icons/md";
 import { IconContext } from "react-icons";
@@ -74,11 +75,11 @@ export default class Commands extends React.Component {
     this.setState({ [command]: true });
     delete this.state[oldCommand];
 
-    axios.get(HTTP_API_URL + "/commands").then((res) => {
+    API.get("talkbackBE", "/commands").then((res) => {
       res.data.forEach((obj) => {
         if (obj.command === this.state.editing) {
           obj.command = command;
-          axios.put(HTTP_API_URL + "/commands" + obj.id + "/", obj); // NEEDS FIXING
+          API.put("talkbackBE", "/commands" + obj.id + "/", { body: obj }); // NEEDS FIXING
         }
       });
     });
@@ -113,16 +114,17 @@ export default class Commands extends React.Component {
       actions: [""],
     };
 
-    axios.post(HTTP_API_URL + "/commands", emptyCommand);
+    API.post("talkbackBE", "/commands", { body: emptyCommand });
   };
 
   deleteCommand = (command) => {
     console.log(command);
-    axios.delete(HTTP_API_URL + "/commands" + "?command=" + command);
+    API.del("talkbackBE", "/commands?command=" + command);
   };
 
   getCommands = () => {
-    axios.get(HTTP_API_URL + "/commands").then((res) => {
+    API.get("talkbackBE", "/commands").then((res) => {
+      console.log("res: ", res);
       res.data.forEach((action) => {
         this.setState({ [action.command]: true });
         this.setState({ rows: [...this.state.rows, action.command] });
