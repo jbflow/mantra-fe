@@ -62,7 +62,6 @@ export default class Commands extends React.Component {
   };
 
   handleEditRow = (e) => {
-    console.table(e);
     e.preventDefault();
     const newRows = [...this.state.rows];
     const oldCommand = this.state.editing;
@@ -74,15 +73,9 @@ export default class Commands extends React.Component {
     this.setState({ rows: newRows });
     this.setState({ [command]: true });
     delete this.state[oldCommand];
-
-    API.get("talkbackBE", "/commands").then((res) => {
-      res.data.forEach((obj) => {
-        if (obj.command === this.state.editing) {
-          obj.command = command;
-          API.put("talkbackBE", "/commands" + obj.id + "/", { body: obj }); // NEEDS FIXING
-        }
-      });
-    });
+    // API.put("talkbackBE", "/commands?command=" + oldCommand, {
+    //   body: obj,
+    // });
   };
 
   handleSelection = (selection) => {
@@ -125,7 +118,7 @@ export default class Commands extends React.Component {
   getCommands = () => {
     API.get("talkbackBE", "/commands").then((res) => {
       console.log("res: ", res);
-      res.data.forEach((action) => {
+      res.forEach((action) => {
         this.setState({ [action.command]: true });
         this.setState({ rows: [...this.state.rows, action.command] });
       });
@@ -137,11 +130,11 @@ export default class Commands extends React.Component {
       <>
         <Container className="min-vh-80 pre-scrollable">
           {this.state.rows.map((command) => (
-            <Form onSubmit={this.handleEditRow}>
+            <Form key={command} onSubmit={this.handleEditRow}>
               <Form.Group
                 onMouseOver={() => {}}
                 as={Row}
-                className="border rounded-pill border-secondary mt-3 ml-2 mr-1 bg-light"
+                className="border rounded-pill border-secondary mt-3 ml-3 mr-1 bg-light"
               >
                 {this.state[command] ? (
                   <>
@@ -178,7 +171,7 @@ export default class Commands extends React.Component {
                         defaultValue={command}
                         className="form-control-commands"
                         ref={(input) => {
-                          this.commandInput = input;
+                          this.editedInput = input;
                         }}
                       />
                     </Col>
@@ -212,7 +205,7 @@ export default class Commands extends React.Component {
           <Form onSubmit={this.handleAddRow}>
             <Form.Group
               as={Row}
-              className="border rounded-pill border-secondary ml-2 mr-3 bg-light"
+              className="border rounded-pill border-secondary ml-3 mr-3 bg-light"
             >
               {this.state.showCreate ? (
                 <Col sm={10}>
