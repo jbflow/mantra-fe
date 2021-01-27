@@ -2,12 +2,14 @@ import BumbleBee from "bumblebee-hotword";
 
 let config, websocket;
 
+const playAlert = require("alert-sound-notify");
+
 // Setup porcupine/bumblebee
 const bumblebee = new BumbleBee();
 bumblebee.setWorkersPath("bumblebee-workers");
 bumblebee.addHotword("hey_edison");
 bumblebee.setHotword("hey_edison");
-bumblebee.setSensitivity(0.5);
+bumblebee.setSensitivity(0.7);
 
 // Setup webspeech API
 const SpeechRecognition = window.webkitSpeechRecognition;
@@ -23,6 +25,12 @@ recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
+recognition.onstart = () => {
+  playAlert("funk");
+};
+recognition.onend = () => {
+  playAlert("tink");
+};
 
 recognition.onresult = (event) => {
   var transcript = "";
