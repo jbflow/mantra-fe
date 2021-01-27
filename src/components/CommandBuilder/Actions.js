@@ -1,16 +1,14 @@
 import React, { Component } from "react";
-import axios from "axios";
-import { HTTP_API_URL } from "../../utils/Constants";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   GrDrag,
   GrDuplicate,
   GrFormTrash,
-  GrFormAdd,
   GrKeyboard,
 } from "react-icons/gr";
 import { BiUserVoice } from "react-icons/bi";
 import { IconContext } from "react-icons";
+import { API } from "aws-amplify";
 
 export default class Actions extends Component {
   constructor(props) {
@@ -22,7 +20,7 @@ export default class Actions extends Component {
     };
   }
   componentDidUpdate() {
-    axios.get(HTTP_API_URL + "/commands").then((res) => {
+    API.get("talkbackBE", "/commands").then((res) => {
       res.data.forEach((obj) => {
         if (
           obj.command === this.props.selected &&
@@ -64,7 +62,7 @@ export default class Actions extends Component {
       command: this.state.selected,
       actions: this.state.actions,
     };
-    axios.post(HTTP_API_URL + "/commands", updatedAction);
+    API.post("talkbackBE", "/commands", updatedAction);
   };
 
   handleOneDragEnd = (result) => {
@@ -194,7 +192,7 @@ export default class Actions extends Component {
                   style={{ width: "15%" }}
                   type="button"
                   className="btn btn-lg btn-primary"
-                  onClick={() => {}}
+                  onClick={() => { }}
                 >
                   Test
                 </button>

@@ -1,7 +1,6 @@
-import Axios from "axios";
+import { API } from "aws-amplify";
 import React, { Component, Fragment } from "react";
 import "../styles/App.css";
-import { HTTP_API_URL } from "../utils/Constants";
 
 export default class BetaArea extends Component {
   sendIntent = () => {
@@ -19,7 +18,7 @@ export default class BetaArea extends Component {
 
   submitReport = () => {
     const message = document.getElementById("betaMessage").value;
-    Axios.post(HTTP_API_URL + "/beta", { message: message });
+    API.post("talkbackBE", "/beta", { message: message });
   };
 
   render() {

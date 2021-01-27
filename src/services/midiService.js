@@ -21,7 +21,7 @@ const setConfig = (midi) => {
 export const getMIDIMessage = (msg) => {
   console.log("getMIDIMessage: ", msg.data);
   // Setting the new Config when MIDI message received
-  if (msg.data != [240, 0, 0, 0, 0, 0, 127, 247]) {
+  if (msg.data !== [240, 0, 0, 0, 0, 0, 127, 247]) {
     setConfig(msg.data);
   }
 };
