@@ -1,5 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/App.css";
+import "./styles/Transitions.css";
 import { Route, BrowserRouter } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Preferences from "./components/Preferences";
@@ -49,6 +51,8 @@ function App() {
     }
 
     // setIsAuthenticating(false);
+    const user = await Auth.currentUserPoolUser();
+    console.log(user.username);
   }
   return (
     <Fragment>

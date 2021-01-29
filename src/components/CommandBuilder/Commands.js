@@ -8,6 +8,8 @@ import { IconContext } from "react-icons";
 
 import { Container, Row, Col, Button, Table, Form } from "react-bootstrap";
 
+const classNames = require("classnames");
+
 export default class Commands extends React.Component {
   constructor(props) {
     super(props);
@@ -132,9 +134,13 @@ export default class Commands extends React.Component {
           {this.state.rows.map((command) => (
             <Form key={command} onSubmit={this.handleEditRow}>
               <Form.Group
-                onMouseOver={() => {}}
                 as={Row}
-                className="border rounded-pill border-secondary mt-3 ml-3 mr-1 bg-light"
+                className={classNames(
+                  "border rounded-pill border-secondary mt-2 ml-3",
+                  {
+                    "bg-light ml-4 all-3s": this.state.selected === command,
+                  }
+                )}
               >
                 {this.state[command] ? (
                   <>
@@ -143,7 +149,7 @@ export default class Commands extends React.Component {
                         plaintext
                         readOnly
                         defaultValue={command}
-                        className="form-control-commands"
+                        className="btn btn-outline"
                         onDoubleClick={() => this.editCommand(command)}
                         onClick={() => this.handleSelection(command)}
                       />

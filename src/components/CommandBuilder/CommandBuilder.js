@@ -17,7 +17,7 @@ export default class CommandBuilder extends Component {
 
   render() {
     return (
-      <Container fluid="s">
+      <Container fluid>
         <Row>
           <Col
             sm={3}
@@ -27,9 +27,9 @@ export default class CommandBuilder extends Component {
             <Commands updateSelected={this.updateSelected} />
           </Col>
 
-          {/* <Col sm={9}>
+          <Col sm={9}>
             <Actions selected={this.state.selected} />
-          </Col> */}
+          </Col>
         </Row>
       </Container>
     );

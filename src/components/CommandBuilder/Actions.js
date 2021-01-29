@@ -1,11 +1,6 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import {
-  GrDrag,
-  GrDuplicate,
-  GrFormTrash,
-  GrKeyboard,
-} from "react-icons/gr";
+import { GrDrag, GrDuplicate, GrFormTrash, GrKeyboard } from "react-icons/gr";
 import { BiUserVoice } from "react-icons/bi";
 import { IconContext } from "react-icons";
 import { API } from "aws-amplify";
@@ -21,7 +16,7 @@ export default class Actions extends Component {
   }
   componentDidUpdate() {
     API.get("talkbackBE", "/commands").then((res) => {
-      res.data.forEach((obj) => {
+      res.forEach((obj) => {
         if (
           obj.command === this.props.selected &&
           this.state.selected !== this.props.selected
@@ -192,7 +187,7 @@ export default class Actions extends Component {
                   style={{ width: "15%" }}
                   type="button"
                   className="btn btn-lg btn-primary"
-                  onClick={() => { }}
+                  onClick={() => {}}
                 >
                   Test
                 </button>
