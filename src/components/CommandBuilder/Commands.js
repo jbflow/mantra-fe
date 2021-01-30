@@ -6,7 +6,7 @@ import { GrFormTrash, GrFormClose } from "react-icons/gr";
 import { MdDone } from "react-icons/md";
 import { IconContext } from "react-icons";
 
-import { Container, Row, Col, Button, Table, Form } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 
 const classNames = require("classnames");
 
@@ -130,15 +130,19 @@ export default class Commands extends React.Component {
   render() {
     return (
       <>
-        <Container className="min-vh-80 pre-scrollable">
+        <Container className="h-75 pre-scrollable">
           {this.state.rows.map((command) => (
             <Form key={command} onSubmit={this.handleEditRow}>
               <Form.Group
                 as={Row}
                 className={classNames(
-                  "border rounded-pill border-secondary mt-2 ml-3",
                   {
-                    "bg-light ml-4 all-3s": this.state.selected === command,
+                    "border rounded-pill border-secondary mt-2 ml-2 mr-2":
+                      this.state.selected !== command,
+                  },
+                  {
+                    "border rounded-pill border-secondary bg-light ml-3 mr-1 all-3s":
+                      this.state.selected === command,
                   }
                 )}
               >
@@ -207,11 +211,11 @@ export default class Commands extends React.Component {
             </Form>
           ))}
         </Container>
-        <Container>
+        <Container className="h-25 p-1 bg-secondary rounded-top">
           <Form onSubmit={this.handleAddRow}>
             <Form.Group
               as={Row}
-              className="border rounded-pill border-secondary ml-3 mr-3 bg-light"
+              className="border rounded-pill border-secondary ml-2 mt-3 mr-4 bg-light"
             >
               {this.state.showCreate ? (
                 <Col sm={10}>

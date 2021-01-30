@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { GrDrag, GrDuplicate, GrFormTrash, GrKeyboard } from "react-icons/gr";
+import { GrDrag, GrDuplicate, GrFormTrash, GrAddCircle } from "react-icons/gr";
 import { BiUserVoice } from "react-icons/bi";
 import { IconContext } from "react-icons";
+import { Container, Card, Row, Col, Form } from "react-bootstrap";
 import { API } from "aws-amplify";
+
+const classNames = require("classnames");
 
 export default class Actions extends Component {
   constructor(props) {
@@ -72,17 +75,13 @@ export default class Actions extends Component {
 
   render() {
     return (
-      <div className="card border-primary mb-3">
-        <div className="card-header">Actions</div>
-        <div className="card-body">
+      <Card>
+        <Card.Header></Card.Header>
+        <Card.Body>
           <DragDropContext onDragEnd={this.handleOneDragEnd}>
             <Droppable droppableId="actions">
               {(provided) => (
-                <ul
-                  style={{ listStyle: "none" }}
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
+                <Container {...provided.droppableProps} ref={provided.innerRef}>
                   {this.state.actions.map((action, index) => {
                     return (
                       <Draggable
@@ -91,111 +90,89 @@ export default class Actions extends Component {
                         index={index}
                       >
                         {(provided) => (
-                          <li
+                          <Form.Group
+                            as={Row}
                             {...provided.draggableProps}
                             ref={provided.innerRef}
+                            className="border rounded border-dark mt-2 ml-2 mr-2 text-right"
                           >
-                            <table className="table table-sm">
-                              <colgroup>
-                                <col span="1" style={{ width: "5%" }}></col>
-                                <col span="1" style={{ width: "80%" }}></col>
-                                <col span="1" style={{ width: "5%" }}></col>
-                                <col span="1" style={{ width: "5%" }}></col>
-                              </colgroup>
-                              <tbody>
-                                <tr>
-                                  <td {...provided.dragHandleProps}>
-                                    <IconContext.Provider
-                                      value={{
-                                        style: {
-                                          fontSize: "30px",
-                                          verticalAlign: "middle",
-                                        },
-                                      }}
-                                    >
-                                      <GrDrag />
-                                    </IconContext.Provider>
-                                  </td>
-                                  <td>
-                                    <input
-                                      type="text"
-                                      value={action}
-                                      name="action"
-                                      className="form-control"
-                                      placeholder="Enter voice action..."
-                                      onChange={(event) =>
-                                        this.onChange(event, index)
-                                      }
-                                    />
-                                  </td>
-                                  <td>
-                                    <button className="btn btn-outline-primary">
-                                      <IconContext.Provider
-                                        value={{ style: { fontSize: "20px" } }}
-                                      >
-                                        <GrDuplicate />
-                                      </IconContext.Provider>
-                                    </button>
-                                  </td>
+                            <Col
+                              className="pt-1"
+                              sm={0.5}
+                              {...provided.dragHandleProps}
+                            >
+                              <IconContext.Provider
+                                value={{
+                                  style: {
+                                    fontSize: "30px",
+                                  },
+                                }}
+                              >
+                                <GrDrag />
+                              </IconContext.Provider>
+                            </Col>
+                            <Col sm={10}>
+                              <Form.Control
+                                plaintext
+                                value={action}
+                                name="action"
+                                className="form-control"
+                                placeholder="Enter voice action..."
+                                onChange={(event) =>
+                                  this.onChange(event, index)
+                                }
+                              />
+                            </Col>
+                            <Col className="pt-1 pr-2 text-right" sm={1}>
+                              <IconContext.Provider
+                                value={{
+                                  style: {
+                                    fontSize: "20px",
+                                    cursor: "pointer",
+                                  },
+                                }}
+                              >
+                                <GrDuplicate />
+                              </IconContext.Provider>
+                            </Col>
 
-                                  <td>
-                                    <button className="btn btn-outline-danger">
-                                      <IconContext.Provider
-                                        value={{ style: { fontSize: "20px" } }}
-                                      >
-                                        <GrFormTrash />
-                                      </IconContext.Provider>
-                                    </button>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </li>
+                            <Col className="pt-1 pr-2 text-right" sm={0.5}>
+                              <IconContext.Provider
+                                value={{
+                                  style: {
+                                    fontSize: "20px",
+                                    cursor: "pointer",
+                                  },
+                                }}
+                              >
+                                <GrAddCircle />
+                              </IconContext.Provider>
+                            </Col>
+
+                            <Col className="pt-1 text-right" sm={0.5}>
+                              <IconContext.Provider
+                                value={{
+                                  style: {
+                                    fontSize: "30px",
+                                    cursor: "pointer",
+                                  },
+                                }}
+                              >
+                                <GrFormTrash />
+                              </IconContext.Provider>
+                            </Col>
+                          </Form.Group>
                         )}
                       </Draggable>
                     );
                   })}
                   {provided.placeholder}
-                </ul>
+                </Container>
               )}
             </Droppable>
           </DragDropContext>
-
-          {this.state.selected && (
-            <div>
-              <div className="card-body">
-                <IconContext.Provider value={{ style: { fontSize: "80px" } }}>
-                  <BiUserVoice />
-                </IconContext.Provider>
-                <IconContext.Provider value={{ style: { fontSize: "80px" } }}>
-                  <GrKeyboard />
-                </IconContext.Provider>
-              </div>
-              <div className="modal-footer">
-                <button
-                  style={{ width: "15%" }}
-                  type="button"
-                  className="btn btn-lg btn-primary"
-                  onClick={() => {
-                    this.saveActions();
-                  }}
-                >
-                  Save
-                </button>
-
-                <button
-                  style={{ width: "15%" }}
-                  type="button"
-                  className="btn btn-lg btn-primary"
-                  onClick={() => {}}
-                >
-                  Test
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+        </Card.Body>
+      </Card>
     );
   }
 }

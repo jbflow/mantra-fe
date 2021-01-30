@@ -138,14 +138,14 @@ export default class Preferences extends Component {
           <Col>Speech Rate</Col>
 
           <Col>
-            <fieldset class="form-group">
+            <fieldset className="form-group">
               <input type="range" className="custom-range" id="speechRate" />
             </fieldset>
           </Col>
           <Col>Feedback Level</Col>
 
           <Col>
-            <fieldset class="form-group">
+            <fieldset className="form-group">
               <input type="range" className="custom-range" id="feedbackLevel" />
             </fieldset>
           </Col>

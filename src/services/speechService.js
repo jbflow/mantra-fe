@@ -2,7 +2,7 @@ import BumbleBee from "bumblebee-hotword";
 
 let config, websocket;
 
-const playAlert = require("alert-sound-notify");
+// const playAlert = require("alert-sound-notify");
 
 // Setup porcupine/bumblebee
 const bumblebee = new BumbleBee();
@@ -25,12 +25,12 @@ recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
-recognition.onstart = () => {
-  playAlert("funk");
-};
-recognition.onend = () => {
-  playAlert("tink");
-};
+// recognition.onstart = () => {
+//   playAlert("funk");
+// };
+// recognition.onend = () => {
+//   playAlert("tink");
+// };
 
 recognition.onresult = (event) => {
   var transcript = "";
