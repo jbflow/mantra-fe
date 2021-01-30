@@ -123,17 +123,20 @@ export default class Actions extends Component {
                                 }
                               />
                             </Col>
+
                             <Col className="pt-1 pr-2 text-right" sm={1}>
-                              <IconContext.Provider
-                                value={{
-                                  style: {
-                                    fontSize: "20px",
-                                    cursor: "pointer",
-                                  },
-                                }}
-                              >
-                                <GrDuplicate />
-                              </IconContext.Provider>
+                              {this.state.actions.length - 1 === index && (
+                                <IconContext.Provider
+                                  value={{
+                                    style: {
+                                      fontSize: "20px",
+                                      cursor: "pointer",
+                                    },
+                                  }}
+                                >
+                                  <GrAddCircle onClick={this.handleAddAction} />
+                                </IconContext.Provider>
+                              )}
                             </Col>
 
                             <Col className="pt-1 pr-2 text-right" sm={0.5}>
@@ -145,21 +148,31 @@ export default class Actions extends Component {
                                   },
                                 }}
                               >
-                                <GrAddCircle />
+                                <GrDuplicate
+                                  onClick={(index) => {
+                                    this.handleDuplicateAction(index);
+                                  }}
+                                />
                               </IconContext.Provider>
                             </Col>
 
-                            <Col className="pt-1 text-right" sm={0.5}>
-                              <IconContext.Provider
-                                value={{
-                                  style: {
-                                    fontSize: "30px",
-                                    cursor: "pointer",
-                                  },
-                                }}
-                              >
-                                <GrFormTrash />
-                              </IconContext.Provider>
+                            <Col className="text-right" sm={0.5}>
+                              {this.state.actions.length !== 1 && (
+                                <IconContext.Provider
+                                  value={{
+                                    style: {
+                                      fontSize: "30px",
+                                      cursor: "pointer",
+                                    },
+                                  }}
+                                >
+                                  <GrFormTrash
+                                    onClick={(index) => {
+                                      this.handleDeleteAction(index);
+                                    }}
+                                  />
+                                </IconContext.Provider>
+                              )}
                             </Col>
                           </Form.Group>
                         )}
