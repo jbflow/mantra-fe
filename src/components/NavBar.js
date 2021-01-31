@@ -4,7 +4,7 @@ import { Navbar, Nav, Form, Button } from "react-bootstrap";
 import { FaCog } from "react-icons/fa";
 import { IconContext } from "react-icons";
 
-export default function NavBar() {
+export default function NavBar({ signOut }) {
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Navbar.Brand>Orunoko</Navbar.Brand>
@@ -28,7 +28,7 @@ export default function NavBar() {
           </Link>
         </IconContext.Provider>
         <Form inline>
-          <Button variant="outline-light">Sign Out</Button>
+          <Button variant="outline-light" onClick={signOut}>Sign Out</Button>
         </Form>
       </Navbar.Collapse>
     </Navbar>

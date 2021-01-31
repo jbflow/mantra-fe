@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import Authoriser from "./Authoriser";
 
 // import "./utils/testMidiToJson";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Authoriser />
   </React.StrictMode>,
   document.getElementById("app")
 );
