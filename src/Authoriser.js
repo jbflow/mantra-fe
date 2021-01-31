@@ -1,8 +1,7 @@
-import Amplify, { Auth, Hub } from 'aws-amplify'
+import { Auth, Hub } from 'aws-amplify'
 import config from "./amplify-config";
 import App from './App';
 import useAuthentication from './hooks/useAuthentication';
-import { HTTP_API_URL } from "./utils/Constants";
 Hub.listen(/.*/, ({ channel, payload }) =>
 	console.debug(`[hub::${channel}::${payload.event}]`, payload)
 )
