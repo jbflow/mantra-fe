@@ -56,20 +56,20 @@ function App() {
   }
   return (
     <Fragment>
-      {isAuthenticated}
+      {/* {isAuthenticated} */}
       <BrowserRouter>
         <NavBar />
-        <Route path="/dashboard" component={Dashboard} />
         <Route
-          path="/prefs"
-          render={() => (
-            <Preferences
-              ref={(Preferences) => {
-                window.Preferences = Preferences;
-              }}
+          path="/dashboard"
+          render={(props) => (
+            <Dashboard
+              {...props}
+              ws={getWebSocket()}
+              getConfig={getConfigFunction}
             />
           )}
         />
+        <Route path="/prefs" component={Preferences} />
         <Route
           path="/commands"
           render={(props) => (
@@ -80,7 +80,6 @@ function App() {
             />
           )}
         />
-        <Route path="/lessons" component={LessonBuilder} />
         <Route
           path="/beta"
           render={(props) => (
