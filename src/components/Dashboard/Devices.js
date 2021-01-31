@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import { Container, Table } from "react-bootstrap";
 
 export default class Devices extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { config: this.props.config };
+  }
   render() {
     return (
       <Container>
@@ -9,32 +13,23 @@ export default class Devices extends Component {
           <thead>
             <tr>
               <th>Track</th>
-              <th>Table heading</th>
-              <th>Table heading</th>
-              <th>Table heading</th>
-              <th>Table heading</th>
-              <th>Table heading</th>
-              <th>Table heading</th>
+              {this.state.config.track.map((track) => (
+                <th key={track}>{track}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>MIDI Devices</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-            </tr>
-            <tr>
-              <td>Audio Devices</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
-              <td>Table cell</td>
+              <td>Devices</td>
+              {this.state.config.device.map((device) => (
+                <td>
+                  <ul>
+                    {device.map((device) => (
+                      <li>{device}</li>
+                    ))}
+                  </ul>
+                </td>
+              ))}
             </tr>
           </tbody>
         </Table>

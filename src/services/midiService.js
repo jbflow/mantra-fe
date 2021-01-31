@@ -19,8 +19,6 @@ const setConfig = (midi) => {
 };
 
 export const getMIDIMessage = (msg) => {
-  console.log("getMIDIMessage: ", msg.data);
-  // Setting the new Config when MIDI message received
   if (msg.data !== [240, 0, 0, 0, 0, 0, 127, 247]) {
     setConfig(msg.data);
   }
@@ -45,7 +43,6 @@ export const setOutPort = (output) => {
 const onMIDISuccess = (midiAccess) => {
   midiInputs = Array.from(midiAccess.inputs.values());
   midiOutputs = Array.from(midiAccess.outputs.values());
-  console.log(midiInputs, midiOutputs);
   midiOutput = midiOutputs[0];
   midiInput = midiInputs[1];
   midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
