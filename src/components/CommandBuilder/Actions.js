@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { GrDrag, GrDuplicate, GrFormTrash, GrAddCircle } from "react-icons/gr";
-import { BiUserVoice } from "react-icons/bi";
 import { IconContext } from "react-icons";
-import { Container, Card, Row, Col, Form } from "react-bootstrap";
+import { Container, Card, Row, Col, Form, Button } from "react-bootstrap";
 import { API } from "aws-amplify";
-
-const classNames = require("classnames");
-
 export default class Actions extends Component {
   constructor(props) {
     super(props);
@@ -75,13 +71,20 @@ export default class Actions extends Component {
 
   render() {
     return (
-      <Card>
-        <Card.Header></Card.Header>
+      <Card className="mt-3" bg={"light"} text={"dark"}>
+        <Card.Header className="bg-primary text-light">
+          Command Name Goes Here!!!
+        </Card.Header>
+
         <Card.Body>
           <DragDropContext onDragEnd={this.handleOneDragEnd}>
             <Droppable droppableId="actions">
               {(provided) => (
-                <Container {...provided.droppableProps} ref={provided.innerRef}>
+                <Container
+                  fluid
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
                   {this.state.actions.map((action, index) => {
                     return (
                       <Draggable
@@ -149,7 +152,7 @@ export default class Actions extends Component {
                                 }}
                               >
                                 <GrDuplicate
-                                  onClick={(index) => {
+                                  onClick={() => {
                                     this.handleDuplicateAction(index);
                                   }}
                                 />
@@ -167,7 +170,7 @@ export default class Actions extends Component {
                                   }}
                                 >
                                   <GrFormTrash
-                                    onClick={(index) => {
+                                    onClick={() => {
                                       this.handleDeleteAction(index);
                                     }}
                                   />
@@ -179,11 +182,31 @@ export default class Actions extends Component {
                       </Draggable>
                     );
                   })}
+
                   {provided.placeholder}
                 </Container>
               )}
             </Droppable>
           </DragDropContext>
+
+          {this.state.selected && (
+            <Container fluid className="mt-5">
+              <Row>
+                <Col md={{ span: 1 }}>
+                  <Button className="btn btn-primary rounded ml-2">Save</Button>
+                  {this.saveActions}
+                </Col>
+                <Col md={{ span: 1 }}>
+                  <Button className="btn btn-primary rounded ml-2">Test</Button>
+                </Col>
+                <Col md={{ span: 2, offset: 8 }}>
+                  <Button className="btn btn-dark rounded mr-5">
+                    Make Lesson
+                  </Button>
+                </Col>
+              </Row>
+            </Container>
+          )}
         </Card.Body>
       </Card>
     );
