@@ -1,13 +1,6 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { setInPort, setOutPort } from "../services/midiService";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  DropdownButton,
-  InputGroup,
-} from "react-bootstrap";
+import { Container, Row, Col, Button, DropdownButton } from "react-bootstrap";
 // import "../styles/App.scss";
 
 export default class Preferences extends Component {
@@ -40,7 +33,7 @@ export default class Preferences extends Component {
 
   render() {
     return (
-      <Container fluid className="p-2">
+      <Container className="p-2">
         <Row className="p-3">
           <h3>Look/Feel</h3>
         </Row>
@@ -67,7 +60,7 @@ export default class Preferences extends Component {
               onChange={this.midiOutChanged}
             >
               {this.state.midiInputs.map((input) => (
-                <DropdownButton.item key="MidiIn">{input}</DropdownButton.item>
+                <DropdownButton.item key="midiIn">{input}</DropdownButton.item>
               ))}
             </DropdownButton>
           </Col>
@@ -79,7 +72,7 @@ export default class Preferences extends Component {
               onChange={this.midiOutChanged}
             >
               {this.state.midiOutputs.map((output) => (
-                <DropdownButton.item key="MidiOut">
+                <DropdownButton.item key="midiOut">
                   {output}
                 </DropdownButton.item>
               ))}
@@ -93,7 +86,7 @@ export default class Preferences extends Component {
           <Col>
             <DropdownButton id="audioIn" title="Audio In">
               {this.state.audioInputs.map((input) => (
-                <DropdownButton.item key="AudioIn">{input}</DropdownButton.item>
+                <DropdownButton.item key="audioIn">{input}</DropdownButton.item>
               ))}
             </DropdownButton>
           </Col>
@@ -101,7 +94,7 @@ export default class Preferences extends Component {
           <Col>
             <DropdownButton id="audioOut" title="Audio Out">
               {this.state.audioOutputs.map((output) => (
-                <DropdownButton.item key="AudioOut">
+                <DropdownButton.item key="audioOut">
                   {output}
                 </DropdownButton.item>
               ))}

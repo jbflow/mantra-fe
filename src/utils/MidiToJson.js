@@ -2,13 +2,14 @@ import { NOUN_MAP, SUB_NOUNS, VERBS } from "./MidiConstants";
 
 const make_paths = (noun_adj, noun, config) => {
   let path = config[NOUN_MAP[noun]];
-  if (noun == noun_adj[0]){return path}
+  if (noun === noun_adj[0]) {
+    return path;
+  }
   for (let i = 1; i < noun_adj.length; i += 3) {
     const index = convert_bytes(noun_adj.slice(i, i + 2)) - 1;
-    if (typeof path[index] !== 'undefined') { 
+    if (typeof path[index] !== "undefined") {
       path = path[index];
-    }
-    else{
+    } else {
       path.splice(index, 0, []);
       path = path[index];
     }
@@ -28,9 +29,9 @@ const make_sub_paths = (noun_adj, noun, config) => {
 
 const get_all_paths = (noun_adj, noun, config) => {
   const index = convert_bytes(noun_adj.slice(-2)) - 1;
-  noun_adj = noun_adj.slice(0, noun_adj.length - 3)
+  noun_adj = noun_adj.slice(0, noun_adj.length - 3);
   const path = make_paths(noun_adj, noun, config);
-  const sub_paths = make_sub_paths(noun_adj, noun,config); 
+  const sub_paths = make_sub_paths(noun_adj, noun, config);
   return { path, sub_paths, index };
 };
 
@@ -60,21 +61,20 @@ const rename_item = (noun_adj, noun, value, config) => {
 };
 
 const load_item = (noun_adj, noun, value, config) => {
-
   // Handles loading an item
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
-  for (var i = 0; i < sub_paths.length; i++){
+  for (var i = 0; i < sub_paths.length; i++) {
     sub_paths[i].splice(index, 0, []);
-  };
+  }
   path.splice(index, 0, value);
 };
 
 const delete_item = (noun_adj, noun, value, config) => {
   // Handles deleting an item
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
-  for (var i = 0; i < sub_paths.length; i++){
+  for (var i = 0; i < sub_paths.length; i++) {
     sub_paths[i].splice(index, 1);
-  };
+  }
   path.splice(index, 1);
 };
 
@@ -119,11 +119,10 @@ export const MidiToJson = (midiArray, config) => {
 };
 
 const updateConfig = (midiArray, config) => {
-  const quantity = midiArray[0]; 
-  const noun_adj = midiArray.slice(1, quantity * 3 + 1); 
-  const noun = noun_adj[noun_adj.length - 3]; 
+  const quantity = midiArray[0];
+  const noun_adj = midiArray.slice(1, quantity * 3 + 1);
+  const noun = noun_adj[noun_adj.length - 3];
   const verb = midiArray[quantity * 3 + 1];
-
 
   const adverb =
     verb === 1 || verb === 2

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import Commands from "./Commands";
 import Actions from "./Actions";
 import { Container, Row, Col } from "react-bootstrap";
@@ -6,7 +6,7 @@ import { Container, Row, Col } from "react-bootstrap";
 export default class CommandBuilder extends Component {
   constructor(props) {
     super(props);
-    const { ws, getConfig } = props;
+    // const { ws, getConfig } = props;
     this.state = { selected: null };
   }
 

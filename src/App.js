@@ -3,10 +3,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import "./styles/App.css";
 import "./styles/Transitions.css";
 import { Route, BrowserRouter } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard/Dashboard";
 import Preferences from "./components/Preferences";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
-import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
+// import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
 import BetaArea from "./components/BetaArea";
 import NavBar from "./components/NavBar";
 import { getWebSocket, getConfigFunction } from "./services/main";
@@ -56,17 +56,13 @@ function App() {
   }
   return (
     <Fragment>
-      {/* {isAuthenticated} */}
+      {isAuthenticated}
       <BrowserRouter>
         <NavBar />
         <Route
           path="/dashboard"
           render={(props) => (
-            <Dashboard
-              {...props}
-              ws={getWebSocket()}
-              getConfig={getConfigFunction}
-            />
+            <Dashboard {...props} getConfig={getConfigFunction} />
           )}
         />
         <Route path="/prefs" component={Preferences} />
