@@ -25,14 +25,20 @@ recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
-// recognition.onstart = () => {
-//   playAlert("funk");
-// };
-// recognition.onend = () => {
-//   playAlert("tink");
-// };
+
+const startSound = new Audio('sounds/start_sound.mp3');
+const endSound = new Audio('sounds/stop_sound.mp3');
+
+startSound.play();
+recognition.onstart = () => {
+  startSound.play();
+};
+recognition.onend = () => {
+  endSound.play();
+};
 
 recognition.onresult = (event) => {
+
   var transcript = "";
   for (var i = event.resultIndex; i < event.results.length; ++i) {
     transcript += event.results[i][0].transcript;
@@ -62,6 +68,7 @@ recognition.onspeechend = () => {
 bumblebee.on("hotword", (hotword) => {
   recognition.start();
   console.log("listening...");
+
 });
 
 bumblebee.start();
