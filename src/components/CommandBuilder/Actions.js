@@ -8,24 +8,29 @@ export default class Actions extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      userId: "1",
       actions: [],
       selected: null,
       currentID: null,
+      saving: false,
     };
   }
   componentDidUpdate() {
-    API.get("talkbackBE", "/commands").then((res) => {
-      res.forEach((obj) => {
-        if (
-          obj.command === this.props.selected &&
-          this.state.selected !== this.props.selected
-        ) {
-          this.setState({ actions: obj.actions });
-          this.setState({ selected: this.props.selected });
-          this.setState({ currentID: obj.id });
-        }
-      });
-    });
+    API.get("talkbackBE", "/commands?userId=" + this.state.userId).then(
+      (res) => {
+        res.forEach((command) => {
+          if (
+            command.id === this.props.selected &&
+            this.state.selected !== this.props.selected
+          ) {
+            this.setState({ command: command.command });
+            this.setState({ actions: command.actions });
+            this.setState({ selected: this.props.selected });
+            this.setState({ currentID: command.id });
+          }
+        });
+      }
+    );
   }
 
   onChange = (event, index) => {
@@ -52,11 +57,19 @@ export default class Actions extends Component {
   };
 
   saveActions = () => {
-    const updatedAction = {
-      command: this.state.selected,
-      actions: this.state.actions,
-    };
-    API.post("talkbackBE", "/commands", updatedAction);
+    console.log(this.state.actions);
+    this.setState({ saving: true });
+    API.patch(
+      "talkbackBE",
+      "/commands?userId=" +
+        this.state.userId +
+        "&commandId=" +
+        this.state.selected +
+        "&patching=actions",
+      { body: this.state.actions }
+    ).then((res) => {
+      this.setState({ saving: false });
+    });
   };
 
   handleOneDragEnd = (result) => {
@@ -73,7 +86,7 @@ export default class Actions extends Component {
     return (
       <Card className="mt-3" bg={"light"} text={"dark"}>
         <Card.Header className="bg-primary text-light">
-          Command Name Goes Here!!!
+          {this.state.command}
         </Card.Header>
 
         <Card.Body>
@@ -193,8 +206,13 @@ export default class Actions extends Component {
             <Container fluid className="mt-5">
               <Row>
                 <Col md={{ span: 1 }}>
-                  <Button className="btn btn-primary rounded ml-2">Save</Button>
-                  {this.saveActions}
+                  <Button
+                    disabled={this.state.saving}
+                    className="btn btn-primary rounded ml-2"
+                    onClick={!this.state.saving ? this.saveActions : null}
+                  >
+                    {this.state.saving ? "Saving..." : "Save"}
+                  </Button>
                 </Col>
                 <Col md={{ span: 1 }}>
                   <Button className="btn btn-primary rounded ml-2">Test</Button>

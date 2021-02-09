@@ -14,6 +14,7 @@ export default class Commands extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      userId: "1",
       showCreate: true,
       rows: [],
       editing: null,
@@ -31,10 +32,10 @@ export default class Commands extends React.Component {
     this.setState({ selected: null });
   };
 
-  editCommand = (command) => {
+  editCommand = (id) => {
     this.exclusiveEdit();
-    this.setState({ [command]: false });
-    this.setState({ editing: command });
+    this.setState({ [id]: false });
+    this.setState({ editing: id });
   };
 
   exclusiveEdit = () => {
@@ -52,32 +53,38 @@ export default class Commands extends React.Component {
 
   handleAddRow = (e) => {
     e.preventDefault();
-    const command = this.commandInput.value;
+    const command = { command: this.commandInput.value, actions: [""] };
     if (!this.state[command]) {
       this.setState({ showCreate: true });
-      this.setState({ [command]: true });
+      this.setState({ [command.id]: true });
       this.setState({ rows: [...this.state.rows, command] });
-      this.postCommand(command);
+      this.postCommand(this.commandInput.value);
     } else {
       alert("Command already taken");
     }
   };
 
-  handleEditRow = (e) => {
-    e.preventDefault();
+  handleEditRow = (command) => {
     const newRows = [...this.state.rows];
-    const oldCommand = this.state.editing;
-    const command = this.editedInput.value;
-    var index = newRows.indexOf(oldCommand);
+    const newCommand = this.editedInput.value;
+    var index = newRows.indexOf(command);
     if (index !== -1) {
-      newRows[index] = command;
+      newRows[index].command = newCommand;
     }
     this.setState({ rows: newRows });
-    this.setState({ [command]: true });
-    delete this.state[oldCommand];
-    // API.put("talkbackBE", "/commands?command=" + oldCommand, {
-    //   body: obj,
-    // });
+    this.setState({ [command.id]: true });
+    delete this.state[command];
+    API.patch(
+      "talkbackBE",
+      "/commands?userId=" +
+        this.state.userId +
+        "&commandId=" +
+        command.id +
+        "&patching=command",
+      {
+        body: [newCommand],
+      }
+    );
   };
 
   handleSelection = (selection) => {
@@ -91,12 +98,12 @@ export default class Commands extends React.Component {
     const index = newRows.indexOf(command);
     newRows.splice(index, 1);
     this.setState({ rows: newRows });
-    delete this.state[command];
-    this.deleteCommand(command);
+    delete this.state[command.id];
+    this.deleteCommand(command.id);
   };
 
-  handleCancelEdit = (command) => {
-    this.setState({ [command]: true });
+  handleCancelEdit = (id) => {
+    this.setState({ [id]: true });
   };
 
   handleCancelCreate = () => {
@@ -109,22 +116,28 @@ export default class Commands extends React.Component {
       actions: [""],
     };
 
-    API.post("talkbackBE", "/commands", { body: emptyCommand });
+    API.patch("talkbackBE", "/commands?userId=" + this.state.userId, {
+      body: emptyCommand,
+    });
   };
 
-  deleteCommand = (command) => {
-    console.log(command);
-    API.del("talkbackBE", "/commands?command=" + command);
+  deleteCommand = (id) => {
+    API.del(
+      "talkbackBE",
+      "/commands?userId=" + this.state.userId + "&commandId=" + id
+    );
   };
 
   getCommands = () => {
-    API.get("talkbackBE", "/commands").then((res) => {
-      console.log("res: ", res);
-      res.forEach((action) => {
-        this.setState({ [action.command]: true });
-        this.setState({ rows: [...this.state.rows, action.command] });
-      });
-    });
+    API.get("talkbackBE", "/commands?userId=" + this.state.userId).then(
+      (res) => {
+        console.log("res: ", res);
+        res.forEach((command) => {
+          this.setState({ [command.id]: true });
+          this.setState({ rows: [...this.state.rows, command] });
+        });
+      }
+    );
   };
 
   render() {
@@ -132,30 +145,36 @@ export default class Commands extends React.Component {
       <>
         <Container className="h-75 pre-scrollable">
           {this.state.rows.map((command) => (
-            <Form key={command} onSubmit={this.handleEditRow}>
+            <Form
+              key={command.id}
+              onSubmit={(e) => {
+                e.preventDefault();
+                this.handleEditRow(command);
+              }}
+            >
               <Form.Group
                 as={Row}
                 className={classNames(
                   {
                     "border rounded-pill border-secondary mt-2 ml-2 mr-2":
-                      this.state.selected !== command,
+                      this.state.selected !== command.id,
                   },
                   {
-                    "border rounded-pill border-secondary bg-light ml-3 mr-1 all-3s":
-                      this.state.selected === command,
+                    "border rounded-pill border-secondary bg-light mt-2 ml-3 mr-1 all-3s":
+                      this.state.selected === command.id,
                   }
                 )}
               >
-                {this.state[command] ? (
+                {this.state[command.id] ? (
                   <>
                     <Col sm={10}>
                       <Form.Control
                         plaintext
                         readOnly
-                        defaultValue={command}
+                        defaultValue={command.command}
                         className="btn btn-outline"
-                        onDoubleClick={() => this.editCommand(command)}
-                        onClick={() => this.handleSelection(command)}
+                        onDoubleClick={() => this.editCommand(command.id)}
+                        onClick={() => this.handleSelection(command.id)}
                       />
                     </Col>
                     <Col sm={2} className="text-right mt-1">
@@ -178,8 +197,8 @@ export default class Commands extends React.Component {
                     <Col sm={9}>
                       <Form.Control
                         plaintext
-                        defaultValue={command}
-                        className="form-control-commands"
+                        defaultValue={command.command}
+                        className="form-control-commands pl-3"
                         ref={(input) => {
                           this.editedInput = input;
                         }}
@@ -201,7 +220,7 @@ export default class Commands extends React.Component {
                         }}
                       >
                         <GrFormClose
-                          onClick={() => this.handleCancelEdit(command)}
+                          onClick={() => this.handleCancelEdit(command.id)}
                         />
                       </IconContext.Provider>
                     </Col>
