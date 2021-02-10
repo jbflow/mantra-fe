@@ -22,7 +22,7 @@ export default function DeleteModal({ deleteCommand, command }) {
         <GrFormTrash onClick={handleShow} />
       </IconContext.Provider>
 
-      <Modal show={show} onHide={handleClose} animation={false}>
+      <Modal size="sm" show={show} onHide={handleClose} animation={false}>
         <Modal.Header className="bg-danger text-white">
           <Modal.Title>Warning!</Modal.Title>
         </Modal.Header>

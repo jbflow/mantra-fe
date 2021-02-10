@@ -6,7 +6,7 @@ import { GrFormClose } from "react-icons/gr";
 import { MdDone } from "react-icons/md";
 import { IconContext } from "react-icons";
 
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Form, Spinner } from "react-bootstrap";
 import DeleteModal from "./DeleteModal";
 
 const classNames = require("classnames");
@@ -30,6 +30,7 @@ export default class Commands extends React.Component {
   createCommand = () => {
     this.exclusiveEdit();
     this.setState({ showCreate: false });
+    this.setState({ addingCommand: false });
     this.setState({ selected: null });
   };
 
@@ -54,15 +55,7 @@ export default class Commands extends React.Component {
 
   handleAddRow = (e) => {
     e.preventDefault();
-    const command = { command: this.commandInput.value, actions: [""] };
-    if (!this.state[command]) {
-      this.setState({ showCreate: true });
-      this.setState({ [command.id]: true });
-      this.setState({ rows: [...this.state.rows, command] });
-      this.postCommand(this.commandInput.value);
-    } else {
-      alert("Command already taken");
-    }
+    this.postCommand(this.commandInput.value);
   };
 
   handleEditRow = (command) => {
@@ -113,6 +106,7 @@ export default class Commands extends React.Component {
   };
 
   postCommand = (command) => {
+    this.setState({ addingCommand: true });
     const emptyCommand = {
       command: command,
       actions: [""],
@@ -121,7 +115,10 @@ export default class Commands extends React.Component {
     API.patch("talkbackBE", "/commands?userId=" + this.state.userId, {
       body: emptyCommand,
     }).then((res) => {
-      console.log(res);
+      this.setState({ [res.id]: true });
+      this.setState({ rows: [...this.state.rows, res] });
+      this.setState({ addingCommand: false });
+      this.setState({ showCreate: true });
     });
   };
 
@@ -258,13 +255,21 @@ export default class Commands extends React.Component {
                     />
                   </Col>
 
-                  <Col sm={2} className="mt-1">
-                    <IconContext.Provider
-                      value={{ style: { fontSize: "30px" } }}
-                    >
-                      <GrFormClose onClick={this.handleCancelCreate} />
-                    </IconContext.Provider>
-                  </Col>
+                  {this.state.addingCommand ? (
+                    <Col sm={2} className="mt-1">
+                      <Spinner size="sm" animation="border" role="status">
+                        <span className="sr-only">Loading...</span>
+                      </Spinner>
+                    </Col>
+                  ) : (
+                    <Col sm={2} className="mt-1">
+                      <IconContext.Provider
+                        value={{ style: { fontSize: "30px" } }}
+                      >
+                        <GrFormClose onClick={this.handleCancelCreate} />
+                      </IconContext.Provider>
+                    </Col>
+                  )}
                 </>
               )}
             </Form.Group>
