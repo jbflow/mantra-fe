@@ -20,8 +20,10 @@ export default class CommandBuilder extends Component {
         <Row>
           <Col
             sm={3}
-            className="border-right border-secondary"
-            style={{ backgroundColor: "#e9ecef" }}
+            className="border-right border-secondary vh-100"
+            style={{
+              backgroundColor: "#e9ecef",
+            }}
           >
             <Commands updateSelected={this.updateSelected} />
           </Col>

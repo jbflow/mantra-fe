@@ -145,7 +145,7 @@ export default class Commands extends React.Component {
   render() {
     return (
       <>
-        <Container className="h-75 pre-scrollable">
+        <Container className="h-100 pre-scrollable">
           {this.state.rows.map((command) => (
             <Form
               key={command.id}
@@ -224,7 +224,16 @@ export default class Commands extends React.Component {
             </Form>
           ))}
         </Container>
-        <Container className="h-25 p-1 bg-secondary rounded-top">
+        <Container
+          className="p-1 bg-secondary rounded-top"
+          style={{
+            zIndex: "1030",
+            right: "0",
+            bottom: "0",
+            left: "0",
+            position: "absolute",
+          }}
+        >
           <Form onSubmit={this.handleAddRow}>
             <Form.Group
               as={Row}
