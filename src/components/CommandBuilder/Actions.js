@@ -4,6 +4,7 @@ import { GrDrag, GrDuplicate, GrFormTrash, GrAddCircle } from "react-icons/gr";
 import { IconContext } from "react-icons";
 import { Container, Card, Row, Col, Form, Button } from "react-bootstrap";
 import { API } from "aws-amplify";
+import DeleteModal from "./DeleteModal";
 export default class Actions extends Component {
   constructor(props) {
     super(props);
@@ -174,20 +175,10 @@ export default class Actions extends Component {
 
                             <Col className="text-right" sm={0.5}>
                               {this.state.actions.length !== 1 && (
-                                <IconContext.Provider
-                                  value={{
-                                    style: {
-                                      fontSize: "30px",
-                                      cursor: "pointer",
-                                    },
-                                  }}
-                                >
-                                  <GrFormTrash
-                                    onClick={() => {
-                                      this.handleDeleteAction(index);
-                                    }}
-                                  />
-                                </IconContext.Provider>
+                                <DeleteModal
+                                  deleteCommand={this.handleDeleteAction}
+                                  command={index}
+                                />
                               )}
                             </Col>
                           </Form.Group>
@@ -218,7 +209,7 @@ export default class Actions extends Component {
                   <Button className="btn btn-primary rounded ml-2">Test</Button>
                 </Col>
                 <Col md={{ span: 2, offset: 8 }}>
-                  <Button className="btn btn-dark rounded mr-5">
+                  <Button disabled className="btn btn-dark rounded mr-5">
                     Make Lesson
                   </Button>
                 </Col>

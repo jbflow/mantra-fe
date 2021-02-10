@@ -2,11 +2,12 @@ import React, { Fragment } from "react";
 
 import { API } from "aws-amplify";
 
-import { GrFormTrash, GrFormClose } from "react-icons/gr";
+import { GrFormClose } from "react-icons/gr";
 import { MdDone } from "react-icons/md";
 import { IconContext } from "react-icons";
 
 import { Container, Row, Col, Form } from "react-bootstrap";
+import DeleteModal from "./DeleteModal";
 
 const classNames = require("classnames");
 
@@ -94,6 +95,7 @@ export default class Commands extends React.Component {
   };
 
   handleDeleteRow = (command) => {
+    console.log(command);
     const newRows = [...this.state.rows];
     const index = newRows.indexOf(command);
     newRows.splice(index, 1);
@@ -118,10 +120,13 @@ export default class Commands extends React.Component {
 
     API.patch("talkbackBE", "/commands?userId=" + this.state.userId, {
       body: emptyCommand,
+    }).then((res) => {
+      console.log(res);
     });
   };
 
   deleteCommand = (id) => {
+    console.log("command id", id);
     API.del(
       "talkbackBE",
       "/commands?userId=" + this.state.userId + "&commandId=" + id
@@ -178,18 +183,10 @@ export default class Commands extends React.Component {
                       />
                     </Col>
                     <Col sm={2} className="text-right mt-1">
-                      <IconContext.Provider
-                        value={{
-                          style: {
-                            fontSize: "30px",
-                            cursor: "pointer",
-                          },
-                        }}
-                      >
-                        <GrFormTrash
-                          onClick={() => this.handleDeleteRow(command)}
-                        />
-                      </IconContext.Provider>
+                      <DeleteModal
+                        deleteCommand={this.handleDeleteRow}
+                        command={command}
+                      />
                     </Col>
                   </>
                 ) : (
