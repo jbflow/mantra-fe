@@ -35,6 +35,7 @@ Amplify.configure({
 
 function App({ signOut }) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const [userid, setUserId] = useState(null);
   useEffect(() => {
     onLoad();
   }, []);
@@ -43,50 +44,57 @@ function App({ signOut }) {
     try {
       await Auth.currentSession();
       userHasAuthenticated(true);
+
+      const { attributes } = await Auth.currentAuthenticatedUser();
+      if (attributes) setUserId(attributes?.sub);
+      console.log('attributes?.sub: ', attributes?.sub);
+      const user = await Auth.currentUserPoolUser();
+      console.log("username:", user.username);
+
     } catch (e) {
       if (e !== "No current user") {
         alert(e);
       }
     }
 
-    // setIsAuthenticating(false);
-    const user = await Auth.currentUserPoolUser();
-    console.log(user.username);
   }
   return (
-    <Fragment>
-      {isAuthenticated}
-      <BrowserRouter>
-        <NavBar signOut={signOut} />
-        <Route
-          path="/dashboard"
-          render={(props) => (
-            <Dashboard {...props} getConfig={getConfigFunction} />
-          )}
-        />
-        <Route path="/prefs" component={Preferences} />
-        <Route
-          path="/commands"
-          render={(props) => (
-            <CommandBuilder
-              {...props}
-              ws={getWebSocket()}
-              getConfig={getConfigFunction}
-            />
-          )}
-        />
-        <Route
-          path="/beta"
-          render={(props) => (
-            <BetaArea
-              {...props}
-              ws={getWebSocket()}
-              getConfig={getConfigFunction}
-            />
-          )}
-        />
-      </BrowserRouter>
-    </Fragment>
+    isAuthenticated &&
+    (
+      <Fragment>
+        <BrowserRouter>
+          <NavBar signOut={signOut} />
+          <Route
+            path="/dashboard"
+            render={(props) => (
+              <Dashboard {...props} getConfig={getConfigFunction} />
+            )}
+          />
+          <Route path="/prefs" component={Preferences} />
+          <Route
+            path="/commands"
+            render={(props) => (
+              <CommandBuilder
+                {...props}
+                ws={getWebSocket()}
+                getConfig={getConfigFunction}
+                userId={userid}
+              />
+            )}
+          />
+          <Route
+            path="/beta"
+            render={(props) => (
+              <BetaArea
+                {...props}
+                ws={getWebSocket()}
+                getConfig={getConfigFunction}
+              />
+            )}
+          />
+        </BrowserRouter>
+      </Fragment>
+    )
   );
 }
 

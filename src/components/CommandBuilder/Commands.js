@@ -71,10 +71,10 @@ export default class Commands extends React.Component {
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-        this.state.userId +
-        "&commandId=" +
-        command.id +
-        "&patching=command",
+      this.props.userId +
+      "&commandId=" +
+      command.id +
+      "&patching=command",
       {
         body: [newCommand],
       }
@@ -112,7 +112,7 @@ export default class Commands extends React.Component {
       actions: [""],
     };
 
-    API.patch("talkbackBE", "/commands?userId=" + this.state.userId, {
+    API.patch("talkbackBE", "/commands?userId=" + this.props.userId, {
       body: emptyCommand,
     }).then((res) => {
       this.setState({ [res.id]: true });
@@ -126,12 +126,12 @@ export default class Commands extends React.Component {
     console.log("command id", id);
     API.del(
       "talkbackBE",
-      "/commands?userId=" + this.state.userId + "&commandId=" + id
+      "/commands?userId=" + this.props.userId + "&commandId=" + id
     );
   };
 
   getCommands = () => {
-    API.get("talkbackBE", "/commands?userId=" + this.state.userId).then(
+    API.get("talkbackBE", "/commands?userId=" + this.props.userId).then(
       (res) => {
         console.log("res: ", res);
         res.forEach((command) => {
@@ -187,39 +187,39 @@ export default class Commands extends React.Component {
                     </Col>
                   </>
                 ) : (
-                  <>
-                    <Col sm={9}>
-                      <Form.Control
-                        plaintext
-                        defaultValue={command.command}
-                        className="form-control-commands pl-3"
-                        ref={(input) => {
-                          this.editedInput = input;
-                        }}
-                      />
-                    </Col>
-                    <Col sm={1} className="mt-1">
-                      <IconContext.Provider
-                        value={{
-                          style: { fontSize: "30px", cursor: "pointer" },
-                        }}
-                      >
-                        <MdDone onClick={() => this.handleEditRow(command)} />
-                      </IconContext.Provider>
-                    </Col>
-                    <Col sm={2} className="text-right mt-1">
-                      <IconContext.Provider
-                        value={{
-                          style: { fontSize: "30px", cursor: "pointer" },
-                        }}
-                      >
-                        <GrFormClose
-                          onClick={() => this.handleCancelEdit(command.id)}
+                    <>
+                      <Col sm={9}>
+                        <Form.Control
+                          plaintext
+                          defaultValue={command.command}
+                          className="form-control-commands pl-3"
+                          ref={(input) => {
+                            this.editedInput = input;
+                          }}
                         />
-                      </IconContext.Provider>
-                    </Col>
-                  </>
-                )}
+                      </Col>
+                      <Col sm={1} className="mt-1">
+                        <IconContext.Provider
+                          value={{
+                            style: { fontSize: "30px", cursor: "pointer" },
+                          }}
+                        >
+                          <MdDone onClick={() => this.handleEditRow(command)} />
+                        </IconContext.Provider>
+                      </Col>
+                      <Col sm={2} className="text-right mt-1">
+                        <IconContext.Provider
+                          value={{
+                            style: { fontSize: "30px", cursor: "pointer" },
+                          }}
+                        >
+                          <GrFormClose
+                            onClick={() => this.handleCancelEdit(command.id)}
+                          />
+                        </IconContext.Provider>
+                      </Col>
+                    </>
+                  )}
               </Form.Group>
             </Form>
           ))}
@@ -251,36 +251,36 @@ export default class Commands extends React.Component {
                   />
                 </Col>
               ) : (
-                <>
-                  <Col sm={10}>
-                    <Form.Control
-                      className="form-control-commands"
-                      type="text"
-                      plaintext
-                      placeholder="Type voice command..."
-                      ref={(input) => {
-                        this.commandInput = input;
-                      }}
-                    />
-                  </Col>
+                  <>
+                    <Col sm={10}>
+                      <Form.Control
+                        className="form-control-commands"
+                        type="text"
+                        plaintext
+                        placeholder="Type voice command..."
+                        ref={(input) => {
+                          this.commandInput = input;
+                        }}
+                      />
+                    </Col>
 
-                  {this.state.addingCommand ? (
-                    <Col sm={2} className="mt-1">
-                      <Spinner size="sm" animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </Spinner>
-                    </Col>
-                  ) : (
-                    <Col sm={2} className="mt-1">
-                      <IconContext.Provider
-                        value={{ style: { fontSize: "30px" } }}
-                      >
-                        <GrFormClose onClick={this.handleCancelCreate} />
-                      </IconContext.Provider>
-                    </Col>
-                  )}
-                </>
-              )}
+                    {this.state.addingCommand ? (
+                      <Col sm={2} className="mt-1">
+                        <Spinner size="sm" animation="border" role="status">
+                          <span className="sr-only">Loading...</span>
+                        </Spinner>
+                      </Col>
+                    ) : (
+                        <Col sm={2} className="mt-1">
+                          <IconContext.Provider
+                            value={{ style: { fontSize: "30px" } }}
+                          >
+                            <GrFormClose onClick={this.handleCancelCreate} />
+                          </IconContext.Provider>
+                        </Col>
+                      )}
+                  </>
+                )}
             </Form.Group>
           </Form>
         </Container>
