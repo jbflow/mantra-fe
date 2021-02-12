@@ -35,7 +35,7 @@ Amplify.configure({
 
 function App({ signOut }) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
-  const [userid, setUserId] = useState(null);
+  const [userId, setuserId] = useState(null);
   useEffect(() => {
     onLoad();
   }, []);
@@ -43,13 +43,10 @@ function App({ signOut }) {
   async function onLoad() {
     try {
       await Auth.currentSession();
-      userHasAuthenticated(true);
 
       const { attributes } = await Auth.currentAuthenticatedUser();
-      if (attributes) setUserId(attributes?.sub);
-      console.log('attributes?.sub: ', attributes?.sub);
-      const user = await Auth.currentUserPoolUser();
-      console.log("username:", user.username);
+      if (attributes) setuserId(attributes?.sub);
+      userHasAuthenticated(true);
 
     } catch (e) {
       if (e !== "No current user") {
@@ -78,7 +75,7 @@ function App({ signOut }) {
                 {...props}
                 ws={getWebSocket()}
                 getConfig={getConfigFunction}
-                userId={userid}
+                userId={userId}
               />
             )}
           />

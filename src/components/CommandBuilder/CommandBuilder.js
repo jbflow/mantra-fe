@@ -25,7 +25,7 @@ export default class CommandBuilder extends Component {
               backgroundColor: "#e9ecef",
             }}
           >
-            <Commands updateSelected={this.updateSelected} userid={this.props.userid} />
+            <Commands updateSelected={this.updateSelected} userId={this.props.userId} />
           </Col>
 
           <Col sm={9}>

@@ -63,10 +63,10 @@ export default class Actions extends Component {
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-        this.state.userId +
-        "&commandId=" +
-        this.state.selected +
-        "&patching=actions",
+      this.state.userId +
+      "&commandId=" +
+      this.state.selected +
+      "&patching=actions",
       { body: this.state.actions }
     ).then((res) => {
       this.setState({ saving: false });
