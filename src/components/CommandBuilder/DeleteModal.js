@@ -3,9 +3,8 @@ import { Col, Modal, Button } from "react-bootstrap";
 import { GrFormTrash } from "react-icons/gr";
 import { IconContext } from "react-icons";
 
-export default function DeleteModal({ deleteCommand, command }) {
+export default function DeleteModal({ deleteCommand, command, isDeleting }) {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -31,8 +30,14 @@ export default function DeleteModal({ deleteCommand, command }) {
         </Modal.Body>
         <Modal.Footer className="pb-2">
           <Col>
-            <Button variant="danger" onClick={() => { deleteCommand(command); setShow(false); }}>
-              Delete
+            <Button
+              disabled={isDeleting}
+              variant="danger"
+              onClick={() => {
+                deleteCommand(command);
+              }}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </Col>
           <Col>

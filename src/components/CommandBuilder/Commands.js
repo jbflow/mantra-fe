@@ -15,6 +15,7 @@ export default function Commands({ updateSelected, userId }) {
   const [addingCommand, setAddingCommand] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
   const [savingCommand, setSavingCommand] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const editedInput = useRef(null);
   let commandInput = null;
@@ -108,10 +109,13 @@ export default function Commands({ updateSelected, userId }) {
   };
 
   const deleteCommand = async (command) => {
+    setIsDeleting(true);
     await API.del(
       "talkbackBE",
       "/commands?userId=" + userId + "&commandId=" + command.id
-    );
+    ).then(() => {
+      setIsDeleting(false);
+    });
     getCommands();
   };
 
@@ -206,6 +210,7 @@ export default function Commands({ updateSelected, userId }) {
                     <DeleteModal
                       deleteCommand={handleDeleteRow}
                       command={command}
+                      isDeleting={isDeleting}
                     />
                   </Col>
                 ) : (

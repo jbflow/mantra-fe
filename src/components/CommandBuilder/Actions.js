@@ -7,24 +7,21 @@ import { API } from "aws-amplify";
 import DeleteModal from "./DeleteModal";
 
 export default function Actions({ userId, selected: propSelected }) {
-
   const [actions, setActions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [command, setCommand] = useState(null);
   const [saving, setSaving] = useState(null);
 
   useEffect(() => {
-    API.get("talkbackBE", "/commands?userId=" + userId).then(
-      (res) => {
-        res.forEach((command) => {
-          if (command.id === propSelected) {
-            setCommand(command.command);
-            setActions(command.actions);
-            setSelected(propSelected);
-          }
-        });
-      }
-    );
+    API.get("talkbackBE", "/commands?userId=" + userId).then((res) => {
+      res.forEach((command) => {
+        if (command.id === propSelected) {
+          setCommand(command.command);
+          setActions(command.actions);
+          setSelected(propSelected);
+        }
+      });
+    });
   }, [userId, propSelected]);
 
   const onChange = (event, index) => {
@@ -51,17 +48,17 @@ export default function Actions({ userId, selected: propSelected }) {
   };
 
   const saveActions = () => {
-    setSaving(true)
+    setSaving(true);
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-      userId +
-      "&commandId=" +
-      selected +
-      "&patching=actions",
+        userId +
+        "&commandId=" +
+        selected +
+        "&patching=actions",
       { body: actions }
     ).then(() => {
-      setSaving(false)
+      setSaving(false);
     });
   };
 
@@ -75,12 +72,9 @@ export default function Actions({ userId, selected: propSelected }) {
     setActions(items);
   };
 
-
   return (
     <Card className="mt-3" bg={"light"} text={"dark"}>
-      <Card.Header className="bg-primary text-light">
-        {command}
-      </Card.Header>
+      <Card.Header className="bg-primary text-light">{command}</Card.Header>
 
       <Card.Body>
         <DragDropContext onDragEnd={handleOneDragEnd}>
@@ -127,9 +121,7 @@ export default function Actions({ userId, selected: propSelected }) {
                               name="action"
                               className="form-control"
                               placeholder="Enter voice action..."
-                              onChange={(event) =>
-                                onChange(event, index)
-                              }
+                              onChange={(event) => onChange(event, index)}
                             />
                           </Col>
 
@@ -170,6 +162,7 @@ export default function Actions({ userId, selected: propSelected }) {
                               <DeleteModal
                                 deleteCommand={handleDeleteAction}
                                 command={index}
+                                deleting={false}
                               />
                             )}
                           </Col>
@@ -203,7 +196,7 @@ export default function Actions({ userId, selected: propSelected }) {
               <Col md={{ span: 2, offset: 8 }}>
                 <Button disabled className="btn btn-dark rounded mr-5">
                   Make Lesson
-                  </Button>
+                </Button>
               </Col>
             </Row>
           </Container>
