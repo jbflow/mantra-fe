@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Col, Modal, Button } from "react-bootstrap";
+import { Col, Modal, Button } from "react-bootstrap";
 import { GrFormTrash } from "react-icons/gr";
 import { IconContext } from "react-icons";
 

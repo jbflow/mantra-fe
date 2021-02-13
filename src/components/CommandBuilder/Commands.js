@@ -8,12 +8,9 @@ import DeleteModal from "./DeleteModal";
 const classNames = require("classnames");
 
 export default function Commands({ updateSelected, userId }) {
-  // const [userId, setUserId] = useState("1");
   const [showCreate, setShowCreate] = useState(null);
-  const [rows, setRows] = useState([]);
   const [commands, setCommands] = useState({});
   const [startup, setStartup] = useState(true);
-  const [editing, setEditing] = useState(false);
   const [selected, setSelected] = useState(null);
   const [addingCommand, setAddingCommand] = useState(false);
 
@@ -33,7 +30,6 @@ export default function Commands({ updateSelected, userId }) {
       ...commands,
       [command.id]: false,
     });
-    setEditing(command);
   };
 
   const exclusiveEdit = () => {
@@ -47,21 +43,15 @@ export default function Commands({ updateSelected, userId }) {
     setCommands(stateCopy);
   };
 
-  const handleFocus = (event) => event.target.select();
-
   const handleAddRow = (e) => {
     e.preventDefault();
     const command = commandInput.value;
     if (!commands[command]) {
       setShowCreate(true);
-      console.log('commands', commands);
       setCommands({
         ...commands,
         [command.id]: { command, id: command },
       });
-      console.log('commands', commands);
-      setRows([...rows, command]);
-      console.log('rows', rows);
       postCommand(command);
     } else {
       alert("Command already taken");
@@ -70,19 +60,7 @@ export default function Commands({ updateSelected, userId }) {
 
   const handleEditRow = (e) => {
     e.preventDefault();
-    // const newRows = [...rows];
-    // const oldCommand = editing;
     const command = editedInput.current.value;
-    // var index = newRows.indexOf(oldCommand);
-    // if (index !== -1) {
-    //   newRows[index] = command;
-    // }
-    // setRows(newRows);
-    // setCommands({
-    //   ...commands,
-    //   [command]: true,
-    //   [oldCommand]: false,
-    // });
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
@@ -97,17 +75,12 @@ export default function Commands({ updateSelected, userId }) {
   };
 
   const handleSelection = (selection) => {
-    console.log('handleSelection: ', selection);
     exclusiveEdit();
     setSelected(selection);
     updateSelected(selection);
   };
 
   const handleDeleteRow = (command) => {
-    const newRows = [...rows];
-    const index = newRows.indexOf(command);
-    newRows.splice(index, 1);
-    setRows(newRows);
     deleteCommand(command);
   };
 
@@ -131,7 +104,6 @@ export default function Commands({ updateSelected, userId }) {
     API.patch("talkbackBE", "/commands?userId=" + userId, {
       body: emptyCommand,
     }).then((res) => {
-      console.log('res: ', res);
       getCommands();
       setAddingCommand(false);
       setShowCreate(true);
@@ -145,7 +117,6 @@ export default function Commands({ updateSelected, userId }) {
 
   const getCommands = () => {
     API.get("talkbackBE", "/commands?userId=" + userId).then((res) => {
-      console.log("res: ", res);
       const newCommands = {};
       res.forEach((cmd) => {
         newCommands[cmd.id] = cmd;
@@ -153,21 +124,23 @@ export default function Commands({ updateSelected, userId }) {
       setCommands({
         ...newCommands,
       });
-      setRows(
-        res.map((cmd) => {
-          return cmd.id;
-        })
-      );
     });
   };
 
   useEffect(() => {
-    console.log('useEffect: ', useEffect);
     if (startup) {
-      getCommands();
+      API.get("talkbackBE", "/commands?userId=" + userId).then((res) => {
+        const newCommands = {};
+        res.forEach((cmd) => {
+          newCommands[cmd.id] = cmd;
+        });
+        setCommands({
+          ...newCommands,
+        });
+      });
       setStartup(false);
     }
-  }, [startup]);
+  }, [startup, userId]);
 
   return (
     <>

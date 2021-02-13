@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { GrDrag, GrDuplicate, GrFormTrash, GrAddCircle } from "react-icons/gr";
+import { GrDrag, GrDuplicate, GrAddCircle } from "react-icons/gr";
 import { IconContext } from "react-icons";
 import { Container, Card, Row, Col, Form, Button } from "react-bootstrap";
 import { API } from "aws-amplify";

@@ -60,7 +60,7 @@ export default class Preferences extends Component {
               onChange={this.midiOutChanged}
             >
               {this.state.midiInputs.map((input) => (
-                <DropdownButton.item key="midiIn">{input}</DropdownButton.item>
+                <DropdownButton.Item key="midiIn">{input}</DropdownButton.Item>
               ))}
             </DropdownButton>
           </Col>
@@ -72,9 +72,9 @@ export default class Preferences extends Component {
               onChange={this.midiOutChanged}
             >
               {this.state.midiOutputs.map((output) => (
-                <DropdownButton.item key="midiOut">
+                <DropdownButton.Item key="midiOut">
                   {output}
-                </DropdownButton.item>
+                </DropdownButton.Item>
               ))}
             </DropdownButton>
           </Col>
@@ -86,7 +86,7 @@ export default class Preferences extends Component {
           <Col>
             <DropdownButton id="audioIn" title="Audio In">
               {this.state.audioInputs.map((input) => (
-                <DropdownButton.item key="audioIn">{input}</DropdownButton.item>
+                <DropdownButton.Item key="audioIn">{input}</DropdownButton.Item>
               ))}
             </DropdownButton>
           </Col>
@@ -94,9 +94,9 @@ export default class Preferences extends Component {
           <Col>
             <DropdownButton id="audioOut" title="Audio Out">
               {this.state.audioOutputs.map((output) => (
-                <DropdownButton.item key="audioOut">
+                <DropdownButton.Item key="audioOut">
                   {output}
-                </DropdownButton.item>
+                </DropdownButton.Item>
               ))}
             </DropdownButton>
           </Col>
