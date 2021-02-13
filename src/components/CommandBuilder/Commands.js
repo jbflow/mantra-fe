@@ -14,6 +14,7 @@ export default function Commands({ updateSelected, userId }) {
   const [selected, setSelected] = useState(null);
   const [addingCommand, setAddingCommand] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
+  const [savingCommand, setSavingCommand] = useState(null);
 
   const editedInput = useRef(null);
   let commandInput = null;
@@ -53,6 +54,7 @@ export default function Commands({ updateSelected, userId }) {
   };
 
   const handleEditRow = (command) => {
+    setSavingCommand(command.id);
     const newName = editedInput.current.value;
     API.patch(
       "talkbackBE",
@@ -66,6 +68,7 @@ export default function Commands({ updateSelected, userId }) {
       }
     ).then((res) => {
       setIsEditing(null);
+      setSavingCommand(null);
       getCommands();
     });
   };
@@ -172,7 +175,7 @@ export default function Commands({ updateSelected, userId }) {
                     className={
                       command.id !== isEditing
                         ? "btn btn-outline"
-                        : "form-control-commands pl-3"
+                        : "form-control-commands btn"
                     }
                     onDoubleClick={() => editCommand(command)}
                     onClick={() => handleSelection(command.id)}
@@ -182,13 +185,19 @@ export default function Commands({ updateSelected, userId }) {
 
                 {isEditing !== command.id ? null : (
                   <Col sm={1} className="mt-1">
-                    <IconContext.Provider
-                      value={{
-                        style: { fontSize: "30px", cursor: "pointer" },
-                      }}
-                    >
-                      <MdDone onClick={() => handleEditRow(command)} />
-                    </IconContext.Provider>
+                    {savingCommand === command.id ? (
+                      <Spinner size="sm" animation="border" role="status">
+                        <span className="sr-only">Loading...</span>
+                      </Spinner>
+                    ) : (
+                      <IconContext.Provider
+                        value={{
+                          style: { fontSize: "30px", cursor: "pointer" },
+                        }}
+                      >
+                        <MdDone onClick={() => handleEditRow(command)} />
+                      </IconContext.Provider>
+                    )}
                   </Col>
                 )}
 
