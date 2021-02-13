@@ -57,15 +57,15 @@ export default function Commands({ updateSelected, userId }) {
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-      userId +
-      "&commandId=" +
-      command.id +
-      "&patching=command",
+        userId +
+        "&commandId=" +
+        command.id +
+        "&patching=command",
       {
         body: [newName],
       }
     ).then((res) => {
-      setIsEditing(null)
+      setIsEditing(null);
       getCommands();
     });
   };
@@ -81,8 +81,8 @@ export default function Commands({ updateSelected, userId }) {
   };
 
   const handleCancelEdit = (command) => {
-    setIsEditing(null)
-    editedInput.current.value = command.command
+    setIsEditing(null);
+    editedInput.current.value = command.command;
   };
 
   const handleCancelCreate = () => {
@@ -158,49 +158,59 @@ export default function Commands({ updateSelected, userId }) {
                     selected !== command.id,
                 },
                 {
-                  "border rounded-pill border-secondary bg-light mt-2 ml-3 mr-1 all-3s":
+                  "border rounded-pill border-secondary bg-light mt-2 ml-2 mr-2 all-3s":
                     selected === command.id,
                 }
               )}
             >
-              <Col sm={2} className="text-right mt-1">
-                <DeleteModal
-                  deleteCommand={handleDeleteRow}
-                  command={command}
-                />
-              </Col>
               <>
-                <Col sm={9}>
+                <Col sm={command.id !== isEditing ? 10 : 9}>
                   <Form.Control
                     plaintext
                     readOnly={command.id !== isEditing}
                     defaultValue={command.command}
-                    className={command.id !== isEditing ? "btn btn-outline" : "form-control-commands pl-3"}
+                    className={
+                      command.id !== isEditing
+                        ? "btn btn-outline"
+                        : "form-control-commands pl-3"
+                    }
                     onDoubleClick={() => editCommand(command)}
                     onClick={() => handleSelection(command.id)}
                     ref={command.id === isEditing ? editedInput : null}
                   />
                 </Col>
-                <Col sm={1} className="mt-1">
-                  <IconContext.Provider
-                    value={{
-                      style: { fontSize: "30px", cursor: "pointer" },
-                    }}
-                  >
-                    <MdDone onClick={() => handleEditRow(command)} />
-                  </IconContext.Provider>
-                </Col>
-                <Col sm={2} className="text-right mt-1">
-                  <IconContext.Provider
-                    value={{
-                      style: { fontSize: "30px", cursor: "pointer" },
-                    }}
-                  >
-                    <GrFormClose onClick={() => handleCancelEdit(command)} />
-                  </IconContext.Provider>
-                </Col>
+
+                {isEditing !== command.id ? null : (
+                  <Col sm={1} className="mt-1">
+                    <IconContext.Provider
+                      value={{
+                        style: { fontSize: "30px", cursor: "pointer" },
+                      }}
+                    >
+                      <MdDone onClick={() => handleEditRow(command)} />
+                    </IconContext.Provider>
+                  </Col>
+                )}
+
+                {isEditing !== command.id ? (
+                  <Col sm={2} className="text-right mt-1">
+                    <DeleteModal
+                      deleteCommand={handleDeleteRow}
+                      command={command}
+                    />
+                  </Col>
+                ) : (
+                  <Col sm={2} className="text-right mt-1">
+                    <IconContext.Provider
+                      value={{
+                        style: { fontSize: "30px", cursor: "pointer" },
+                      }}
+                    >
+                      <GrFormClose onClick={() => handleCancelEdit(command)} />
+                    </IconContext.Provider>
+                  </Col>
+                )}
               </>
-              {/* )} */}
             </Form.Group>
           </Form>
         ))}
@@ -232,36 +242,36 @@ export default function Commands({ updateSelected, userId }) {
                 />
               </Col>
             ) : (
-                <>
-                  <Col sm={10}>
-                    <Form.Control
-                      className="form-control-commands"
-                      type="text"
-                      plaintext
-                      placeholder="Type voice command..."
-                      ref={(input) => {
-                        commandInput = input;
-                      }}
-                    />
-                  </Col>
+              <>
+                <Col sm={10}>
+                  <Form.Control
+                    className="form-control-commands"
+                    type="text"
+                    plaintext
+                    placeholder="Type voice command..."
+                    ref={(input) => {
+                      commandInput = input;
+                    }}
+                  />
+                </Col>
 
-                  {addingCommand ? (
-                    <Col sm={2} className="mt-1">
-                      <Spinner size="sm" animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </Spinner>
-                    </Col>
-                  ) : (
-                      <Col sm={2} className="mt-1">
-                        <IconContext.Provider
-                          value={{ style: { fontSize: "30px" } }}
-                        >
-                          <GrFormClose onClick={handleCancelCreate} />
-                        </IconContext.Provider>
-                      </Col>
-                    )}
-                </>
-              )}
+                {addingCommand ? (
+                  <Col sm={2} className="mt-1">
+                    <Spinner size="sm" animation="border" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </Spinner>
+                  </Col>
+                ) : (
+                  <Col sm={2} className="mt-1">
+                    <IconContext.Provider
+                      value={{ style: { fontSize: "30px" } }}
+                    >
+                      <GrFormClose onClick={handleCancelCreate} />
+                    </IconContext.Provider>
+                  </Col>
+                )}
+              </>
+            )}
           </Form.Group>
         </Form>
       </Container>
