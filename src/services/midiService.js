@@ -5,8 +5,8 @@ let config;
 let midiOutputs;
 let midiInputs;
 
-let inPortName;
-let outPortName;
+// let inPortName;
+// let outPortName;
 
 let midiOutput;
 let midiInput;
@@ -34,11 +34,11 @@ export const sendMIDIMessage = (msg) => {
 };
 
 export const setInPort = (input) => {
-  inPortName = input;
+  // inPortName = input;
   console.log(input);
 };
 export const setOutPort = (output) => {
-  outPortName = output;
+  // outPortName = output;
   console.log(output);
 };
 

@@ -14,9 +14,16 @@ Auth.configure({
 	// Cognito Hosted UI configuration
 	oauth: {
 		domain: 'dbs-talkback.auth.eu-west-2.amazoncognito.com',
-		scope: ['email', 'profile', 'openid'],
+		scope: [
+			'phone',
+			'email',
+			'openid',
+			'aws.cognito.signin.user.admin',
+			'profile',
+		],
 		redirectSignIn: `${document.location.origin}/callback`,
 		redirectSignOut: `${document.location.origin}/signout`,
+		userPoolId: config.cognito.USER_POOL_ID,
 		responseType: 'code',
 	},
 })
