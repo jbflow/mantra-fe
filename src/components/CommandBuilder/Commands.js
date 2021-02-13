@@ -13,6 +13,7 @@ export default function Commands({ updateSelected, userId }) {
   const [startup, setStartup] = useState(true);
   const [selected, setSelected] = useState(null);
   const [addingCommand, setAddingCommand] = useState(false);
+  const [isEditing, setIsEditing] = useState(null);
 
   const editedInput = useRef(null);
   let commandInput = null;
@@ -26,10 +27,7 @@ export default function Commands({ updateSelected, userId }) {
 
   const editCommand = (command) => {
     exclusiveEdit();
-    setCommands({
-      ...commands,
-      [command.id]: { ...command, isEditing: true },
-    });
+    setIsEditing(command.id);
   };
 
   const exclusiveEdit = () => {
@@ -55,7 +53,6 @@ export default function Commands({ updateSelected, userId }) {
   };
 
   const handleEditRow = (command) => {
-    console.log("edit row:", command);
     const newName = editedInput.current.value;
     API.patch(
       "talkbackBE",
@@ -68,10 +65,8 @@ export default function Commands({ updateSelected, userId }) {
         body: [newName],
       }
     ).then((res) => {
-      setCommands({
-        ...commands,
-        [command.id]: { ...command, isEditing: false },
-      });
+      setIsEditing(null)
+      getCommands();
     });
   };
 
@@ -86,11 +81,8 @@ export default function Commands({ updateSelected, userId }) {
   };
 
   const handleCancelEdit = (command) => {
-    setCommands({
-      ...commands,
-      [command.id]: { ...command, isEditing: false },
-    });
-    console.log("cancelEdit:", commands);
+    setIsEditing(null)
+    editedInput.current.value = command.command
   };
 
   const handleCancelCreate = () => {
@@ -171,56 +163,44 @@ export default function Commands({ updateSelected, userId }) {
                 }
               )}
             >
-              {!command.isEditing ? (
-                <>
-                  { }
-                  <Col sm={10}>
-                    <Form.Control
-                      plaintext
-                      readOnly
-                      defaultValue={command.command}
-                      className="btn btn-outline"
-                      onDoubleClick={() => editCommand(command)}
-                      onClick={() => handleSelection(command.id)}
-                    />
-                  </Col>
-                  <Col sm={2} className="text-right mt-1">
-                    <DeleteModal
-                      deleteCommand={handleDeleteRow}
-                      command={command}
-                    />
-                  </Col>
-                </>
-              ) : (
-                  <>
-                    <Col sm={9}>
-                      <Form.Control
-                        plaintext
-                        defaultValue={command.command}
-                        className="form-control-commands pl-3"
-                        ref={editedInput}
-                      />
-                    </Col>
-                    <Col sm={1} className="mt-1">
-                      <IconContext.Provider
-                        value={{
-                          style: { fontSize: "30px", cursor: "pointer" },
-                        }}
-                      >
-                        <MdDone onClick={() => handleEditRow(command)} />
-                      </IconContext.Provider>
-                    </Col>
-                    <Col sm={2} className="text-right mt-1">
-                      <IconContext.Provider
-                        value={{
-                          style: { fontSize: "30px", cursor: "pointer" },
-                        }}
-                      >
-                        <GrFormClose onClick={() => handleCancelEdit(command)} />
-                      </IconContext.Provider>
-                    </Col>
-                  </>
-                )}
+              <Col sm={2} className="text-right mt-1">
+                <DeleteModal
+                  deleteCommand={handleDeleteRow}
+                  command={command}
+                />
+              </Col>
+              <>
+                <Col sm={9}>
+                  <Form.Control
+                    plaintext
+                    readOnly={command.id !== isEditing}
+                    defaultValue={command.command}
+                    className={command.id !== isEditing ? "btn btn-outline" : "form-control-commands pl-3"}
+                    onDoubleClick={() => editCommand(command)}
+                    onClick={() => handleSelection(command.id)}
+                    ref={command.id === isEditing ? editedInput : null}
+                  />
+                </Col>
+                <Col sm={1} className="mt-1">
+                  <IconContext.Provider
+                    value={{
+                      style: { fontSize: "30px", cursor: "pointer" },
+                    }}
+                  >
+                    <MdDone onClick={() => handleEditRow(command)} />
+                  </IconContext.Provider>
+                </Col>
+                <Col sm={2} className="text-right mt-1">
+                  <IconContext.Provider
+                    value={{
+                      style: { fontSize: "30px", cursor: "pointer" },
+                    }}
+                  >
+                    <GrFormClose onClick={() => handleCancelEdit(command)} />
+                  </IconContext.Provider>
+                </Col>
+              </>
+              {/* )} */}
             </Form.Group>
           </Form>
         ))}
