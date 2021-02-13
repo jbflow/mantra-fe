@@ -28,7 +28,7 @@ export default function Commands({ updateSelected, userId }) {
     exclusiveEdit();
     setCommands({
       ...commands,
-      [command.id]: false,
+      [command.id]: { ...command, isEditing: true },
     });
   };
 
@@ -48,30 +48,31 @@ export default function Commands({ updateSelected, userId }) {
     const command = commandInput.value;
     if (!commands[command]) {
       setShowCreate(true);
-      setCommands({
-        ...commands,
-        [command.id]: { command, id: command },
-      });
       postCommand(command);
     } else {
       alert("Command already taken");
     }
   };
 
-  const handleEditRow = (e) => {
-    e.preventDefault();
-    const command = editedInput.current.value;
+  const handleEditRow = (command) => {
+    console.log("edit row:", command);
+    const newName = editedInput.current.value;
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-      userId +
-      "&commandId=" +
-      command.id +
-      "&patching=command",
+        userId +
+        "&commandId=" +
+        command.id +
+        "&patching=command",
       {
-        body: [command],
+        body: [newName],
       }
-    );
+    ).then((res) => {
+      setCommands({
+        ...commands,
+        [command.id]: { ...command, isEditing: false },
+      });
+    });
   };
 
   const handleSelection = (selection) => {
@@ -87,8 +88,9 @@ export default function Commands({ updateSelected, userId }) {
   const handleCancelEdit = (command) => {
     setCommands({
       ...commands,
-      [command]: true,
+      [command.id]: { ...command, isEditing: false },
     });
+    console.log("cancelEdit:", commands);
   };
 
   const handleCancelCreate = () => {
@@ -111,7 +113,10 @@ export default function Commands({ updateSelected, userId }) {
   };
 
   const deleteCommand = async (command) => {
-    await API.del("talkbackBE", "/commands?userId=" + userId + "&commandId=" + command.id);
+    await API.del(
+      "talkbackBE",
+      "/commands?userId=" + userId + "&commandId=" + command.id
+    );
     getCommands();
   };
 
@@ -166,7 +171,7 @@ export default function Commands({ updateSelected, userId }) {
                 }
               )}
             >
-              {command.id ? (
+              {!command.isEditing ? (
                 <>
                   <Col sm={10}>
                     <Form.Control
@@ -174,7 +179,7 @@ export default function Commands({ updateSelected, userId }) {
                       readOnly
                       defaultValue={command.command}
                       className="btn btn-outline"
-                      onDoubleClick={() => editCommand(command.id)}
+                      onDoubleClick={() => editCommand(command)}
                       onClick={() => handleSelection(command.id)}
                     />
                   </Col>
@@ -186,41 +191,38 @@ export default function Commands({ updateSelected, userId }) {
                   </Col>
                 </>
               ) : (
-                  <>
-                    <Col sm={9}>
-                      <Form.Control
-                        plaintext
-                        defaultValue={command.command}
-                        className="form-control-commands pl-3"
-                        ref={editedInput}
-                      />
-                    </Col>
-                    <Col sm={1} className="mt-1">
-                      <IconContext.Provider
-                        value={{
-                          style: { fontSize: "30px", cursor: "pointer" },
-                        }}
-                      >
-                        <MdDone onClick={() => handleEditRow(command)} />
-                      </IconContext.Provider>
-                    </Col>
-                    <Col sm={2} className="text-right mt-1">
-                      <IconContext.Provider
-                        value={{
-                          style: { fontSize: "30px", cursor: "pointer" },
-                        }}
-                      >
-                        <GrFormClose
-                          onClick={() => handleCancelEdit(command.id)}
-                        />
-                      </IconContext.Provider>
-                    </Col>
-                  </>
-                )}
+                <>
+                  <Col sm={9}>
+                    <Form.Control
+                      plaintext
+                      defaultValue={command.command}
+                      className="form-control-commands pl-3"
+                      ref={editedInput}
+                    />
+                  </Col>
+                  <Col sm={1} className="mt-1">
+                    <IconContext.Provider
+                      value={{
+                        style: { fontSize: "30px", cursor: "pointer" },
+                      }}
+                    >
+                      <MdDone onClick={() => handleEditRow(command)} />
+                    </IconContext.Provider>
+                  </Col>
+                  <Col sm={2} className="text-right mt-1">
+                    <IconContext.Provider
+                      value={{
+                        style: { fontSize: "30px", cursor: "pointer" },
+                      }}
+                    >
+                      <GrFormClose onClick={() => handleCancelEdit(command)} />
+                    </IconContext.Provider>
+                  </Col>
+                </>
+              )}
             </Form.Group>
           </Form>
-        ))
-        }
+        ))}
       </Container>
       <Container
         className="p-1 bg-secondary rounded-top"
@@ -249,36 +251,36 @@ export default function Commands({ updateSelected, userId }) {
                 />
               </Col>
             ) : (
-                <>
-                  <Col sm={10}>
-                    <Form.Control
-                      className="form-control-commands"
-                      type="text"
-                      plaintext
-                      placeholder="Type voice command..."
-                      ref={(input) => {
-                        commandInput = input;
-                      }}
-                    />
-                  </Col>
+              <>
+                <Col sm={10}>
+                  <Form.Control
+                    className="form-control-commands"
+                    type="text"
+                    plaintext
+                    placeholder="Type voice command..."
+                    ref={(input) => {
+                      commandInput = input;
+                    }}
+                  />
+                </Col>
 
-                  {addingCommand ? (
-                    <Col sm={2} className="mt-1">
-                      <Spinner size="sm" animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                      </Spinner>
-                    </Col>
-                  ) : (
-                      <Col sm={2} className="mt-1">
-                        <IconContext.Provider
-                          value={{ style: { fontSize: "30px" } }}
-                        >
-                          <GrFormClose onClick={handleCancelCreate} />
-                        </IconContext.Provider>
-                      </Col>
-                    )}
-                </>
-              )}
+                {addingCommand ? (
+                  <Col sm={2} className="mt-1">
+                    <Spinner size="sm" animation="border" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </Spinner>
+                  </Col>
+                ) : (
+                  <Col sm={2} className="mt-1">
+                    <IconContext.Provider
+                      value={{ style: { fontSize: "30px" } }}
+                    >
+                      <GrFormClose onClick={handleCancelCreate} />
+                    </IconContext.Provider>
+                  </Col>
+                )}
+              </>
+            )}
           </Form.Group>
         </Form>
       </Container>
