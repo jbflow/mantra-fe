@@ -51,7 +51,7 @@ const move_item = (noun_adj, noun, value, config) => {
 
 const rename_item = (noun_adj, noun, value, config) => {
   // Handles renaming an item
-  const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
+  const { path, index } = get_all_paths(noun_adj, noun, config);
   // Try overwriting first, otherwise insert.
   try {
     path[index] = value;
@@ -127,8 +127,8 @@ const updateConfig = (midiArray, config) => {
   const adverb =
     verb === 1 || verb === 2
       ? midiArray
-          .slice(quantity * 3 + 2)
-          .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
+        .slice(quantity * 3 + 2)
+        .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
       : convert_bytes(midiArray.slice(quantity * 3 + 2)) - 1; // convert the bytes to a single int
 
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map

@@ -1,290 +1,290 @@
-import React, { Fragment } from "react";
-
+import React, { useState, useEffect, useRef } from "react";
 import { API } from "aws-amplify";
-
 import { GrFormClose } from "react-icons/gr";
 import { MdDone } from "react-icons/md";
 import { IconContext } from "react-icons";
-
 import { Container, Row, Col, Form, Spinner } from "react-bootstrap";
 import DeleteModal from "./DeleteModal";
-
 const classNames = require("classnames");
 
-export default class Commands extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      userId: "1",
-      showCreate: true,
-      rows: [],
-      editing: null,
-      selected: null,
-    };
-  }
+export default function Commands({ updateSelected, userId }) {
+  const [showCreate, setShowCreate] = useState(null);
+  const [commands, setCommands] = useState({});
+  const [startup, setStartup] = useState(true);
+  const [selected, setSelected] = useState(null);
+  const [addingCommand, setAddingCommand] = useState(false);
 
-  componentDidMount() {
-    this.getCommands();
-  }
+  const editedInput = useRef(null);
+  let commandInput = null;
 
-  createCommand = () => {
-    this.exclusiveEdit();
-    this.setState({ showCreate: false });
-    this.setState({ addingCommand: false });
-    this.setState({ selected: null });
+  const createCommand = () => {
+    exclusiveEdit();
+    setShowCreate(false);
+    setAddingCommand(false);
+    setSelected(false);
   };
 
-  editCommand = (id) => {
-    this.exclusiveEdit();
-    this.setState({ [id]: false });
-    this.setState({ editing: id });
+  const editCommand = (command) => {
+    exclusiveEdit();
+    setCommands({
+      ...commands,
+      [command.id]: { ...command, isEditing: true },
+    });
   };
 
-  exclusiveEdit = () => {
-    const stateCopy = { ...this.state };
+  const exclusiveEdit = () => {
+    const stateCopy = { ...commands };
     const stateKeys = Object.keys(stateCopy);
     for (var s = 0; s < stateKeys.length; s++) {
       if (stateCopy[stateKeys[s]] === false) {
         stateCopy[stateKeys[s]] = true;
       }
     }
-    this.setState(stateCopy);
+    setCommands(stateCopy);
   };
 
-  handleFocus = (event) => event.target.select();
-
-  handleAddRow = (e) => {
+  const handleAddRow = (e) => {
     e.preventDefault();
-    this.postCommand(this.commandInput.value);
+    const command = commandInput.value;
+    if (!commands[command]) {
+      setShowCreate(true);
+      postCommand(command);
+    } else {
+      alert("Command already taken");
+    }
   };
 
-  handleEditRow = (command) => {
-    const newRows = [...this.state.rows];
-    const newCommand = this.editedInput.value;
-    var index = newRows.indexOf(command);
-    if (index !== -1) {
-      newRows[index].command = newCommand;
-    }
-    this.setState({ rows: newRows });
-    this.setState({ [command.id]: true });
-    delete this.state[command];
+  const handleEditRow = (command) => {
+    console.log("edit row:", command);
+    const newName = editedInput.current.value;
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-      this.props.userId +
+      userId +
       "&commandId=" +
       command.id +
       "&patching=command",
       {
-        body: [newCommand],
+        body: [newName],
       }
-    );
+    ).then((res) => {
+      setCommands({
+        ...commands,
+        [command.id]: { ...command, isEditing: false },
+      });
+    });
   };
 
-  handleSelection = (selection) => {
-    this.exclusiveEdit();
-    this.setState({ selected: selection });
-    this.props.updateSelected(selection);
+  const handleSelection = (selection) => {
+    exclusiveEdit();
+    setSelected(selection);
+    updateSelected(selection);
   };
 
-  handleDeleteRow = (command) => {
-    console.log(command);
-    const newRows = [...this.state.rows];
-    const index = newRows.indexOf(command);
-    newRows.splice(index, 1);
-    this.setState({ rows: newRows });
-    delete this.state[command.id];
-    this.deleteCommand(command.id);
+  const handleDeleteRow = (command) => {
+    deleteCommand(command);
   };
 
-  handleCancelEdit = (id) => {
-    this.setState({ [id]: true });
+  const handleCancelEdit = (command) => {
+    setCommands({
+      ...commands,
+      [command.id]: { ...command, isEditing: false },
+    });
+    console.log("cancelEdit:", commands);
   };
 
-  handleCancelCreate = () => {
-    this.setState({ showCreate: true });
+  const handleCancelCreate = () => {
+    setShowCreate(true);
   };
 
-  postCommand = (command) => {
-    this.setState({ addingCommand: true });
+  const postCommand = (command) => {
     const emptyCommand = {
       command: command,
       actions: [""],
     };
 
-    API.patch("talkbackBE", "/commands?userId=" + this.props.userId, {
+    API.patch("talkbackBE", "/commands?userId=" + userId, {
       body: emptyCommand,
     }).then((res) => {
-      this.setState({ [res.id]: true });
-      this.setState({ rows: [...this.state.rows, res] });
-      this.setState({ addingCommand: false });
-      this.setState({ showCreate: true });
+      getCommands();
+      setAddingCommand(false);
+      setShowCreate(true);
     });
   };
 
-  deleteCommand = (id) => {
-    console.log("command id", id);
-    API.del(
+  const deleteCommand = async (command) => {
+    await API.del(
       "talkbackBE",
-      "/commands?userId=" + this.props.userId + "&commandId=" + id
+      "/commands?userId=" + userId + "&commandId=" + command.id
     );
+    getCommands();
   };
 
-  getCommands = () => {
-    API.get("talkbackBE", "/commands?userId=" + this.props.userId).then(
-      (res) => {
-        console.log("res: ", res);
-        res.forEach((command) => {
-          this.setState({ [command.id]: true });
-          this.setState({ rows: [...this.state.rows, command] });
+  const getCommands = () => {
+    API.get("talkbackBE", "/commands?userId=" + userId).then((res) => {
+      const newCommands = {};
+      res.forEach((cmd) => {
+        newCommands[cmd.id] = cmd;
+      });
+      setCommands({
+        ...newCommands,
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (startup) {
+      API.get("talkbackBE", "/commands?userId=" + userId).then((res) => {
+        const newCommands = {};
+        res.forEach((cmd) => {
+          newCommands[cmd.id] = cmd;
         });
-      }
-    );
-  };
+        setCommands({
+          ...newCommands,
+        });
+      });
+      setStartup(false);
+    }
+  }, [startup, userId]);
 
-  render() {
-    return (
-      <>
-        <Container className="h-100 pre-scrollable">
-          {this.state.rows.map((command) => (
-            <Form
-              key={command.id}
-              onSubmit={(e) => {
-                e.preventDefault();
-                this.handleEditRow(command);
-              }}
-            >
-              <Form.Group
-                as={Row}
-                className={classNames(
-                  {
-                    "border rounded-pill border-secondary mt-2 ml-2 mr-2":
-                      this.state.selected !== command.id,
-                  },
-                  {
-                    "border rounded-pill border-secondary bg-light mt-2 ml-3 mr-1 all-3s":
-                      this.state.selected === command.id,
-                  }
-                )}
-              >
-                {this.state[command.id] ? (
-                  <>
-                    <Col sm={10}>
-                      <Form.Control
-                        plaintext
-                        readOnly
-                        defaultValue={command.command}
-                        className="btn btn-outline"
-                        onDoubleClick={() => this.editCommand(command.id)}
-                        onClick={() => this.handleSelection(command.id)}
-                      />
-                    </Col>
-                    <Col sm={2} className="text-right mt-1">
-                      <DeleteModal
-                        deleteCommand={this.handleDeleteRow}
-                        command={command}
-                      />
-                    </Col>
-                  </>
-                ) : (
-                    <>
-                      <Col sm={9}>
-                        <Form.Control
-                          plaintext
-                          defaultValue={command.command}
-                          className="form-control-commands pl-3"
-                          ref={(input) => {
-                            this.editedInput = input;
-                          }}
-                        />
-                      </Col>
-                      <Col sm={1} className="mt-1">
-                        <IconContext.Provider
-                          value={{
-                            style: { fontSize: "30px", cursor: "pointer" },
-                          }}
-                        >
-                          <MdDone onClick={() => this.handleEditRow(command)} />
-                        </IconContext.Provider>
-                      </Col>
-                      <Col sm={2} className="text-right mt-1">
-                        <IconContext.Provider
-                          value={{
-                            style: { fontSize: "30px", cursor: "pointer" },
-                          }}
-                        >
-                          <GrFormClose
-                            onClick={() => this.handleCancelEdit(command.id)}
-                          />
-                        </IconContext.Provider>
-                      </Col>
-                    </>
-                  )}
-              </Form.Group>
-            </Form>
-          ))}
-        </Container>
-        <Container
-          className="p-1 bg-secondary rounded-top"
-          style={{
-            zIndex: "1030",
-            right: "0",
-            bottom: "0",
-            left: "0",
-            position: "absolute",
-          }}
-        >
-          <Form onSubmit={this.handleAddRow}>
+  return (
+    <>
+      <Container className="h-100 pre-scrollable">
+        {Object.entries(commands).map(([key, command]) => (
+          <Form
+            key={command.id}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleEditRow(command);
+            }}
+          >
             <Form.Group
               as={Row}
-              className="border rounded-pill border-secondary ml-2 mt-3 mr-4 bg-light"
+              className={classNames(
+                {
+                  "border rounded-pill border-secondary mt-2 ml-2 mr-2":
+                    selected !== command.id,
+                },
+                {
+                  "border rounded-pill border-secondary bg-light mt-2 ml-3 mr-1 all-3s":
+                    selected === command.id,
+                }
+              )}
             >
-              {this.state.showCreate ? (
-                <Col sm={10}>
-                  <Form.Control
-                    className="form-control-commands"
-                    type="text"
-                    plaintext
-                    readOnly
-                    placeholder="Click here to add command..."
-                    onClick={this.createCommand}
-                  />
-                </Col>
+              {!command.isEditing ? (
+                <>
+                  { }
+                  <Col sm={10}>
+                    <Form.Control
+                      plaintext
+                      readOnly
+                      defaultValue={command.command}
+                      className="btn btn-outline"
+                      onDoubleClick={() => editCommand(command)}
+                      onClick={() => handleSelection(command.id)}
+                    />
+                  </Col>
+                  <Col sm={2} className="text-right mt-1">
+                    <DeleteModal
+                      deleteCommand={handleDeleteRow}
+                      command={command}
+                    />
+                  </Col>
+                </>
               ) : (
                   <>
-                    <Col sm={10}>
+                    <Col sm={9}>
                       <Form.Control
-                        className="form-control-commands"
-                        type="text"
                         plaintext
-                        placeholder="Type voice command..."
-                        ref={(input) => {
-                          this.commandInput = input;
-                        }}
+                        defaultValue={command.command}
+                        className="form-control-commands pl-3"
+                        ref={editedInput}
                       />
                     </Col>
-
-                    {this.state.addingCommand ? (
-                      <Col sm={2} className="mt-1">
-                        <Spinner size="sm" animation="border" role="status">
-                          <span className="sr-only">Loading...</span>
-                        </Spinner>
-                      </Col>
-                    ) : (
-                        <Col sm={2} className="mt-1">
-                          <IconContext.Provider
-                            value={{ style: { fontSize: "30px" } }}
-                          >
-                            <GrFormClose onClick={this.handleCancelCreate} />
-                          </IconContext.Provider>
-                        </Col>
-                      )}
+                    <Col sm={1} className="mt-1">
+                      <IconContext.Provider
+                        value={{
+                          style: { fontSize: "30px", cursor: "pointer" },
+                        }}
+                      >
+                        <MdDone onClick={() => handleEditRow(command)} />
+                      </IconContext.Provider>
+                    </Col>
+                    <Col sm={2} className="text-right mt-1">
+                      <IconContext.Provider
+                        value={{
+                          style: { fontSize: "30px", cursor: "pointer" },
+                        }}
+                      >
+                        <GrFormClose onClick={() => handleCancelEdit(command)} />
+                      </IconContext.Provider>
+                    </Col>
                   </>
                 )}
             </Form.Group>
           </Form>
-        </Container>
-      </>
-    );
-  }
+        ))}
+      </Container>
+      <Container
+        className="p-1 bg-secondary rounded-top"
+        style={{
+          zIndex: "1030",
+          right: "0",
+          bottom: "0",
+          left: "0",
+          position: "absolute",
+        }}
+      >
+        <Form onSubmit={handleAddRow}>
+          <Form.Group
+            as={Row}
+            className="border rounded-pill border-secondary ml-2 mt-3 mr-4 bg-light"
+          >
+            {showCreate ? (
+              <Col sm={10}>
+                <Form.Control
+                  className="form-control-commands"
+                  type="text"
+                  plaintext
+                  readOnly
+                  placeholder="Click here to add command..."
+                  onClick={createCommand}
+                />
+              </Col>
+            ) : (
+                <>
+                  <Col sm={10}>
+                    <Form.Control
+                      className="form-control-commands"
+                      type="text"
+                      plaintext
+                      placeholder="Type voice command..."
+                      ref={(input) => {
+                        commandInput = input;
+                      }}
+                    />
+                  </Col>
+
+                  {addingCommand ? (
+                    <Col sm={2} className="mt-1">
+                      <Spinner size="sm" animation="border" role="status">
+                        <span className="sr-only">Loading...</span>
+                      </Spinner>
+                    </Col>
+                  ) : (
+                      <Col sm={2} className="mt-1">
+                        <IconContext.Provider
+                          value={{ style: { fontSize: "30px" } }}
+                        >
+                          <GrFormClose onClick={handleCancelCreate} />
+                        </IconContext.Provider>
+                      </Col>
+                    )}
+                </>
+              )}
+          </Form.Group>
+        </Form>
+      </Container>
+    </>
+  );
 }

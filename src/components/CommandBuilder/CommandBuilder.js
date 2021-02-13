@@ -1,38 +1,31 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Commands from "./Commands";
 import Actions from "./Actions";
 import { Container, Row, Col } from "react-bootstrap";
 
-export default class CommandBuilder extends Component {
-  constructor(props) {
-    super(props);
-    // const { ws, getConfig } = props;
-    this.state = { selected: null };
-  }
-
-  updateSelected = (command) => {
-    this.setState({ selected: command });
+export default function CommandBuilder({ userId }) {
+  const [selected, setSelected] = useState(null);
+  const updateSelected = (command) => {
+    setSelected(command);
   };
 
-  render() {
-    return (
-      <Container fluid>
-        <Row>
-          <Col
-            sm={3}
-            className="border-right border-secondary vh-100"
-            style={{
-              backgroundColor: "#e9ecef",
-            }}
-          >
-            <Commands updateSelected={this.updateSelected} userId={this.props.userId} />
-          </Col>
+  return (
+    <Container fluid>
+      <Row>
+        <Col
+          sm={3}
+          className="border-right border-secondary vh-100"
+          style={{
+            backgroundColor: "#e9ecef",
+          }}
+        >
+          <Commands updateSelected={updateSelected} userId={userId} />
+        </Col>
 
-          <Col sm={9}>
-            <Actions selected={this.state.selected} />
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
+        <Col sm={9}>
+          <Actions selected={selected} userId={userId} />
+        </Col>
+      </Row>
+    </Container>
+  );
 }

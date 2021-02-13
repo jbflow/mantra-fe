@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Col, Modal, Button } from "react-bootstrap";
+import { Col, Modal, Button } from "react-bootstrap";
 import { GrFormTrash } from "react-icons/gr";
 import { IconContext } from "react-icons";
 
@@ -31,7 +31,7 @@ export default function DeleteModal({ deleteCommand, command }) {
         </Modal.Body>
         <Modal.Footer className="pb-2">
           <Col>
-            <Button variant="danger" onClick={() => deleteCommand(command)}>
+            <Button variant="danger" onClick={() => { deleteCommand(command); setShow(false); }}>
               Delete
             </Button>
           </Col>

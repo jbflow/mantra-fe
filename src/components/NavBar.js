@@ -11,9 +11,9 @@ export default function NavBar({ signOut }) {
       <Navbar.Toggle aria-controls="navigation" />
       <Navbar.Collapse id="navigation">
         <Nav className="mr-auto">
-          <Nav.Link href="dashboard">Dashboard</Nav.Link>
-          <Nav.Link href="commands">Command Builder</Nav.Link>
-          <Nav.Link href="beta">Testing Area</Nav.Link>
+          <Link className="nav-link" to="/dashboard">Dashboard</Link>
+          <Link className="nav-link" to="/commands">Command Builder</Link>
+          <Link className="nav-link" to="/beta">Testing Area</Link>
         </Nav>
         <IconContext.Provider
           value={{
