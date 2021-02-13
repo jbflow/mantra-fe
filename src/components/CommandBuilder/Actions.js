@@ -9,7 +9,6 @@ export default class Actions extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: "1",
       actions: [],
       selected: null,
       currentID: null,
@@ -17,13 +16,14 @@ export default class Actions extends Component {
     };
   }
   componentDidUpdate() {
-    API.get("talkbackBE", "/commands?userId=" + this.state.userId).then(
+    API.get("talkbackBE", "/commands?userId=" + this.props.userId).then(
       (res) => {
         res.forEach((command) => {
           if (
             command.id === this.props.selected &&
             this.state.selected !== this.props.selected
           ) {
+            console.log('actiosn command', command);
             this.setState({ command: command.command });
             this.setState({ actions: command.actions });
             this.setState({ selected: this.props.selected });
@@ -63,7 +63,7 @@ export default class Actions extends Component {
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-      this.state.userId +
+      this.props.userId +
       "&commandId=" +
       this.state.selected +
       "&patching=actions",

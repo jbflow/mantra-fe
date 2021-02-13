@@ -31,7 +31,7 @@ export default function DeleteModal({ deleteCommand, command }) {
         </Modal.Body>
         <Modal.Footer className="pb-2">
           <Col>
-            <Button variant="danger" onClick={() => deleteCommand(command)}>
+            <Button variant="danger" onClick={() => { deleteCommand(command); setShow(false); }}>
               Delete
             </Button>
           </Col>

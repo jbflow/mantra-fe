@@ -3,10 +3,10 @@ import Commands from "./Commands";
 import Actions from "./Actions";
 import { Container, Row, Col } from "react-bootstrap";
 
-export default function CommandBuilder() {
+export default function CommandBuilder({ userId }) {
   const [selected, setSelected] = useState(null);
   const updateSelected = (command) => {
-    setSelected({ selected: command });
+    setSelected(command);
   };
 
   return (
@@ -19,11 +19,11 @@ export default function CommandBuilder() {
             backgroundColor: "#e9ecef",
           }}
         >
-          <Commands updateSelected={updateSelected} />
+          <Commands updateSelected={updateSelected} userId={userId} />
         </Col>
 
         <Col sm={9}>
-          <Actions selected={selected} />
+          <Actions selected={selected} userId={userId} />
         </Col>
       </Row>
     </Container>

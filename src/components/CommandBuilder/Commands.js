@@ -7,11 +7,12 @@ import { Container, Row, Col, Form, Spinner } from "react-bootstrap";
 import DeleteModal from "./DeleteModal";
 const classNames = require("classnames");
 
-export default function Commands({ updateSelected }) {
-  const [userId, setUserId] = useState("1");
+export default function Commands({ updateSelected, userId }) {
+  // const [userId, setUserId] = useState("1");
   const [showCreate, setShowCreate] = useState(null);
   const [rows, setRows] = useState([]);
   const [commands, setCommands] = useState({});
+  const [startup, setStartup] = useState(true);
   const [editing, setEditing] = useState(false);
   const [selected, setSelected] = useState(null);
   const [addingCommand, setAddingCommand] = useState(false);
@@ -53,11 +54,14 @@ export default function Commands({ updateSelected }) {
     const command = commandInput.value;
     if (!commands[command]) {
       setShowCreate(true);
+      console.log('commands', commands);
       setCommands({
         ...commands,
-        [command.id]: true,
+        [command.id]: { command, id: command },
       });
+      console.log('commands', commands);
       setRows([...rows, command]);
+      console.log('rows', rows);
       postCommand(command);
     } else {
       alert("Command already taken");
@@ -66,26 +70,26 @@ export default function Commands({ updateSelected }) {
 
   const handleEditRow = (e) => {
     e.preventDefault();
-    const newRows = [...rows];
-    const oldCommand = editing;
+    // const newRows = [...rows];
+    // const oldCommand = editing;
     const command = editedInput.current.value;
-    var index = newRows.indexOf(oldCommand);
-    if (index !== -1) {
-      newRows[index] = command;
-    }
-    setRows(newRows);
-    setCommands({
-      ...commands,
-      [command]: true,
-      [oldCommand]: false,
-    });
+    // var index = newRows.indexOf(oldCommand);
+    // if (index !== -1) {
+    //   newRows[index] = command;
+    // }
+    // setRows(newRows);
+    // setCommands({
+    //   ...commands,
+    //   [command]: true,
+    //   [oldCommand]: false,
+    // });
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-        userId +
-        "&commandId=" +
-        command.id +
-        "&patching=command",
+      userId +
+      "&commandId=" +
+      command.id +
+      "&patching=command",
       {
         body: [command],
       }
@@ -93,6 +97,7 @@ export default function Commands({ updateSelected }) {
   };
 
   const handleSelection = (selection) => {
+    console.log('handleSelection: ', selection);
     exclusiveEdit();
     setSelected(selection);
     updateSelected(selection);
@@ -126,18 +131,16 @@ export default function Commands({ updateSelected }) {
     API.patch("talkbackBE", "/commands?userId=" + userId, {
       body: emptyCommand,
     }).then((res) => {
-      setCommands({
-        ...commands,
-        ...res.id,
-      });
-      setRows([...rows, res]);
+      console.log('res: ', res);
+      getCommands();
       setAddingCommand(false);
       setShowCreate(true);
     });
   };
 
-  const deleteCommand = (id) => {
-    API.del("talkbackBE", "/commands?userId=" + userId + "&commandId=" + id);
+  const deleteCommand = async (command) => {
+    await API.del("talkbackBE", "/commands?userId=" + userId + "&commandId=" + command.id);
+    getCommands();
   };
 
   const getCommands = () => {
@@ -145,28 +148,31 @@ export default function Commands({ updateSelected }) {
       console.log("res: ", res);
       const newCommands = {};
       res.forEach((cmd) => {
-        newCommands[cmd.id] = true;
+        newCommands[cmd.id] = cmd;
       });
       setCommands({
-        ...commands,
         ...newCommands,
       });
       setRows(
         res.map((cmd) => {
-          return cmd.command;
+          return cmd.id;
         })
       );
     });
   };
 
   useEffect(() => {
-    getCommands();
-  }, []);
+    console.log('useEffect: ', useEffect);
+    if (startup) {
+      getCommands();
+      setStartup(false);
+    }
+  }, [startup]);
 
   return (
     <>
       <Container className="h-100 pre-scrollable">
-        {rows.map((command) => (
+        {Object.entries(commands).map(([key, command]) => (
           <Form
             key={command.id}
             onSubmit={(e) => {
@@ -207,40 +213,41 @@ export default function Commands({ updateSelected }) {
                   </Col>
                 </>
               ) : (
-                <>
-                  <Col sm={9}>
-                    <Form.Control
-                      plaintext
-                      defaultValue={command.command}
-                      className="form-control-commands pl-3"
-                      ref={editedInput}
-                    />
-                  </Col>
-                  <Col sm={1} className="mt-1">
-                    <IconContext.Provider
-                      value={{
-                        style: { fontSize: "30px", cursor: "pointer" },
-                      }}
-                    >
-                      <MdDone onClick={() => handleEditRow(command)} />
-                    </IconContext.Provider>
-                  </Col>
-                  <Col sm={2} className="text-right mt-1">
-                    <IconContext.Provider
-                      value={{
-                        style: { fontSize: "30px", cursor: "pointer" },
-                      }}
-                    >
-                      <GrFormClose
-                        onClick={() => handleCancelEdit(command.id)}
+                  <>
+                    <Col sm={9}>
+                      <Form.Control
+                        plaintext
+                        defaultValue={command.command}
+                        className="form-control-commands pl-3"
+                        ref={editedInput}
                       />
-                    </IconContext.Provider>
-                  </Col>
-                </>
-              )}
+                    </Col>
+                    <Col sm={1} className="mt-1">
+                      <IconContext.Provider
+                        value={{
+                          style: { fontSize: "30px", cursor: "pointer" },
+                        }}
+                      >
+                        <MdDone onClick={() => handleEditRow(command)} />
+                      </IconContext.Provider>
+                    </Col>
+                    <Col sm={2} className="text-right mt-1">
+                      <IconContext.Provider
+                        value={{
+                          style: { fontSize: "30px", cursor: "pointer" },
+                        }}
+                      >
+                        <GrFormClose
+                          onClick={() => handleCancelEdit(command.id)}
+                        />
+                      </IconContext.Provider>
+                    </Col>
+                  </>
+                )}
             </Form.Group>
           </Form>
-        ))}
+        ))
+        }
       </Container>
       <Container
         className="p-1 bg-secondary rounded-top"
@@ -269,36 +276,36 @@ export default function Commands({ updateSelected }) {
                 />
               </Col>
             ) : (
-              <>
-                <Col sm={10}>
-                  <Form.Control
-                    className="form-control-commands"
-                    type="text"
-                    plaintext
-                    placeholder="Type voice command..."
-                    ref={(input) => {
-                      commandInput = input;
-                    }}
-                  />
-                </Col>
+                <>
+                  <Col sm={10}>
+                    <Form.Control
+                      className="form-control-commands"
+                      type="text"
+                      plaintext
+                      placeholder="Type voice command..."
+                      ref={(input) => {
+                        commandInput = input;
+                      }}
+                    />
+                  </Col>
 
-                {addingCommand ? (
-                  <Col sm={2} className="mt-1">
-                    <Spinner size="sm" animation="border" role="status">
-                      <span className="sr-only">Loading...</span>
-                    </Spinner>
-                  </Col>
-                ) : (
-                  <Col sm={2} className="mt-1">
-                    <IconContext.Provider
-                      value={{ style: { fontSize: "30px" } }}
-                    >
-                      <GrFormClose onClick={handleCancelCreate} />
-                    </IconContext.Provider>
-                  </Col>
-                )}
-              </>
-            )}
+                  {addingCommand ? (
+                    <Col sm={2} className="mt-1">
+                      <Spinner size="sm" animation="border" role="status">
+                        <span className="sr-only">Loading...</span>
+                      </Spinner>
+                    </Col>
+                  ) : (
+                      <Col sm={2} className="mt-1">
+                        <IconContext.Provider
+                          value={{ style: { fontSize: "30px" } }}
+                        >
+                          <GrFormClose onClick={handleCancelCreate} />
+                        </IconContext.Provider>
+                      </Col>
+                    )}
+                </>
+              )}
           </Form.Group>
         </Form>
       </Container>
