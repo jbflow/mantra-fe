@@ -1,162 +1,140 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { GrDrag, GrDuplicate, GrAddCircle } from "react-icons/gr";
 import { IconContext } from "react-icons";
 import { Container, Card, Row, Col, Form, Button } from "react-bootstrap";
 import { API } from "aws-amplify";
 import DeleteModal from "./DeleteModal";
-export default class Actions extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      actions: [],
-      selected: null,
-      currentID: null,
-      saving: false,
-    };
-  }
-  componentDidUpdate() {
-    API.get("talkbackBE", "/commands?userId=" + this.props.userId).then(
+
+export default function Actions({ userId, selected: propSelected }) {
+
+  const [actions, setActions] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [command, setCommand] = useState(null);
+  const [saving, setSaving] = useState(null);
+
+  useEffect(() => {
+    API.get("talkbackBE", "/commands?userId=" + userId).then(
       (res) => {
         res.forEach((command) => {
-          if (
-            command.id === this.props.selected &&
-            this.state.selected !== this.props.selected
-          ) {
-            console.log('actiosn command', command);
-            this.setState({ command: command.command });
-            this.setState({ actions: command.actions });
-            this.setState({ selected: this.props.selected });
-            this.setState({ currentID: command.id });
+          if (command.id === propSelected) {
+            setCommand(command.command);
+            setActions(command.actions);
+            setSelected(propSelected);
           }
         });
       }
     );
-  }
+  }, [userId, propSelected]);
 
-  onChange = (event, index) => {
-    const newActions = this.state.actions;
+  const onChange = (event, index) => {
+    const newActions = [...actions];
     newActions[index] = event.target.value;
-    this.setState({ actions: newActions });
+    setActions(newActions);
   };
 
-  handleAddAction = () => {
-    this.setState({ actions: [...this.state.actions, ""] });
+  const handleAddAction = () => {
+    setActions([...actions, ""]);
   };
 
-  handleDeleteAction = (index) => {
-    const newActions = this.state.actions;
+  const handleDeleteAction = (index) => {
+    const newActions = [...actions];
     newActions.splice(index, 1);
-    this.setState({ actions: newActions });
+    setActions(newActions);
   };
 
-  handleDuplicateAction = (index) => {
-    const actions = this.state.actions;
-    const action = actions[index];
-    actions.splice(index, 0, action);
-    this.setState({ actions: actions });
+  const handleDuplicateAction = (index) => {
+    const newActions = [...actions];
+    const action = newActions[index];
+    newActions.splice(index, 0, action);
+    setActions(newActions);
   };
 
-  saveActions = () => {
-    console.log(this.state.actions);
-    this.setState({ saving: true });
+  const saveActions = () => {
+    setSaving(true)
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-      this.props.userId +
+      userId +
       "&commandId=" +
-      this.state.selected +
+      selected +
       "&patching=actions",
-      { body: this.state.actions }
-    ).then((res) => {
-      this.setState({ saving: false });
+      { body: actions }
+    ).then(() => {
+      setSaving(false)
     });
   };
 
-  handleOneDragEnd = (result) => {
+  const handleOneDragEnd = (result) => {
     if (!result.destination) {
       return;
     }
-    const items = Array.from(this.state.actions);
+    const items = Array.from(actions);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-    this.setState({ actions: items });
+    setActions(items);
   };
 
-  render() {
-    return (
-      <Card className="mt-3" bg={"light"} text={"dark"}>
-        <Card.Header className="bg-primary text-light">
-          {this.state.command}
-        </Card.Header>
 
-        <Card.Body>
-          <DragDropContext onDragEnd={this.handleOneDragEnd}>
-            <Droppable droppableId="actions">
-              {(provided) => (
-                <Container
-                  fluid
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  {this.state.actions.map((action, index) => {
-                    return (
-                      <Draggable
-                        key={index}
-                        draggableId={index.toString()}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <Form.Group
-                            as={Row}
-                            {...provided.draggableProps}
-                            ref={provided.innerRef}
-                            className="border rounded border-dark mt-2 ml-2 mr-2 text-right"
+  return (
+    <Card className="mt-3" bg={"light"} text={"dark"}>
+      <Card.Header className="bg-primary text-light">
+        {command}
+      </Card.Header>
+
+      <Card.Body>
+        <DragDropContext onDragEnd={handleOneDragEnd}>
+          <Droppable droppableId="actions">
+            {(provided) => (
+              <Container
+                fluid
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {actions.map((action, index) => {
+                  return (
+                    <Draggable
+                      key={index}
+                      draggableId={index.toString()}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <Form.Group
+                          as={Row}
+                          {...provided.draggableProps}
+                          ref={provided.innerRef}
+                          className="border rounded border-dark mt-2 ml-2 mr-2 text-right"
+                        >
+                          <Col
+                            className="pt-1"
+                            sm={0.5}
+                            {...provided.dragHandleProps}
                           >
-                            <Col
-                              className="pt-1"
-                              sm={0.5}
-                              {...provided.dragHandleProps}
+                            <IconContext.Provider
+                              value={{
+                                style: {
+                                  fontSize: "30px",
+                                },
+                              }}
                             >
-                              <IconContext.Provider
-                                value={{
-                                  style: {
-                                    fontSize: "30px",
-                                  },
-                                }}
-                              >
-                                <GrDrag />
-                              </IconContext.Provider>
-                            </Col>
-                            <Col sm={10}>
-                              <Form.Control
-                                plaintext
-                                value={action}
-                                name="action"
-                                className="form-control"
-                                placeholder="Enter voice action..."
-                                onChange={(event) =>
-                                  this.onChange(event, index)
-                                }
-                              />
-                            </Col>
+                              <GrDrag />
+                            </IconContext.Provider>
+                          </Col>
+                          <Col sm={10}>
+                            <Form.Control
+                              plaintext
+                              value={action}
+                              name="action"
+                              className="form-control"
+                              placeholder="Enter voice action..."
+                              onChange={(event) =>
+                                onChange(event, index)
+                              }
+                            />
+                          </Col>
 
-                            <Col className="pt-1 pr-2 text-right" sm={1}>
-                              {this.state.actions.length - 1 === index && (
-                                <IconContext.Provider
-                                  value={{
-                                    style: {
-                                      fontSize: "20px",
-                                      cursor: "pointer",
-                                    },
-                                  }}
-                                >
-                                  <GrAddCircle onClick={this.handleAddAction} />
-                                </IconContext.Provider>
-                              )}
-                            </Col>
-
-                            <Col className="pt-1 pr-2 text-right" sm={0.5}>
+                          <Col className="pt-1 pr-2 text-right" sm={1}>
+                            {actions.length - 1 === index && (
                               <IconContext.Provider
                                 value={{
                                   style: {
@@ -165,59 +143,72 @@ export default class Actions extends Component {
                                   },
                                 }}
                               >
-                                <GrDuplicate
-                                  onClick={() => {
-                                    this.handleDuplicateAction(index);
-                                  }}
-                                />
+                                <GrAddCircle onClick={handleAddAction} />
                               </IconContext.Provider>
-                            </Col>
+                            )}
+                          </Col>
 
-                            <Col className="text-right" sm={0.5}>
-                              {this.state.actions.length !== 1 && (
-                                <DeleteModal
-                                  deleteCommand={this.handleDeleteAction}
-                                  command={index}
-                                />
-                              )}
-                            </Col>
-                          </Form.Group>
-                        )}
-                      </Draggable>
-                    );
-                  })}
+                          <Col className="pt-1 pr-2 text-right" sm={0.5}>
+                            <IconContext.Provider
+                              value={{
+                                style: {
+                                  fontSize: "20px",
+                                  cursor: "pointer",
+                                },
+                              }}
+                            >
+                              <GrDuplicate
+                                onClick={() => {
+                                  handleDuplicateAction(index);
+                                }}
+                              />
+                            </IconContext.Provider>
+                          </Col>
 
-                  {provided.placeholder}
-                </Container>
-              )}
-            </Droppable>
-          </DragDropContext>
+                          <Col className="text-right" sm={0.5}>
+                            {actions.length !== 1 && (
+                              <DeleteModal
+                                deleteCommand={handleDeleteAction}
+                                command={index}
+                              />
+                            )}
+                          </Col>
+                        </Form.Group>
+                      )}
+                    </Draggable>
+                  );
+                })}
 
-          {this.state.selected && (
-            <Container fluid className="mt-5">
-              <Row>
-                <Col md={{ span: 1 }}>
-                  <Button
-                    disabled={this.state.saving}
-                    className="btn btn-primary rounded ml-2"
-                    onClick={!this.state.saving ? this.saveActions : null}
-                  >
-                    {this.state.saving ? "Saving..." : "Save"}
+                {provided.placeholder}
+              </Container>
+            )}
+          </Droppable>
+        </DragDropContext>
+
+        {selected && (
+          <Container fluid className="mt-5">
+            <Row>
+              <Col md={{ span: 1 }}>
+                <Button
+                  disabled={saving}
+                  className="btn btn-primary rounded ml-2"
+                  onClick={!saving ? saveActions : null}
+                >
+                  {saving ? "Saving..." : "Save"}
+                </Button>
+              </Col>
+              <Col md={{ span: 1 }}>
+                <Button className="btn btn-primary rounded ml-2">Test</Button>
+              </Col>
+              <Col md={{ span: 2, offset: 8 }}>
+                <Button disabled className="btn btn-dark rounded mr-5">
+                  Make Lesson
                   </Button>
-                </Col>
-                <Col md={{ span: 1 }}>
-                  <Button className="btn btn-primary rounded ml-2">Test</Button>
-                </Col>
-                <Col md={{ span: 2, offset: 8 }}>
-                  <Button disabled className="btn btn-dark rounded mr-5">
-                    Make Lesson
-                  </Button>
-                </Col>
-              </Row>
-            </Container>
-          )}
-        </Card.Body>
-      </Card>
-    );
-  }
+              </Col>
+            </Row>
+          </Container>
+        )}
+      </Card.Body>
+    </Card>
+  );
 }
