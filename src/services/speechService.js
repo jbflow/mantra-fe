@@ -55,6 +55,7 @@ recognition.onresult = (event) => {
       message: transcript,
       action: "command",
       config: config,
+      userId: localStorage.getItem("userId"),
     })
   );
 };

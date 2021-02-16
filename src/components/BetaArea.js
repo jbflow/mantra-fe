@@ -10,6 +10,7 @@ export default function BetaArea({ ws, getConfig }) {
         message: transcript,
         action: "command",
         config: getConfig(),
+        userId: localStorage.getItem("userId"),
       })
     );
   };
@@ -22,20 +23,18 @@ export default function BetaArea({ ws, getConfig }) {
   return (
     <Fragment>
       <div className="jumbotron" style={{ margin: "20px", aligh: "center" }}>
-        <h1 className="display-3">
-          Welcome, to the TalkBack Beta Programme!
-          </h1>
+        <h1 className="display-3">Welcome, to the TalkBack Beta Programme!</h1>
         <br />
         <p className="lead">
           Please watch the video below for further instruction on setup and
           usage.
-          </p>
+        </p>
         <hr className="my-4" />
 
         <p className="lead">
-          Use the input below to quickly test the intent detection without
-          using speech input.
-          </p>
+          Use the input below to quickly test the intent detection without using
+          speech input.
+        </p>
         <table className="table table-sm" style={{ width: "400px" }}>
           <tbody>
             <tr>
@@ -54,14 +53,14 @@ export default function BetaArea({ ws, getConfig }) {
                   className="btn btn-outline-primary"
                 >
                   Test
-                  </button>
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
         <p className="lead">
           Please use this form to submit bug reports and feature requests.
-          </p>
+        </p>
 
         <div className="form-group" style={{ width: "50%" }}>
           <textarea
@@ -78,7 +77,7 @@ export default function BetaArea({ ws, getConfig }) {
           style={{ width: "10%" }}
         >
           Submit
-          </button>
+        </button>
         <br />
         <br />
         <p>Thank you for your participation!</p>

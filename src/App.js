@@ -43,21 +43,21 @@ function App({ signOut }) {
   async function onLoad() {
     try {
       await Auth.currentSession();
-
       const { attributes } = await Auth.currentAuthenticatedUser();
-      if (attributes) setuserId(attributes?.sub);
-      userHasAuthenticated(true);
+      if (attributes) {
+        setuserId(attributes?.sub);
+        localStorage.setItem("userId", attributes?.sub);
+      }
 
+      userHasAuthenticated(true);
     } catch (e) {
       if (e !== "No current user") {
         alert(e);
       }
     }
-
   }
   return (
-    isAuthenticated &&
-    (
+    isAuthenticated && (
       <Fragment>
         <BrowserRouter>
           <NavBar signOut={signOut} />
