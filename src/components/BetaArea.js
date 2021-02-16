@@ -23,7 +23,9 @@ export default function BetaArea({ ws, getConfig }) {
   return (
     <Fragment>
       <div className="jumbotron" style={{ margin: "20px", aligh: "center" }}>
-        <h1 className="display-3">Welcome, to the TalkBack Beta Programme!</h1>
+        <h1 className="display-3">
+          Welcome, to the TalkBack Alpha Tesing Phase!
+        </h1>
         <br />
         <p className="lead">
           Please watch the video below for further instruction on setup and
