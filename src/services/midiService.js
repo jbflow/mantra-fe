@@ -46,8 +46,18 @@ const onMIDISuccess = (midiAccess) => {
   midiInputs = Array.from(midiAccess.inputs.values());
   midiOutputs = Array.from(midiAccess.outputs.values());
   console.log(midiInputs, midiOutputs);
-  midiOutput = midiOutputs[0];
-  midiInput = midiInputs[1];
+
+  midiInputs.forEach((input) => {
+    if (input.name == "IAC Driver TB IN") {
+      midiInput = input;
+    }
+  });
+  midiOutputs.forEach((output) => {
+    if (output.name == "IAC Driver TB OUT") {
+      midiOutput = output;
+    }
+  });
+
   midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
   midiInput.onmidimessage = getMIDIMessage;
   // window.Preferences.setMidiPorts(midiInputs, midiOutputs); // set the ports in the prefs componenet to render them in drop downs

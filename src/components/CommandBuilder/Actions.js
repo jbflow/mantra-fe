@@ -184,17 +184,22 @@ export default function Actions({ userId, selected: propSelected }) {
               <Col md={{ span: 1 }}>
                 <Button
                   disabled={saving}
-                  className="btn btn-primary rounded ml-2"
+                  className="btn btn-primary rounded ml-2 text-center"
                   onClick={!saving ? saveActions : null}
                 >
                   {saving ? "Saving..." : "Save"}
                 </Button>
               </Col>
               <Col md={{ span: 1 }}>
-                <Button className="btn btn-primary rounded ml-2">Test</Button>
+                <Button className="btn btn-primary rounded ml-2 text-center">
+                  Test
+                </Button>
               </Col>
               <Col md={{ span: 2, offset: 8 }}>
-                <Button disabled className="btn btn-dark rounded mr-5">
+                <Button
+                  disabled
+                  className="btn btn-dark rounded mr-5 text-center"
+                >
                   Make Lesson
                 </Button>
               </Col>
