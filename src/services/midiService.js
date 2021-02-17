@@ -47,12 +47,12 @@ const onMIDISuccess = (midiAccess) => {
   console.log(midiInputs, midiOutputs);
 
   midiInputs.forEach((input) => {
-    if (input.name == "IAC Driver TB IN") {
+    if (input.name == "IAC Driver TB IN" || input.name == "TB IN") {
       midiInput = input;
     }
   });
   midiOutputs.forEach((output) => {
-    if (output.name == "IAC Driver TB OUT") {
+    if (output.name == "IAC Driver TB OUT" || output.name == "TB OUT") {
       midiOutput = output;
     }
   });
