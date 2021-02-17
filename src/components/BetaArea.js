@@ -17,10 +17,11 @@ export default function BetaArea({ ws, getConfig }) {
   };
 
   const submitReport = () => {
+    console.log(isSubmitting);
     setIsSubmitting(true);
 
     const message = document.getElementById("betaMessage").value;
-    API.post("talkbackBE", "/beta", { message: message }).then(
+    API.post("talkbackBE", "/beta", { body: { message: message } }).then(
       setIsSubmitting(false)
     );
   };
