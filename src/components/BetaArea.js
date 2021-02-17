@@ -1,8 +1,9 @@
 import { API } from "aws-amplify";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import "../styles/App.css";
 
 export default function BetaArea({ ws, getConfig }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const sendIntent = () => {
     const transcript = document.getElementById("intent_test").value;
     ws.send(
@@ -16,8 +17,12 @@ export default function BetaArea({ ws, getConfig }) {
   };
 
   const submitReport = () => {
+    setIsSubmitting(true);
+
     const message = document.getElementById("betaMessage").value;
-    API.post("talkbackBE", "/beta", { message: message });
+    API.post("talkbackBE", "/beta", { message: message }).then(
+      setIsSubmitting(false)
+    );
   };
 
   return (
@@ -28,10 +33,23 @@ export default function BetaArea({ ws, getConfig }) {
         </h1>
         <br />
         <p className="lead">
-          Please watch the video below for further instruction on setup and
-          usage.
+          <a
+            href="https://drive.google.com/file/d/1xr2t5wNLBjC-9tWSFxbV-Y1lGxnrAW9K/view?usp=sharing"
+            target="_blank"
+          >
+            Click here to watch set up and usage instruction video
+          </a>
         </p>
         <hr className="my-4" />
+
+        <p className="lead">
+          <a
+            href="https://drive.google.com/file/d/1D3u5vMaxHMSRn-obTuVJPoeEEQvFMOdi/view?usp=sharing"
+            target="_blank"
+          >
+            Click here to download the Ableton Remote Script.
+          </a>
+        </p>
 
         <p className="lead">
           Use the input below to quickly test the intent detection without using
@@ -77,8 +95,9 @@ export default function BetaArea({ ws, getConfig }) {
           type="button"
           className="btn btn-outline-primary"
           style={{ width: "10%" }}
+          disabled={isSubmitting}
         >
-          Submit
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
         <br />
         <br />

@@ -57,9 +57,11 @@ const onMIDISuccess = (midiAccess) => {
     }
   });
 
-  midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
-  midiInput.onmidimessage = getMIDIMessage;
-  // window.Preferences.setMidiPorts(midiInputs, midiOutputs); // set the ports in the prefs componenet to render them in drop downs
+  if (midiInput && midiOutput) {
+    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+    midiInput.onmidimessage = getMIDIMessage;
+    // window.Preferences.setMidiPorts(midiInputs, midiOutputs); // set the ports in the prefs componenet to render them in drop downs
+  }
 };
 
 const onMIDIFailure = () => {
