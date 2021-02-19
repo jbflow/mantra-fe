@@ -3,6 +3,8 @@ import { Howl } from "howler";
 
 let config, websocket;
 
+let startSound, endSound;
+
 // const playAlert = require("alert-sound-notify");
 
 // Setup porcupine/bumblebee
@@ -26,9 +28,6 @@ recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
-
-const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
-const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
 
 recognition.onstart = () => {
   startSound.play();
@@ -67,6 +66,8 @@ recognition.onspeechend = () => {
 };
 
 bumblebee.on("hotword", (hotword) => {
+  startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
+  endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
   recognition.start();
   console.log("listening...");
 });
