@@ -1,4 +1,5 @@
 import BumbleBee from "bumblebee-hotword";
+import { Howl } from "howler";
 
 let config, websocket;
 
@@ -26,12 +27,13 @@ recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
-const startSound = new Audio("sounds/start_sound.mp3");
-const endSound = new Audio("sounds/stop_sound.mp3");
+const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
+const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
 
 recognition.onstart = () => {
   startSound.play();
 };
+
 recognition.onend = () => {
   endSound.play();
 };
