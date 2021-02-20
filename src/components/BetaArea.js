@@ -37,6 +37,7 @@ export default function BetaArea({ ws, getConfig }) {
           <a
             href="https://drive.google.com/file/d/1xr2t5wNLBjC-9tWSFxbV-Y1lGxnrAW9K/view?usp=sharing"
             target="_blank"
+            rel="noreferrer"
           >
             Click here to watch set up and usage instruction video
           </a>
@@ -47,6 +48,7 @@ export default function BetaArea({ ws, getConfig }) {
           <a
             href="https://drive.google.com/file/d/1D3u5vMaxHMSRn-obTuVJPoeEEQvFMOdi/view?usp=sharing"
             target="_blank"
+            rel="noreferrer"
           >
             Click here to download the Ableton Remote Script.
           </a>
