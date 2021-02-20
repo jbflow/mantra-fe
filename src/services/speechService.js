@@ -1,7 +1,9 @@
 import BumbleBee from "bumblebee-hotword";
+import { Howl, Howler } from "howler";
 
 let config, websocket;
 
+Howler.autoUnlock = true;
 // const playAlert = require("alert-sound-notify");
 
 // Setup porcupine/bumblebee
@@ -16,7 +18,7 @@ const SpeechRecognition = window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
 var grammar =
-  "#JSGF V1.0; grammar phrases; public <phrase> = select the bass | track 1 | track 2 | arm track 1 | bass | arm | arm track;";
+  "#JSGF V1.0; grammar phrases; public <phrase> = select the bass | track 1 | track 2 | arm track 1 | bass | arm | arm track | 1 to | load a;";
 const SpeechGrammarList = window.webkitSpeechGrammarList;
 var speechRecognitionList = new SpeechGrammarList();
 speechRecognitionList.addFromString(grammar, 1);
@@ -25,12 +27,17 @@ recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
-// recognition.onstart = () => {
-//   playAlert("funk");
-// };
-// recognition.onend = () => {
-//   playAlert("tink");
-// };
+
+const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
+const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
+
+recognition.onstart = () => {
+  startSound.play();
+};
+
+recognition.onend = () => {
+  endSound.play();
+};
 
 recognition.onresult = (event) => {
   var transcript = "";
@@ -51,6 +58,7 @@ recognition.onresult = (event) => {
       message: transcript,
       action: "command",
       config: config,
+      userId: localStorage.getItem("userId"),
     })
   );
 };

@@ -5,8 +5,8 @@ let config;
 let midiOutputs;
 let midiInputs;
 
-let inPortName;
-let outPortName;
+// let inPortName;
+// let outPortName;
 
 let midiOutput;
 let midiInput;
@@ -19,6 +19,7 @@ const setConfig = (midi) => {
 };
 
 export const getMIDIMessage = (msg) => {
+  // Setting the new Config when MIDI message received
   if (msg.data !== [240, 0, 0, 0, 0, 0, 127, 247]) {
     setConfig(msg.data);
   }
@@ -32,22 +33,35 @@ export const sendMIDIMessage = (msg) => {
 };
 
 export const setInPort = (input) => {
-  inPortName = input;
+  // inPortName = input;
   console.log(input);
 };
 export const setOutPort = (output) => {
-  outPortName = output;
+  // outPortName = output;
   console.log(output);
 };
 
 const onMIDISuccess = (midiAccess) => {
   midiInputs = Array.from(midiAccess.inputs.values());
   midiOutputs = Array.from(midiAccess.outputs.values());
-  midiOutput = midiOutputs[0];
-  midiInput = midiInputs[1];
-  midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
-  midiInput.onmidimessage = getMIDIMessage;
-  // window.Preferences.setMidiPorts(midiInputs, midiOutputs); // set the ports in the prefs componenet to render them in drop downs
+  console.log(midiInputs, midiOutputs);
+
+  midiInputs.forEach((input) => {
+    if (input.name == "IAC Driver TB IN" || input.name == "TB IN") {
+      midiInput = input;
+    }
+  });
+  midiOutputs.forEach((output) => {
+    if (output.name == "IAC Driver TB OUT" || output.name == "TB OUT") {
+      midiOutput = output;
+    }
+  });
+
+  if (midiInput && midiOutput) {
+    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+    midiInput.onmidimessage = getMIDIMessage;
+    // window.Preferences.setMidiPorts(midiInputs, midiOutputs); // set the ports in the prefs componenet to render them in drop downs
+  }
 };
 
 const onMIDIFailure = () => {
