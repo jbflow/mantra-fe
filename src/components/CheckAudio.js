@@ -1,5 +1,20 @@
 import React from "react";
 import { Howl } from "howler";
+
+let audioCtx
+try {
+	audioCtx = new AudioContext();
+	console.log('audioCtx: ', audioCtx);
+	if (audioCtx.state !== 'running') {
+		console.log("blocked, show alert")
+	} else {
+		console.log("should be able to play")
+	}
+} catch (error) {
+	console.log('AudioContext error: ', error);
+}
+
+
 let emtpy
 try {
 	emtpy = new Howl({ src: ['/sounds/Audience.mp3'] })
