@@ -1,3 +1,4 @@
+import { Howl } from "howler";
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
@@ -5,6 +6,7 @@ import { Button, Modal } from "react-bootstrap";
 
 export default function CheckAudio({ signOut }) {
 	const [showModal, setShowModal] = useState(false);
+	const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
 
 	useEffect(() => {
 		let audioCtx
@@ -23,6 +25,7 @@ export default function CheckAudio({ signOut }) {
 	})
 
 	const handleClose = () => {
+		startSound.play();
 		setShowModal(false);
 	}
 
@@ -39,7 +42,7 @@ export default function CheckAudio({ signOut }) {
 					</Modal.Body>
 
 					<Modal.Footer>
-						<Button variant="primary" onClick={() => setShowModal(false)}>OK</Button>
+						<Button variant="primary" onClick={handleClose}>OK</Button>
 					</Modal.Footer>
 				</Modal.Dialog>
 			)
