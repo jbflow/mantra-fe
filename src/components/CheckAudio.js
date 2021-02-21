@@ -18,6 +18,7 @@ try {
 let emtpy
 try {
 	emtpy = new Howl({ src: ['/sounds/Audience.mp3'] })
+	emtpy.play()
 } catch (error) {
 	console.log('holer init error: ', error);
 
