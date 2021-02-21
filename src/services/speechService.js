@@ -3,7 +3,7 @@ import { Howl, Howler } from "howler";
 
 let config, websocket;
 
-// Howler.autoUnlock = true;
+Howler.autoUnlock = true;
 console.log('Howler.autoUnlock: ', Howler.autoUnlock);
 // const playAlert = require("alert-sound-notify");
 
