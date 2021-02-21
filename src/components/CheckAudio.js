@@ -1,36 +1,48 @@
-import React from "react";
-import { Howl } from "howler";
-
-let audioCtx
-try {
-	audioCtx = new AudioContext();
-	console.log('audioCtx: ', audioCtx);
-	if (audioCtx.state !== 'running') {
-		console.log("blocked, show alert")
-	} else {
-		console.log("should be able to play")
-	}
-} catch (error) {
-	console.log('AudioContext error: ', error);
-}
+import React, { useEffect, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
 
 
-let emtpy
-try {
-	emtpy = new Howl({ src: ['/sounds/Audience.mp3'] })
-	emtpy.play()
-} catch (error) {
-	console.log('holer init error: ', error);
-
-}
 
 export default function CheckAudio({ signOut }) {
-	try {
-		if (!emtpy.playing()) emtpy.play();
-		console.log('emtpy: ', emtpy);
-	} catch (error) {
-		console.log('HOWL error: ', error);
+	const [showModal, setShowModal] = useState(false);
+
+	useEffect(() => {
+		let audioCtx
+		try {
+			audioCtx = new AudioContext();
+			console.log('audioCtx: ', audioCtx);
+			if (audioCtx.state !== 'running') {
+				console.log("blocked, show alert")
+				setShowModal(true);
+			} else {
+				console.log("should be able to play")
+			}
+		} catch (error) {
+			console.log('AudioContext error: ', error);
+		}
+	})
+
+	const handleClose = () => {
+		setShowModal(false);
 	}
+
 	return <>
+		{showModal &&
+			(
+				<Modal.Dialog>
+					<Modal.Header closeButton>
+						<Modal.Title>Audio playback</Modal.Title>
+					</Modal.Header>
+
+					<Modal.Body>
+						<p>TLKBCK will play audio</p>
+					</Modal.Body>
+
+					<Modal.Footer>
+						<Button variant="primary" onClick={() => setShowModal(false)}>OK</Button>
+					</Modal.Footer>
+				</Modal.Dialog>
+			)
+		}
 	</>
 }
