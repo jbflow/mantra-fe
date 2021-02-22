@@ -6,7 +6,7 @@ import { Button, Modal } from "react-bootstrap";
 
 export default function CheckAudio({ signOut }) {
 	const [showModal, setShowModal] = useState(true);
-	const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
+	const startSound = new Howl({ src: ['/sounds/start_sound.mp3'] });
 
 	useEffect(() => {
 		let audioCtx
@@ -33,8 +33,14 @@ export default function CheckAudio({ signOut }) {
 		startSound.play();
 	}
 
+	const playOldSchool = () => {
+		var audio = new Audio('/sounds/start_sound.mp3');
+		audio.play();
+	}
+
 	return <>
 		<button onClick={playstart}>play start</button>
+		<button onClick={playOldSchool}>play old school</button>
 		{showModal &&
 			(
 				<Modal.Dialog>
