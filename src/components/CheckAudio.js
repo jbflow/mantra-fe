@@ -5,7 +5,7 @@ import { Button, Modal } from "react-bootstrap";
 
 
 export default function CheckAudio({ signOut }) {
-	const [showModal, setShowModal] = useState(false);
+	const [showModal, setShowModal] = useState(true);
 	const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
 
 	useEffect(() => {
@@ -22,14 +22,19 @@ export default function CheckAudio({ signOut }) {
 		} catch (error) {
 			console.log('AudioContext error: ', error);
 		}
-	})
+	}, [])
 
 	const handleClose = () => {
 		startSound.play();
 		setShowModal(false);
 	}
 
+	const playstart = () => {
+		startSound.play();
+	}
+
 	return <>
+		<button onClick={playstart}>play start</button>
 		{showModal &&
 			(
 				<Modal.Dialog>

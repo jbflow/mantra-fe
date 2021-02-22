@@ -43,7 +43,7 @@ recognition.onstart = () => {
 };
 
 recognition.onend = () => {
-  if (!startSound) createSounds();
+  if (!endSound) createSounds();
   endSound.play();
 };
 
