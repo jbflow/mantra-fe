@@ -1,30 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { setInPort, setOutPort } from "../services/midiService";
-import { Container, Row, Col, Button, DropdownButton } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
+
+export let updateMidiInputs;
+export let updateMidiOutputs;
 
 export default function Preferences() {
-
   const [midiInputs, setMidiInputs] = useState([]);
   const [midiOutputs, setMidiOutputs] = useState([]);
   const [audioInputs, setAudioInputs] = useState([]);
   const [audioOutputs, setAudioOutputs] = useState([]);
 
-  const setMidiPorts = (inputs, outputs) => {
-    inputs.forEach((input) => {
-      setMidiInputs([...midiInputs, input.name]);
-    });
-    outputs.forEach((output) => {
-      setMidiOutputs([...midiOutputs, output.name]);
-    });
-  };
+  useEffect(() => {
+    updateMidiInputs = setMidiInputs;
+    updateMidiOutputs = setMidiOutputs;
 
-  const midiOutChanged = (e) => {
-    setOutPort(e.target.value); // set the selected port inside the midiservice, need to handle opening and closing
-  };
-
-  const midiInChanged = (e) => {
-    setInPort(e.target.value);
-  };
+    return () => {
+      updateMidiInputs = null;
+      updateMidiOutputs = null;
+    };
+  });
 
   return (
     <Container className="p-2">
@@ -48,29 +51,41 @@ export default function Preferences() {
       <Row className="p-3">
         <Col>MIDI</Col>
         <Col>
-          <DropdownButton
-            id="midiIn"
-            title="MIDI In"
-            onChange={midiOutChanged}
-          >
-            {midiInputs.map((input) => (
-              <DropdownButton.Item key="midiIn">{input}</DropdownButton.Item>
-            ))}
-          </DropdownButton>
+          <Form>
+            <Form.Label className="p-1">Input</Form.Label>
+            <Form.Control
+              as="select"
+              onChange={(e) => {
+                setInPort(e.target.value);
+              }}
+            >
+              <option>Choose...</option>
+              {midiInputs.map((input) => (
+                <option as="button" key={input.id}>
+                  {input.name}
+                </option>
+              ))}
+            </Form.Control>
+          </Form>
         </Col>
 
         <Col>
-          <DropdownButton
-            id="midiOut"
-            title="MIDI Out"
-            onChange={midiOutChanged}
-          >
-            {midiOutputs.map((output) => (
-              <DropdownButton.Item key="midiOut">
-                {output}
-              </DropdownButton.Item>
-            ))}
-          </DropdownButton>
+          <Form>
+            <Form.Label className="p-1">Output</Form.Label>
+            <Form.Control
+              as="select"
+              onChange={(e) => {
+                setOutPort(e.target.value);
+              }}
+            >
+              <option>Choose...</option>
+              {midiOutputs.map((output) => (
+                <option as="button" key={output.id}>
+                  {output.name}
+                </option>
+              ))}
+            </Form.Control>
+          </Form>
         </Col>
       </Row>
 
@@ -80,7 +95,7 @@ export default function Preferences() {
         <Col>
           <DropdownButton id="audioIn" title="Audio In">
             {audioInputs.map((input) => (
-              <DropdownButton.Item key="audioIn">{input}</DropdownButton.Item>
+              <Dropdown.Item key="audioIn">{input}</Dropdown.Item>
             ))}
           </DropdownButton>
         </Col>
@@ -88,9 +103,7 @@ export default function Preferences() {
         <Col>
           <DropdownButton id="audioOut" title="Audio Out">
             {audioOutputs.map((output) => (
-              <DropdownButton.Item key="audioOut">
-                {output}
-              </DropdownButton.Item>
+              <Dropdown.Item key="audioOut">{output}</Dropdown.Item>
             ))}
           </DropdownButton>
         </Col>
