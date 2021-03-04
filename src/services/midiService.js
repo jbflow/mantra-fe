@@ -1,5 +1,6 @@
 import { MidiToJson } from "../utils/MidiToJson";
-import { updateMidiInputs, updateMidiOutputs } from "../components/Preferences";
+import { updateMidiInputs, updateMidiOutputs } from "../App";
+import { updateConfig } from "../components/Dashboard/Dashboard";
 
 let config;
 
@@ -14,6 +15,7 @@ const setConfig = (midi) => {
   config = MidiToJson(midi, config);
   // console.log('config: ', config);
   setConfigOnSpeech(config);
+  updateConfig(config);
 };
 
 export const getMIDIMessage = (msg) => {
@@ -30,7 +32,7 @@ export const sendMIDIMessage = (msg) => {
   }
 };
 
-export const setInPort = (portName) => {
+export const openInPort = (portName) => {
   midiInputs.forEach((input) => {
     if (input.name == portName && input.name !== "Choose...") {
       midiInput = input;
@@ -38,9 +40,10 @@ export const setInPort = (portName) => {
       input.close();
     }
   });
+
   midiInput.onmidimessage = getMIDIMessage;
 };
-export const setOutPort = (portName) => {
+export const openOutPort = (portName) => {
   midiOutputs.forEach((output) => {
     if (output.name == portName && output.name !== "Choose...") {
       midiOutput = output;
@@ -48,7 +51,11 @@ export const setOutPort = (portName) => {
       output.close();
     }
   });
-  midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+  if (midiOutput.name === midiInput.name) {
+    alert("MIDI In and Out cannot be the same port!");
+  } else {
+    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+  }
 };
 
 const onMIDISuccess = (midiAccess) => {

@@ -1,47 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { setInPort, setOutPort } from "../services/midiService";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Form,
-  Dropdown,
-  DropdownButton,
-} from "react-bootstrap";
+import { openInPort, openOutPort } from "../services/midiService";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { API } from "aws-amplify";
 
-export let updateMidiInputs;
-export let updateMidiOutputs;
+export default function Preferences({
+  userId,
+  midiInputs,
+  midiOutputs,
+  midiIn,
+  midiOut,
+  setMidiIn,
+  setMidiOut,
+}) {
+  const [theme, setTheme] = useState("None");
+  const [mag, setMag] = useState("None");
 
-export default function Preferences() {
-  const [midiInputs, setMidiInputs] = useState([]);
-  const [midiOutputs, setMidiOutputs] = useState([]);
-  const [audioInputs, setAudioInputs] = useState([]);
-  const [audioOutputs, setAudioOutputs] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    updateMidiInputs = setMidiInputs;
-    updateMidiOutputs = setMidiOutputs;
-
-    return () => {
-      updateMidiInputs = null;
-      updateMidiOutputs = null;
+  const patchPrefs = () => {
+    setIsSaving(true);
+    const prefs = {
+      theme: theme,
+      mag: mag,
+      midi_in: midiIn,
+      midi_out: midiOut,
     };
-  });
+    API.patch("talkbackBE", "/prefs?userId=" + userId, { body: prefs }).then(
+      (res) => {
+        setIsSaving(false);
+        openInPort(midiIn);
+        openOutPort(midiOut);
+      }
+    );
+  };
 
   return (
     <Container className="p-2">
+      <h1>Page Still Under Construction!!!</h1>
       <Row className="p-3">
         <h3>Look/Feel</h3>
       </Row>
       <Row className="p-3">
         <Col>Dark/Light</Col>
         <Col>
-          <Button className="btn-sm w-25">Dark</Button>
+          <Button className="btn-sm w-25" disabled>
+            Dark
+          </Button>
         </Col>
         <Col>Magnifaction</Col>
         <Col>
-          <Button className="btn-sm w-25">On</Button>
+          <Button className="btn-sm w-25" disabled>
+            On
+          </Button>
         </Col>
       </Row>
 
@@ -56,8 +66,9 @@ export default function Preferences() {
             <Form.Control
               as="select"
               onChange={(e) => {
-                setInPort(e.target.value);
+                setMidiIn(e.target.value);
               }}
+              value={midiIn}
             >
               <option>Choose...</option>
               {midiInputs.map((input) => (
@@ -75,8 +86,9 @@ export default function Preferences() {
             <Form.Control
               as="select"
               onChange={(e) => {
-                setOutPort(e.target.value);
+                setMidiOut(e.target.value);
               }}
+              value={midiOut}
             >
               <option>Choose...</option>
               {midiOutputs.map((output) => (
@@ -89,7 +101,7 @@ export default function Preferences() {
         </Col>
       </Row>
 
-      <Row className="p-3">
+      {/* <Row className="p-3">
         <Col>Audio</Col>
 
         <Col>
@@ -107,7 +119,7 @@ export default function Preferences() {
             ))}
           </DropdownButton>
         </Col>
-      </Row>
+      </Row> */}
       <Row className="p-3">
         <h3>Intent Engine</h3>
       </Row>
@@ -138,20 +150,32 @@ export default function Preferences() {
         <Col>Speech Rate</Col>
 
         <Col>
-          <fieldset className="form-group">
-            <input type="range" className="custom-range" id="speechRate" />
-          </fieldset>
+          <Form>
+            <Form.Group controlId="speechRate">
+              <Form.Control type="range" disabled />
+            </Form.Group>
+          </Form>
         </Col>
         <Col>Feedback Level</Col>
 
         <Col>
-          <fieldset className="form-group">
-            <input type="range" className="custom-range" id="feedbackLevel" />
-          </fieldset>
+          <Form>
+            <Form.Group controlId="feedBackLevel">
+              <Form.Control type="range" disabled />
+            </Form.Group>
+          </Form>
         </Col>
       </Row>
       <Row className="p-3">
         <h3>AI Personality</h3>
+      </Row>
+
+      <Row className="p-3">
+        <Col sm={2}>
+          <Button onClick={!isSaving ? patchPrefs : null} disabled={isSaving}>
+            {isSaving ? "Saving..." : "Save"}
+          </Button>
+        </Col>
       </Row>
     </Container>
   );

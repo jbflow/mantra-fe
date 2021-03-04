@@ -1,9 +1,10 @@
 import React from "react";
 import { Container, Table } from "react-bootstrap";
 
-export default function General() {
+export default function General(config) {
   return (
     <Container>
+      {console.log(config)}
       <Table bordered striped responsive="sm">
         <thead>
           <tr>
