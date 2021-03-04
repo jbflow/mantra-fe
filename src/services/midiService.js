@@ -1,6 +1,7 @@
 import { MidiToJson } from "../utils/MidiToJson";
 import { updateMidiInputs, updateMidiOutputs } from "../App";
 import { updateConfig } from "../components/Dashboard/Dashboard";
+import { updateScriptConnected } from "../components/StatusBar";
 
 let config;
 
@@ -14,8 +15,9 @@ var setConfigOnSpeech;
 const setConfig = (midi) => {
   config = MidiToJson(midi, config);
   // console.log('config: ', config);
+  updateScriptConnected(true);
   setConfigOnSpeech(config);
-  updateConfig(config);
+  // updateConfig(config);
 };
 
 export const getMIDIMessage = (msg) => {

@@ -16,6 +16,7 @@ import config from "./amplify-config";
 import { HTTP_API_URL } from "./utils/Constants";
 
 import { openInPort, openOutPort } from "./services/midiService";
+import StatusBar from "./components/StatusBar";
 
 Amplify.configure({
   Auth: {
@@ -42,7 +43,6 @@ export let updateMidiOutputs;
 function App({ signOut }) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [userId, setuserId] = useState(null);
-
   const [midiInputs, setMidiInputs] = useState([]);
   const [midiOutputs, setMidiOutputs] = useState([]);
   const [midiIn, setMidiIn] = useState("None");
@@ -136,6 +136,7 @@ function App({ signOut }) {
             )}
           />
         </BrowserRouter>
+        <StatusBar />
       </Fragment>
     )
   );

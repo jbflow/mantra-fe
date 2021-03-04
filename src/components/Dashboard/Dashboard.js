@@ -6,7 +6,6 @@ import Devices from "./Devices";
 import Clips from "./Clips";
 import Parameters from "./Parameters";
 import Browser from "./Browser";
-
 export let updateConfig;
 
 const tabArray = [
@@ -39,7 +38,6 @@ export default function Dashboard() {
 
   return (
     <Container>
-      {console.log(config)}
       <Tabs defaultActiveKey="Tracks" id="uncontrolled-tab-example">
         {tabArray.map((tab, index) => (
           <Tab key={tab} eventKey={tab} title={tab}>
