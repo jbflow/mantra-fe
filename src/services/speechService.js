@@ -1,6 +1,10 @@
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
-import { updateMicConnected, updateIsListening } from "../components/StatusBar";
+import {
+  updateMicConnected,
+  updateIsListening,
+  updateTranscript,
+} from "../components/StatusBar";
 
 let config, websocket;
 
@@ -51,15 +55,16 @@ recognition.onresult = (event) => {
   for (var i = event.resultIndex; i < event.results.length; ++i) {
     transcript += event.results[i][0].transcript;
   }
-  console.log(transcript);
+
   if (transcript.includes("stop listening")) {
     recognition.stop();
   }
   if (transcript) {
-    console.log("transcript: ", transcript);
+    updateTranscript(transcript);
   }
-  console.log("websocket", websocket);
+
   console.log("config", config);
+
   websocket.send(
     JSON.stringify({
       message: transcript,
