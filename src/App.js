@@ -136,7 +136,7 @@ function App({ signOut }) {
             )}
           />
         </BrowserRouter>
-        <StatusBar />
+        <StatusBar midiIn={midiIn} midiOut={midiOut} />
       </Fragment>
     )
   );

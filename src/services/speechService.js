@@ -1,6 +1,6 @@
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
-import { updateMicConnected } from "../components/StatusBar";
+import { updateMicConnected, updateIsListening } from "../components/StatusBar";
 
 let config, websocket;
 
@@ -37,10 +37,12 @@ navigator.mediaDevices.getUserMedia(constraints).then(() => {
 });
 
 recognition.onstart = () => {
+  updateIsListening(true);
   startSound.play();
 };
 
 recognition.onend = () => {
+  updateIsListening(false);
   endSound.play();
 };
 

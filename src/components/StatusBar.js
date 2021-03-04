@@ -3,14 +3,18 @@ import { Container, Row, Col, Badge } from "react-bootstrap";
 
 export let updateMicConnected;
 export let updateScriptConnected;
+export let updateIsListening;
 
-export default function StatusBar() {
+export default function StatusBar({ midiIn, midiOut }) {
+  console.log(midiIn);
   const [micConnected, setMicConnected] = useState(false);
   const [scriptConnected, setScriptConnected] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     updateMicConnected = setMicConnected;
     updateScriptConnected = setScriptConnected;
+    updateIsListening = setIsListening;
   }, []);
 
   return (
@@ -31,15 +35,17 @@ export default function StatusBar() {
           </Col>
           <Col>
             MIDI In
-            <Badge variant="success">Port Name</Badge>
+            <Badge variant="info">{midiIn}</Badge>
           </Col>
           <Col>
             MIDI Out
-            <Badge variant="success">Port Name</Badge>
+            <Badge variant="info">{midiOut}</Badge>
           </Col>
           <Col>
             TlkBck
-            <Badge variant="success">Listening</Badge>
+            <Badge variant={isListening ? "success" : "info"}>
+              {isListening ? "Listening" : "Not Listening"}
+            </Badge>
           </Col>
         </Row>
         <Row>
