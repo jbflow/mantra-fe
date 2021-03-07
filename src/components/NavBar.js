@@ -3,21 +3,39 @@ import { Link } from "react-router-dom";
 import { Navbar, Nav, Form, Button } from "react-bootstrap";
 import { FaCog } from "react-icons/fa";
 import { IconContext } from "react-icons";
+import './NavBar.css';
+
+const styles = {
+  mainbar: {
+    backgroundColor: '#6C757D'
+  },
+  forceColumn: {
+    width: '288px',
+    height: '100vh',
+    flexFlow: 'column',
+    alignItems: 'initial',
+  }
+}
 
 export default function NavBar({ signOut }) {
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Navbar.Brand>TLKBCK</Navbar.Brand>
+    <Navbar variant="dark" expand="lg" style={{ ...styles.forceColumn, ...styles.mainbar }}>
+      {/* <Navbar.Brand>TLKBCK</Navbar.Brand> */}
       <Navbar.Toggle aria-controls="navigation" />
-      <Navbar.Collapse id="navigation">
-        <Nav className="mr-auto">
-          <Link className="nav-link" to="/dashboard">
+      <Navbar.Collapse
+        id="navigation"
+        style={styles.forceColumn}
+      >
+        <Nav
+          className="mr-auto"
+          style={styles.forceColumn}>
+          <Link className="nav-link nav-link-sidebar" to="/dashboard" >
             Dashboard
           </Link>
-          <Link className="nav-link" to="/commands">
+          <Link className="nav-link nav-link-sidebar" to="/commands">
             Command Builder
           </Link>
-          <Link className="nav-link" to="/beta">
+          <Link className="nav-link nav-link-sidebar" to="/beta">
             Testing Area
           </Link>
         </Nav>
