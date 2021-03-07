@@ -37,7 +37,7 @@ const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
 const constraints = { audio: true };
 
 navigator.mediaDevices.getUserMedia(constraints).then(() => {
-  updateMicConnected(true);
+  if (updateMicConnected) updateMicConnected(true);
 });
 
 recognition.onstart = () => {

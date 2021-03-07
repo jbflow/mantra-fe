@@ -1,6 +1,6 @@
 import { MidiToJson } from "../utils/MidiToJson";
 import { updateMidiInputs, updateMidiOutputs } from "../App";
-import { updateConfig } from "../components/Dashboard/Dashboard";
+// import { updateConfig } from "../components/Dashboard/Dashboard";
 import { updateScriptConnected } from "../components/StatusBar";
 
 let config;
@@ -36,20 +36,20 @@ export const sendMIDIMessage = (msg) => {
 
 export const openInPort = (portName) => {
   midiInputs.forEach((input) => {
-    if (input.name == portName && input.name !== "Choose...") {
+    if (input.name === portName && input.name !== "Choose...") {
       midiInput = input;
-    } else if (input.connection == "open") {
+    } else if (input.connection === "open") {
       input.close();
     }
   });
 
-  midiInput.onmidimessage = getMIDIMessage;
+  if (midiInput) midiInput.onmidimessage = getMIDIMessage;
 };
 export const openOutPort = (portName) => {
   midiOutputs.forEach((output) => {
-    if (output.name == portName && output.name !== "Choose...") {
+    if (output.name === portName && output.name !== "Choose...") {
       midiOutput = output;
-    } else if (output.connection == "open") {
+    } else if (output.connection === "open") {
       output.close();
     }
   });

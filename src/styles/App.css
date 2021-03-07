@@ -2877,7 +2877,7 @@ textarea.form-control.is-invalid {
 
 .btn {
   display: inline-block;
-  width: 100%;
+  /* width: 100%; */
   font-weight: 400;
   color: #373a3c;
   text-align: left;
@@ -2893,7 +2893,7 @@ textarea.form-control.is-invalid {
   padding: 0.375rem 0.75rem;
   font-size: 0.9375rem;
   line-height: 1.5;
-  border-radius: 0;
+  border-radius: 4px;
   -webkit-transition: color 0.15s ease-in-out,
     background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
     -webkit-box-shadow 0.15s ease-in-out;
@@ -11007,6 +11007,7 @@ body {
 
 ::-webkit-scrollbar-track {
   -webkit-box-shadow: f 0 0 6px var(--light);
+  box-shadow: f 0 0 6px var(--light);
   -webkit-border-radius: 10px;
   border-radius: 10px;
 }

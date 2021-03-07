@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/App.css";
+import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route, BrowserRouter } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
@@ -49,6 +50,23 @@ function App({ signOut }) {
   const [midiOut, setMidiOut] = useState("None");
 
   useEffect(() => {
+    async function onLoad() {
+      try {
+        await Auth.currentSession();
+        const { attributes } = await Auth.currentAuthenticatedUser();
+        if (attributes) {
+          setuserId(attributes?.sub);
+          localStorage.setItem("userId", attributes?.sub);
+          getPrefs(attributes?.sub);
+        }
+
+        userHasAuthenticated(true);
+      } catch (e) {
+        if (e !== "No current user") {
+          alert(e);
+        }
+      }
+    }
     onLoad();
   }, []);
 
@@ -59,7 +77,7 @@ function App({ signOut }) {
       updateMidiInputs = null;
       updateMidiOutputs = null;
     };
-  });
+  }, [setMidiInputs, setMidiOutputs]);
 
   const getPrefs = (userId) => {
     API.get("talkbackBE", "/prefs?userId=" + userId).then((res) => {
@@ -71,23 +89,7 @@ function App({ signOut }) {
     });
   };
 
-  async function onLoad() {
-    try {
-      await Auth.currentSession();
-      const { attributes } = await Auth.currentAuthenticatedUser();
-      if (attributes) {
-        setuserId(attributes?.sub);
-        localStorage.setItem("userId", attributes?.sub);
-        getPrefs(attributes?.sub);
-      }
 
-      userHasAuthenticated(true);
-    } catch (e) {
-      if (e !== "No current user") {
-        alert(e);
-      }
-    }
-  }
   return (
     isAuthenticated && (
       <Fragment>

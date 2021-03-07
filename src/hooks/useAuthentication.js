@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 
 import { Auth, Hub } from 'aws-amplify'
-import { signInButton, signInButtonContent } from '@aws-amplify/ui'
+// import { signInButton, signInButtonContent } from '@aws-amplify/ui'
+import { Button } from 'react-bootstrap'
 
 /**
  * Handle user authentication and related features.
@@ -91,10 +92,10 @@ const useAuthentication = () => {
 	}, [refreshState])
 
 	const CognitoSignInButton = useCallback(
-		({ label = 'Sign In' }) => (
-			<button className={signInButton} onClick={signIn}>
-				<span className={signInButtonContent}>{label}</span>
-			</button>
+		({ label = 'Sign In', ...props }) => (
+			<Button variant="primary" onClick={signIn} {...props}>
+				{label}
+			</Button>
 		),
 		[signIn]
 	)
