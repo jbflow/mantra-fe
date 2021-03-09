@@ -53,7 +53,7 @@ export const openOutPort = (portName) => {
       output.close();
     }
   });
-  if (midiOutput.name === midiInput.name) {
+  if (midiOutput && midiInput && midiOutput.name === midiInput.name) {
     alert("MIDI In and Out cannot be the same port!");
   } else {
     midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);

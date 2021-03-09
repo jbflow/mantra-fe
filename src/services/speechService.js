@@ -1,10 +1,6 @@
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
-import {
-  updateMicConnected,
-  updateIsListening,
-  updateTranscript,
-} from "../components/StatusBar";
+import { updateIsListening, updateTranscript } from "../components/StatusBar";
 
 let config, websocket;
 
@@ -27,19 +23,12 @@ const SpeechGrammarList = window.webkitSpeechGrammarList;
 var speechRecognitionList = new SpeechGrammarList();
 speechRecognitionList.addFromString(grammar, 1);
 recognition.continuous = true;
-q;
+
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
-
 const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
 const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
-
-const constraints = { audio: true };
-
-navigator.mediaDevices.getUserMedia(constraints).then(() => {
-  if (updateMicConnected) updateMicConnected(true);
-});
 
 recognition.onstart = () => {
   updateIsListening(true);
