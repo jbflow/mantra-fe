@@ -27,6 +27,7 @@ const SpeechGrammarList = window.webkitSpeechGrammarList;
 var speechRecognitionList = new SpeechGrammarList();
 speechRecognitionList.addFromString(grammar, 1);
 recognition.continuous = true;
+q;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
