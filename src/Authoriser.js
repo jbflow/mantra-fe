@@ -1,4 +1,5 @@
 import { Auth, Hub } from 'aws-amplify'
+import { Card } from 'react-bootstrap';
 import config from "./amplify-config";
 import App from './App';
 import useAuthentication from './hooks/useAuthentication';
@@ -43,7 +44,28 @@ const Authoriser = () => {
 			<>
 				<App signOut={signOut} />
 			</>
-		) : <SignInButton />
+		) : (
+			<>
+				<div style={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					width: "100vw", // make sure the parent is full screen 
+					height: "80vh", // so that the content will center correctly
+				}}>
+					<Card style={{ width: '18rem' }}>
+						<Card.Header><p style={{ color: '#0069D9' }}>tlkbck</p></Card.Header>
+						<Card.Body>
+							<Card.Title>Sign In</Card.Title>
+							<Card.Text>
+								New user? <a href="#">Create an account</a>
+							</Card.Text>
+							<SignInButton style={{ float: "right" }} />
+						</Card.Body>
+					</Card>
+				</div>
+			</>
+		)
 	)
 };
 export default Authoriser;

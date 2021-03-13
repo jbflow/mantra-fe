@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Badge } from "react-bootstrap";
 
-export let updateMicConnected;
 export let updateScriptConnected;
 export let updateIsListening;
 export let updateTranscript;
@@ -14,10 +13,15 @@ export default function StatusBar({ midiIn, midiOut }) {
   const [transcript, setTranscript] = useState("");
 
   useEffect(() => {
-    updateMicConnected = setMicConnected;
     updateScriptConnected = setScriptConnected;
     updateIsListening = setIsListening;
     updateTranscript = setTranscript;
+
+    const constraints = { audio: true };
+
+    navigator.mediaDevices.getUserMedia(constraints).then(() => {
+      setMicConnected(true);
+    });
   }, []);
 
   return (

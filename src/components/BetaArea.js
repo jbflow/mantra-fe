@@ -81,29 +81,17 @@ export default function BetaArea({ ws, getConfig }) {
             </tr>
           </tbody>
         </table>
-        <p className="lead">
-          Please use this form to submit bug reports and feature requests.
-        </p>
-
-        <div className="form-group" style={{ width: "50%" }}>
-          <textarea
-            className="form-control"
-            id="betaMessage"
-            rows="3"
-          ></textarea>
-        </div>
-
-        <button
-          onClick={submitReport}
-          type="button"
-          className="btn btn-outline-primary"
-          style={{ width: "10%" }}
-          disabled={isSubmitting}
+        <iframe
+          src="https://docs.google.com/forms/d/e/1FAIpQLSecPQTHl6PT84t-d5FyrdQ_bvV0P_zYrPyg2ay1W_yKDP3DtA/viewform?embedded=true"
+          width="640"
+          height="849"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
         >
-          {isSubmitting ? "Submitting..." : "Submit"}
-        </button>
-        <br />
-        <br />
+          Loading…
+        </iframe>
+
         <p>Thank you for your participation!</p>
       </div>
     </Fragment>

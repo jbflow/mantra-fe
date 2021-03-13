@@ -1,0 +1,11 @@
+.nav-link-sidebar:focus {
+  /* color: red !important; */
+  /* border: 1px white solid; */
+  background-color: #636a71;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  margin-right: 16px;
+}
+.nav-link-sidebar {
+  color: white !important;
+}

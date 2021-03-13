@@ -25,7 +25,7 @@ export default function Dashboard() {
     return () => {
       updateConfig = null;
     };
-  });
+  }, [setConfig]);
 
   const tabComponents = [
     <General config={config} />,
