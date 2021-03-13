@@ -1,23 +1,21 @@
 import { MidiToJson } from "../utils/MidiToJson";
-import { updateMidiInputs, updateMidiOutputs } from "../App";
-import { updateConfig } from "../components/Dashboard/Dashboard";
-import { updateScriptConnected } from "../components/StatusBar";
 
 let config;
 
-let midiInputs = [];
-let midiOutputs = [];
-let midiInput;
-let midiOutput;
+let midiOutputs;
+let midiInputs;
 
+// let inPortName;
+// let outPortName;
+
+let midiOutput;
+let midiInput;
 var setConfigOnSpeech;
 
 const setConfig = (midi) => {
   config = MidiToJson(midi, config);
   // console.log('config: ', config);
-  updateScriptConnected(true);
   setConfigOnSpeech(config);
-  // updateConfig(config);
 };
 
 export const getMIDIMessage = (msg) => {
@@ -34,37 +32,36 @@ export const sendMIDIMessage = (msg) => {
   }
 };
 
-export const openInPort = (portName) => {
-  midiInputs.forEach((input) => {
-    if (input.name == portName && input.name !== "Choose...") {
-      midiInput = input;
-    } else if (input.connection == "open") {
-      input.close();
-    }
-  });
-
-  midiInput.onmidimessage = getMIDIMessage;
+export const setInPort = (input) => {
+  // inPortName = input;
+  console.log(input);
 };
-export const openOutPort = (portName) => {
-  midiOutputs.forEach((output) => {
-    if (output.name == portName && output.name !== "Choose...") {
-      midiOutput = output;
-    } else if (output.connection == "open") {
-      output.close();
-    }
-  });
-  if (midiOutput.name === midiInput.name) {
-    alert("MIDI In and Out cannot be the same port!");
-  } else {
-    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
-  }
+export const setOutPort = (output) => {
+  // outPortName = output;
+  console.log(output);
 };
 
 const onMIDISuccess = (midiAccess) => {
   midiInputs = Array.from(midiAccess.inputs.values());
   midiOutputs = Array.from(midiAccess.outputs.values());
-  if (updateMidiInputs) updateMidiInputs(midiInputs);
-  if (updateMidiOutputs) updateMidiOutputs(midiOutputs);
+  console.log(midiInputs, midiOutputs);
+
+  midiInputs.forEach((input) => {
+    if (input.name === "IAC Driver TB IN" || input.name === "TB IN") {
+      midiInput = input;
+    }
+  });
+  midiOutputs.forEach((output) => {
+    if (output.name === "IAC Driver TB OUT" || output.name === "TB OUT") {
+      midiOutput = output;
+    }
+  });
+
+  if (midiInput && midiOutput) {
+    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+    midiInput.onmidimessage = getMIDIMessage;
+    // window.Preferences.setMidiPorts(midiInputs, midiOutputs); // set the ports in the prefs componenet to render them in drop downs
+  }
 };
 
 const onMIDIFailure = () => {
@@ -75,6 +72,25 @@ const requestMIDI = () => {
     .requestMIDIAccess({ sysex: true })
     .then(onMIDISuccess, onMIDIFailure);
 };
+
+// const openOutPort = () => {
+//   midiOutputs.forEach((outPort) => {
+//     if (outPort.name == outPortName) {
+//       midiOutput = outPort;
+//       midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+//     }
+//   });
+// };
+// const openInPort = () => {
+//   midiInputs.forEach((inPort) => {
+//     if (inPort.name == inPortName) {
+//       console.log("open in Port:", inPort.name);
+
+//       midiInput = inPort;
+//       midiInput.onmidimessage = getMIDIMessage;
+//     }
+//   });
+// };
 
 export const startMidi = (setConfig) => {
   setConfigOnSpeech = setConfig;

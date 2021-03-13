@@ -1,14 +1,10 @@
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
-import {
-  updateMicConnected,
-  updateIsListening,
-  updateTranscript,
-} from "../components/StatusBar";
 
 let config, websocket;
 
 Howler.autoUnlock = true;
+console.log('Howler.autoUnlock: ', Howler.autoUnlock);
 // const playAlert = require("alert-sound-notify");
 
 // Setup porcupine/bumblebee
@@ -21,32 +17,33 @@ bumblebee.setSensitivity(0.7);
 // Setup webspeech API
 const SpeechRecognition = window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
+
+let startSound
+let endSound
+
 var grammar =
   "#JSGF V1.0; grammar phrases; public <phrase> = select the bass | track 1 | track 2 | arm track 1 | bass | arm | arm track | 1 to | load a;";
 const SpeechGrammarList = window.webkitSpeechGrammarList;
 var speechRecognitionList = new SpeechGrammarList();
 speechRecognitionList.addFromString(grammar, 1);
+
 recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
-const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
-const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
-
-const constraints = { audio: true };
-
-navigator.mediaDevices.getUserMedia(constraints).then(() => {
-  updateMicConnected(true);
-});
+const createSounds = () => {
+  startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
+  endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
+}
 
 recognition.onstart = () => {
-  updateIsListening(true);
+  if (!startSound) createSounds();
   startSound.play();
 };
 
 recognition.onend = () => {
-  updateIsListening(false);
+  if (!endSound) createSounds();
   endSound.play();
 };
 
@@ -55,16 +52,15 @@ recognition.onresult = (event) => {
   for (var i = event.resultIndex; i < event.results.length; ++i) {
     transcript += event.results[i][0].transcript;
   }
-
+  console.log(transcript);
   if (transcript.includes("stop listening")) {
     recognition.stop();
   }
   if (transcript) {
-    updateTranscript(transcript);
+    console.log("transcript: ", transcript);
   }
-
+  console.log("websocket", websocket);
   console.log("config", config);
-
   websocket.send(
     JSON.stringify({
       message: transcript,
