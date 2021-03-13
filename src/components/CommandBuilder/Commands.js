@@ -60,10 +60,10 @@ export default function Commands({ updateSelected, userId }) {
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-        userId +
-        "&commandId=" +
-        command.id +
-        "&patching=command",
+      userId +
+      "&commandId=" +
+      command.id +
+      "&patching=command",
       {
         body: [newName],
       }
@@ -148,7 +148,8 @@ export default function Commands({ updateSelected, userId }) {
 
   return (
     <>
-      <Container className="h-100 pre-scrollable">
+
+      <Container style={{ paddingRight: 0, paddingLeft: 0 }}>
         {Object.entries(commands).map(([key, command]) => (
           <Form
             key={command.id}
@@ -159,19 +160,23 @@ export default function Commands({ updateSelected, userId }) {
           >
             <Form.Group
               as={Row}
+              style={{
+                margin: 0,
+                borderTop: 0
+              }}
               className={classNames(
                 {
-                  "border rounded-pill border-secondary mt-2 ml-2 mr-2":
+                  "border-bottom   ":
                     selected !== command.id,
                 },
                 {
-                  "border rounded-pill border-secondary bg-light mt-2 ml-2 mr-2 all-3s":
+                  "border-bottom   bg-light  all-3s":
                     selected === command.id,
                 }
               )}
             >
               <>
-                <Col sm={command.id !== isEditing ? 10 : 9}>
+                <Col sm={command.id !== isEditing ? 9 : 8}>
                   <Form.Control
                     plaintext
                     readOnly={command.id !== isEditing}
@@ -181,6 +186,10 @@ export default function Commands({ updateSelected, userId }) {
                         ? "btn btn-outline"
                         : "form-control-commands btn"
                     }
+                    style={{
+                      fontWeight: 700,
+                      padding: 10
+                    }}
                     onDoubleClick={() => editCommand(command)}
                     onClick={() => handleSelection(command.id)}
                     ref={command.id === isEditing ? editedInput : null}
@@ -230,19 +239,21 @@ export default function Commands({ updateSelected, userId }) {
         ))}
       </Container>
       <Container
-        className="p-1 bg-secondary rounded-top"
+        className="border-top"
         style={{
-          zIndex: "1030",
-          right: "0",
-          bottom: "0",
-          left: "0",
-          position: "absolute",
+          paddingRight: 0,
+          paddingLeft: 0,
+          position: 'absolute',
+          bottom: 0
+
         }}
+
       >
         <Form onSubmit={handleAddRow}>
           <Form.Group
             as={Row}
-            className="border rounded-pill border-secondary ml-2 mt-3 mr-4 bg-light"
+            className="border ml-2 mt-3 mr-0 bg-light"
+            style={{ borderRadius: '20px 0px 0px 20px' }}
           >
             {showCreate ? (
               <Col sm={10}>
@@ -257,7 +268,7 @@ export default function Commands({ updateSelected, userId }) {
               </Col>
             ) : (
               <>
-                <Col sm={10}>
+                <Col sm={9}>
                   <Form.Control
                     className="form-control-commands"
                     type="text"

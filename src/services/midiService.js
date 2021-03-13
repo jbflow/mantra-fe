@@ -45,7 +45,15 @@ export const openInPort = (portName) => {
 
   if (midiInput) midiInput.onmidimessage = getMIDIMessage;
 };
+
+const sendInit = () => {
+  if (midiOutput) {
+    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+  }
+}
+
 export const openOutPort = (portName) => {
+  console.log('openOutPort: ', openOutPort);
   midiOutputs.forEach((output) => {
     if (output.name === portName && output.name !== "Choose...") {
       midiOutput = output;
@@ -56,7 +64,7 @@ export const openOutPort = (portName) => {
   if (midiOutput && midiInput && midiOutput.name === midiInput.name) {
     alert("MIDI In and Out cannot be the same port!");
   } else {
-    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
+    sendInit();
   }
 };
 

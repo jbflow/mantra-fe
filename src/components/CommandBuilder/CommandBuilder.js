@@ -13,10 +13,10 @@ export default function CommandBuilder({ userId }) {
     <Container fluid>
       <Row>
         <Col
-          sm={3}
-          className="border-right border-secondary vh-87"
+          className="border-right vh-87"
           style={{
-            backgroundColor: "#e9ecef",
+            backgroundColor: "#FFFFFF",
+            padding: 0,
           }}
         >
           <Commands updateSelected={updateSelected} userId={userId} />
