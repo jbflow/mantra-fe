@@ -58,9 +58,10 @@ recognition.onresult = (event) => {
   websocket.send(
     JSON.stringify({
       message: transcript,
-      action: "command",
       config: config,
+      action: "command",
       userId: localStorage.getItem("userId"),
+      last_subject: localStorage.getItem("lastSubject"),
     })
   );
 };
