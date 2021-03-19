@@ -167,10 +167,6 @@ export default function Preferences({
         </Col>
       </Row>
       <Row className="p-3">
-        <h3>AI Personality</h3>
-      </Row>
-
-      <Row className="p-3">
         <Col sm={2}>
           <Button onClick={!isSaving ? patchPrefs : null} disabled={isSaving}>
             {isSaving ? "Saving..." : "Save"}
