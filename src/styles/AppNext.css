@@ -27,3 +27,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.rounded-more {
+  border-radius: 2rem !important;
+}

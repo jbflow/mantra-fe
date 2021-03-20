@@ -41,7 +41,7 @@ export default function TopBar({ signOut }) {
             <FaCog className="mr-sm-3" color="#6C757D" />
           </Link>
         </IconContext.Provider>
-        <Button variant="dark" block={false} onClick={signOut} style={{ margin: 'initial' }}>
+        <Button variant="dark" block={false} onClick={signOut} style={{ margin: 'initial' }} className="rounded-more">
           Sign Out
         </Button>
       </div>

@@ -58,7 +58,7 @@ export default function NavBar({ signOut }) {
           </Link>
         </IconContext.Provider>
         <Form inline>
-          <Button variant="outline-light" onClick={signOut}>
+          <Button variant="outline-light rounded-more" onClick={signOut}>
             Sign Out
           </Button>
         </Form>

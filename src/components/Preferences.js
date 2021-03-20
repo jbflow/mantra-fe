@@ -168,7 +168,7 @@ export default function Preferences({
       </Row>
       <Row className="p-3">
         <Col sm={2}>
-          <Button onClick={!isSaving ? patchPrefs : null} disabled={isSaving}>
+          <Button onClick={!isSaving ? patchPrefs : null} disabled={isSaving} className="rounded-more">
             {isSaving ? "Saving..." : "Save"}
           </Button>
         </Col>

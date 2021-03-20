@@ -203,18 +203,18 @@ export default function Actions({ userId, selected: propSelected }) {
               <Col md={{ span: 6 }} >
                 <Button
                   disabled={saving}
-                  className="btn btn-primary rounded text-center"
+                  className="btn btn-primary rounded-more text-center"
                   onClick={!saving ? saveActions : null}
                 >
                   {saving ? "Saving..." : "Save"}
-                </Button><Button className="btn btn-primary rounded ml-2 text-center">
+                </Button><Button className="btn btn-primary rounded-more ml-2 text-center">
                   Test
                 </Button>
               </Col>
               <Col md={{ span: 6 }} className="justify-content-end text-right p-0">
                 <Button
                   disabled
-                  className="btn btn-dark rounded text-center mr-1"
+                  className="btn btn-dark rounded-more text-center mr-1"
                 >
                   Make Lesson
                 </Button>
