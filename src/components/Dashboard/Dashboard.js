@@ -37,7 +37,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <Container>
+    <Container className="h-100">
       <Tabs defaultActiveKey="Tracks" id="uncontrolled-tab-example">
         {tabArray.map((tab, index) => (
           <Tab key={tab} eventKey={tab} title={tab}>

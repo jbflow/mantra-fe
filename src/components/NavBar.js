@@ -1,8 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Navbar, Nav, Form, Button } from "react-bootstrap";
-import { FaCog } from "react-icons/fa";
-import { IconContext } from "react-icons";
+import { Navbar, Nav } from "react-bootstrap";
 import './NavBar.css';
 
 const styles = {
@@ -10,10 +8,13 @@ const styles = {
     backgroundColor: '#6C757D'
   },
   forceColumn: {
-    width: '200px',
-    height: '100vh',
+    width: '210px',
+    height: '100%',
     flexFlow: 'column',
     alignItems: 'initial',
+    position: 'fixed',
+    paddingTop: 20,
+    paddingRight: 10
   },
   icon: {
     float: 'right',
@@ -23,46 +24,31 @@ const styles = {
 
 export default function NavBar({ signOut }) {
   return (
-    <Navbar variant="dark" expand="lg" style={{ ...styles.forceColumn, ...styles.mainbar }}>
-      <Navbar.Toggle aria-controls="navigation" />
-      <Navbar.Collapse
-        id="navigation"
-        style={styles.forceColumn}
-      >
-        <Nav
-          className="mr-auto"
-          style={styles.forceColumn}>
-          <Link className="nav-link nav-link-sidebar" to="/dashboard" >
-            Dashboard
-            <img style={styles.icon} alt='Dashboard nav logo' src='./images/menu-icons/speedometer.svg' />
-          </Link>
-          <Link className="nav-link nav-link-sidebar" to="/commands">
-            Command Builder
-            <img style={styles.icon} alt='Command Builder nav logo' src='./images/menu-icons/command.svg' />
-          </Link>
-          <Link className="nav-link nav-link-sidebar" to="/beta">
-            Testing Area
-            <img style={styles.icon} alt='Testing Area nav logo' src='./images/menu-icons/gear-wide-connected.svg' />
-          </Link>
-        </Nav>
-        <IconContext.Provider
-          value={{
-            style: {
-              fontSize: "20px",
-              cursor: "pointer",
-            },
-          }}
+    <div>
+      <Navbar variant="dark" expand="lg" style={{ ...styles.forceColumn, ...styles.mainbar }}>
+        <Navbar.Toggle aria-controls="navigation" />
+        <Navbar.Collapse
+          id="navigation"
+          style={styles.forceColumn}
         >
-          <Link to="/prefs">
-            <FaCog className="mr-sm-3" color="white" />
-          </Link>
-        </IconContext.Provider>
-        <Form inline>
-          <Button variant="outline-light rounded-more" onClick={signOut}>
-            Sign Out
-          </Button>
-        </Form>
-      </Navbar.Collapse>
-    </Navbar>
+          <Nav
+            className="mr-auto"
+            style={styles.forceColumn}>
+            <Link className="nav-link nav-link-sidebar" to="/dashboard" >
+              Dashboard
+            <img style={styles.icon} alt='Dashboard nav logo' src='./images/menu-icons/speedometer.svg' />
+            </Link>
+            <Link className="nav-link nav-link-sidebar" to="/commands">
+              Command Builder
+            <img style={styles.icon} alt='Command Builder nav logo' src='./images/menu-icons/command.svg' />
+            </Link>
+            <Link className="nav-link nav-link-sidebar" to="/beta">
+              Testing Area
+            <img style={styles.icon} alt='Testing Area nav logo' src='./images/menu-icons/gear-wide-connected.svg' />
+            </Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    </div>
   );
 }

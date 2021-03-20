@@ -149,7 +149,7 @@ export default function Commands({ updateSelected, userId }) {
   return (
     <>
 
-      <Container style={{ paddingRight: 0, paddingLeft: 0 }}>
+      <Container style={{ paddingRight: 0, paddingLeft: 0, maxHeight: 'calc(100% - 70px)', overflowY: 'scroll' }}>
         {Object.entries(commands).map(([key, command]) => (
           <Form
             key={command.id}

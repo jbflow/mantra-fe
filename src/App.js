@@ -93,60 +93,64 @@ function App({ signOut }) {
 
   return (
     isAuthenticated && (
-      <Fragment>
+      <>
         <BrowserRouter>
-          <TopBar signOut={signOut} />
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row'
-          }}>
+          <div>
+            <TopBar signOut={signOut} />
             <NavBar />
-            <Route
-              path="/dashboard"
-              render={(props) => (
-                <Dashboard {...props} getConfig={getConfigFunction} />
-              )}
-            />
-            <Route
-              path="/prefs"
-              render={(props) => (
-                <Preferences
-                  {...props}
-                  userId={userId}
-                  midiInputs={midiInputs}
-                  midiOutputs={midiOutputs}
-                  midiIn={midiIn}
-                  midiOut={midiOut}
-                  setMidiIn={setMidiIn}
-                  setMidiOut={setMidiOut}
-                />
-              )}
-            />
-            <Route
-              path="/commands"
-              render={(props) => (
-                <CommandBuilder
-                  {...props}
-                  ws={getWebSocket()}
-                  getConfig={getConfigFunction}
-                  userId={userId}
-                />
-              )}
-            />
-            <Route
-              path="/beta"
-              render={(props) => (
-                <BetaArea
-                  {...props}
-                  ws={getWebSocket()}
-                  getConfig={getConfigFunction}
-                />
-              )}
-            />
+            <div style={{
+              paddingTop: 54,
+              paddingLeft: 210,
+              display: 'flex',
+              flexDirection: 'row'
+            }}>
+              <Route
+                path="/dashboard"
+                render={(props) => (
+                  <Dashboard {...props} getConfig={getConfigFunction} />
+                )}
+              />
+              <Route
+                path="/prefs"
+                render={(props) => (
+                  <Preferences
+                    {...props}
+                    userId={userId}
+                    midiInputs={midiInputs}
+                    midiOutputs={midiOutputs}
+                    midiIn={midiIn}
+                    midiOut={midiOut}
+                    setMidiIn={setMidiIn}
+                    setMidiOut={setMidiOut}
+                  />
+                )}
+              />
+              <Route
+                path="/commands"
+                render={(props) => (
+                  <CommandBuilder
+                    {...props}
+                    ws={getWebSocket()}
+                    getConfig={getConfigFunction}
+                    userId={userId}
+                  />
+                )}
+              />
+              <Route
+                path="/beta"
+                render={(props) => (
+                  <BetaArea
+                    {...props}
+                    ws={getWebSocket()}
+                    getConfig={getConfigFunction}
+                  />
+                )}
+              />
+            </div>
+            <StatusBar midiIn={midiIn} midiOut={midiOut} />
           </div>
         </BrowserRouter>
-        <StatusBar midiIn={midiIn} midiOut={midiOut} />
-      </Fragment>
+      </>
     )
   );
 }

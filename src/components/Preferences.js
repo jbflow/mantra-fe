@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { openInPort, openOutPort } from "../services/midiService";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { API } from "aws-amplify";

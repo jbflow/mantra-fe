@@ -20,7 +20,7 @@ const Circ = () => (
 
 export default function TopBar({ signOut }) {
   return (
-    <Navbar variant="dark" expand={false} style={{ border: '1px solid #E4E4E4' }}>
+    <Navbar variant="dark" expand={false} style={{ border: '1px solid #E4E4E4' }} className="fixed-top bg-white">
       <div>
         <Circ />
         <Circ />

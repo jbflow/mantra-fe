@@ -10,7 +10,7 @@ export default function CommandBuilder({ userId }) {
   };
 
   return (
-    <Container fluid>
+    <Container fluid className="modal-open">
       <Row>
         <Col
           className="border-right vh-87"
@@ -26,6 +26,6 @@ export default function CommandBuilder({ userId }) {
           <Actions selected={selected} userId={userId} />
         </Col>
       </Row>
-    </Container>
+    </Container >
   );
 }
