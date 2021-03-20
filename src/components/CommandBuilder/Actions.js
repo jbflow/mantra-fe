@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { GrDrag, GrDuplicate, GrAddCircle } from "react-icons/gr";
+import { GrDrag, GrAdd } from "react-icons/gr";
+import { IoMdCopy } from "react-icons/io";
 import { IconContext } from "react-icons";
 import { Container, Card, Row, Col, Form, Button } from "react-bootstrap";
 import { API } from "aws-amplify";
@@ -108,12 +109,12 @@ export default function Actions({ userId, selected: propSelected }) {
                           as={Row}
                           {...provided.draggableProps}
                           ref={provided.innerRef}
-                          className="border border-dark mt-2 ml-2 mr-2 p-2 text-right actionItem justify-content-between"
+                          className="border border-dark mt-2 ml-2 mr-2 p-0 text-right actionItem justify-content-between align-items-center"
                         >
                           <Col sm={8}>
-                            <div className="d-flex justify-content-start">
+                            <div className="d-flex justify-content-start ">
                               <Col
-                                className="pt-1"
+                                className="pt-2"
                                 sm={0.5}
                                 {...provided.dragHandleProps}
                               >
@@ -141,24 +142,9 @@ export default function Actions({ userId, selected: propSelected }) {
                             </div>
                           </Col>
 
-                          <Col sm={2}>
-                            <div className="d-flex justify-content-end">
-                              <Col className="pt-1 mr-3 text-right" sm={1}>
-                                {actions.length - 1 === index && (
-                                  <IconContext.Provider
-                                    value={{
-                                      style: {
-                                        fontSize: "20px",
-                                        cursor: "pointer",
-                                      },
-                                    }}
-                                  >
-                                    <GrAddCircle onClick={handleAddAction} />
-                                  </IconContext.Provider>
-                                )}
-                              </Col>
-
-                              <Col className="pt-1 pr-2 text-right" sm={0.5}>
+                          <Col sm={4} className="p-0">
+                            <div className="d-flex justify-content-end " style={{ height: 50 }}>
+                              <Col className="border-left svg-container" sm={3} style={{ height: 50 }}>
                                 <IconContext.Provider
                                   value={{
                                     style: {
@@ -167,7 +153,7 @@ export default function Actions({ userId, selected: propSelected }) {
                                     },
                                   }}
                                 >
-                                  <GrDuplicate
+                                  <IoMdCopy
                                     onClick={() => {
                                       handleDuplicateAction(index);
                                     }}
@@ -175,7 +161,7 @@ export default function Actions({ userId, selected: propSelected }) {
                                 </IconContext.Provider>
                               </Col>
 
-                              <Col className="text-right" sm={0.5}>
+                              <Col className="border-left svg-container" sm={3}>
                                 {actions.length !== 1 && (
                                   <DeleteModal
                                     deleteCommand={handleDeleteAction}
@@ -193,6 +179,18 @@ export default function Actions({ userId, selected: propSelected }) {
                 })}
 
                 {provided.placeholder}
+                <div className="svg-container addAction m-2">
+                  <IconContext.Provider
+                    value={{
+                      style: {
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      },
+                    }}
+                  >
+                    <GrAdd onClick={handleAddAction} />
+                  </IconContext.Provider>
+                </div>
               </Container>
             )
             }
@@ -200,26 +198,23 @@ export default function Actions({ userId, selected: propSelected }) {
         </DragDropContext>
 
         {selected && (
-          <Container fluid className="mt-5">
-            <Row>
-              <Col md={{ span: 1 }}>
+          <Container fluid className="mt-5 justify-content-between flex-row">
+            <Row className="justify-content-between">
+              <Col md={{ span: 6 }} >
                 <Button
                   disabled={saving}
-                  className="btn btn-primary rounded ml-2 text-center"
+                  className="btn btn-primary rounded text-center"
                   onClick={!saving ? saveActions : null}
                 >
                   {saving ? "Saving..." : "Save"}
-                </Button>
-              </Col>
-              <Col md={{ span: 1 }}>
-                <Button className="btn btn-primary rounded ml-2 text-center">
+                </Button><Button className="btn btn-primary rounded ml-2 text-center">
                   Test
                 </Button>
               </Col>
-              <Col md={{ span: 2, offset: 8 }}>
+              <Col md={{ span: 6 }} className="justify-content-end text-right p-0">
                 <Button
                   disabled
-                  className="btn btn-dark rounded mr-5 text-center"
+                  className="btn btn-dark rounded text-center mr-1"
                 >
                   Make Lesson
                 </Button>

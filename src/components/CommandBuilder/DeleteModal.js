@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Col, Modal, Button } from "react-bootstrap";
-import { GrFormTrash } from "react-icons/gr";
 import { IconContext } from "react-icons";
+import { IoMdClose } from "react-icons/io";
 
 export default function DeleteModal({ deleteCommand, command, isDeleting }) {
   const [show, setShow] = useState(false);
@@ -18,7 +18,7 @@ export default function DeleteModal({ deleteCommand, command, isDeleting }) {
           },
         }}
       >
-        <GrFormTrash onClick={handleShow} />
+        <IoMdClose onClick={handleShow} />
       </IconContext.Provider>
 
       <Modal size="sm" show={show} onHide={handleClose} animation={false}>
