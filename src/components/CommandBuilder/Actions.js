@@ -52,10 +52,10 @@ export default function Actions({ userId, selected: propSelected }) {
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-        userId +
-        "&commandId=" +
-        selected +
-        "&patching=actions",
+      userId +
+      "&commandId=" +
+      selected +
+      "&patching=actions",
       { body: actions }
     ).then(() => {
       setSaving(false);
@@ -73,14 +73,25 @@ export default function Actions({ userId, selected: propSelected }) {
   };
 
   return (
-    <Card className="mt-3" bg={"light"} text={"dark"}>
-      <Card.Header className="bg-primary text-light">{command}</Card.Header>
-
-      <Card.Body>
+    <Card className="ml-4 mt-3 border-0 h-100 " bg={"light"} text={"dark"}>
+      <div className=" bg-white p-4">
+        <Card.Header className="text-primary font-weight-bold bg-white border-bottom p-0">
+          {command}
+          <br />
+          {command && (
+            <>
+              <p className="text-secondary font-weight-light small">Actions</p>
+              {/* <p className="text-secondary font-weight-light small">Last Edited:</p> */}
+            </>
+          )}
+        </Card.Header>
+      </div>
+      <Card.Body className="bg-white h-100 ">
         <DragDropContext onDragEnd={handleOneDragEnd}>
-          <Droppable droppableId="actions">
+          <Droppable droppableId="actions" >
             {(provided) => (
               <Container
+                className="p-0"
                 fluid
                 {...provided.droppableProps}
                 ref={provided.innerRef}
@@ -97,74 +108,83 @@ export default function Actions({ userId, selected: propSelected }) {
                           as={Row}
                           {...provided.draggableProps}
                           ref={provided.innerRef}
-                          className="border rounded border-dark mt-2 ml-2 mr-2 text-right"
+                          className="border border-dark mt-2 ml-2 mr-2 p-2 text-right actionItem justify-content-between"
                         >
-                          <Col
-                            className="pt-1"
-                            sm={0.5}
-                            {...provided.dragHandleProps}
-                          >
-                            <IconContext.Provider
-                              value={{
-                                style: {
-                                  fontSize: "30px",
-                                },
-                              }}
-                            >
-                              <GrDrag />
-                            </IconContext.Provider>
-                          </Col>
-                          <Col sm={10}>
-                            <Form.Control
-                              plaintext
-                              value={action}
-                              name="action"
-                              className="form-control"
-                              placeholder="Enter voice action..."
-                              onChange={(event) => onChange(event, index)}
-                            />
-                          </Col>
-
-                          <Col className="pt-1 pr-2 text-right" sm={1}>
-                            {actions.length - 1 === index && (
-                              <IconContext.Provider
-                                value={{
-                                  style: {
-                                    fontSize: "20px",
-                                    cursor: "pointer",
-                                  },
-                                }}
+                          <Col sm={8}>
+                            <div className="d-flex justify-content-start">
+                              <Col
+                                className="pt-1"
+                                sm={0.5}
+                                {...provided.dragHandleProps}
                               >
-                                <GrAddCircle onClick={handleAddAction} />
-                              </IconContext.Provider>
-                            )}
+                                <IconContext.Provider
+                                  value={{
+                                    style: {
+                                      // fontSize: "30px",
+                                      transform: 'rotate(-90deg)'
+                                    },
+                                  }}
+                                >
+                                  <GrDrag />
+                                </IconContext.Provider>
+                              </Col>
+                              <Col sm={6}>
+                                <Form.Control
+                                  plaintext
+                                  value={action}
+                                  name="action"
+                                  className="form-control"
+                                  placeholder="Enter voice action..."
+                                  onChange={(event) => onChange(event, index)}
+                                />
+                              </Col>
+                            </div>
                           </Col>
 
-                          <Col className="pt-1 pr-2 text-right" sm={0.5}>
-                            <IconContext.Provider
-                              value={{
-                                style: {
-                                  fontSize: "20px",
-                                  cursor: "pointer",
-                                },
-                              }}
-                            >
-                              <GrDuplicate
-                                onClick={() => {
-                                  handleDuplicateAction(index);
-                                }}
-                              />
-                            </IconContext.Provider>
-                          </Col>
+                          <Col sm={2}>
+                            <div className="d-flex justify-content-end">
+                              <Col className="pt-1 mr-3 text-right" sm={1}>
+                                {actions.length - 1 === index && (
+                                  <IconContext.Provider
+                                    value={{
+                                      style: {
+                                        fontSize: "20px",
+                                        cursor: "pointer",
+                                      },
+                                    }}
+                                  >
+                                    <GrAddCircle onClick={handleAddAction} />
+                                  </IconContext.Provider>
+                                )}
+                              </Col>
 
-                          <Col className="text-right" sm={0.5}>
-                            {actions.length !== 1 && (
-                              <DeleteModal
-                                deleteCommand={handleDeleteAction}
-                                command={index}
-                                deleting={false}
-                              />
-                            )}
+                              <Col className="pt-1 pr-2 text-right" sm={0.5}>
+                                <IconContext.Provider
+                                  value={{
+                                    style: {
+                                      fontSize: "20px",
+                                      cursor: "pointer",
+                                    },
+                                  }}
+                                >
+                                  <GrDuplicate
+                                    onClick={() => {
+                                      handleDuplicateAction(index);
+                                    }}
+                                  />
+                                </IconContext.Provider>
+                              </Col>
+
+                              <Col className="text-right" sm={0.5}>
+                                {actions.length !== 1 && (
+                                  <DeleteModal
+                                    deleteCommand={handleDeleteAction}
+                                    command={index}
+                                    deleting={false}
+                                  />
+                                )}
+                              </Col>
+                            </div>
                           </Col>
                         </Form.Group>
                       )}
@@ -174,7 +194,8 @@ export default function Actions({ userId, selected: propSelected }) {
 
                 {provided.placeholder}
               </Container>
-            )}
+            )
+            }
           </Droppable>
         </DragDropContext>
 

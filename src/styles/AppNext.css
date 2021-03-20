@@ -1,3 +1,13 @@
 body {
   background-color: #f9f9f9;
 }
+
+.actionItem {
+  border-top-left-radius: 2rem !important;
+  border-bottom-left-radius: 2rem !important;
+  background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  box-shadow: 2px 1px 4px #00000029;
+  border: 1px solid #c1c1c1 !important;
+  opacity: 1;
+}
