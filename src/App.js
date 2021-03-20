@@ -5,7 +5,7 @@ import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route, BrowserRouter } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
-import Preferences from "./components/Preferences";
+// import Preferences from "./components/Preferences";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 // import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
 import BetaArea from "./components/BetaArea";
@@ -17,7 +17,7 @@ import Amplify, { API, Auth } from "aws-amplify";
 import config from "./amplify-config";
 import { HTTP_API_URL } from "./utils/Constants";
 
-import { openInPort, openOutPort } from "./services/midiService";
+// import { openInPort, openOutPort } from "./services/midiService";
 import StatusBar from "./components/StatusBar";
 
 Amplify.configure({
@@ -39,14 +39,17 @@ Amplify.configure({
   },
 });
 
-export let updateMidiInputs;
-export let updateMidiOutputs;
+// export let updateMidiInputs;
+// export let updateMidiOutputs;
+
+export let updateMidiIn;
+export let updateMidiOut;
 
 function App({ signOut }) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [userId, setuserId] = useState(null);
-  const [midiInputs, setMidiInputs] = useState([]);
-  const [midiOutputs, setMidiOutputs] = useState([]);
+  // const [midiInputs, setMidiInputs] = useState([]);
+  // const [midiOutputs, setMidiOutputs] = useState([]);
   const [midiIn, setMidiIn] = useState("None");
   const [midiOut, setMidiOut] = useState("None");
 
@@ -58,7 +61,7 @@ function App({ signOut }) {
         if (attributes) {
           setuserId(attributes?.sub);
           localStorage.setItem("userId", attributes?.sub);
-          getPrefs(attributes?.sub);
+          // getPrefs(attributes?.sub);
         }
 
         userHasAuthenticated(true);
@@ -72,24 +75,23 @@ function App({ signOut }) {
   }, []);
 
   useEffect(() => {
-    updateMidiInputs = setMidiInputs;
-    updateMidiOutputs = setMidiOutputs;
+    updateMidiIn = setMidiIn;
+    updateMidiOut = setMidiOut;
     return () => {
-      updateMidiInputs = null;
-      updateMidiOutputs = null;
+      updateMidiIn = null;
+      updateMidiOut = null;
     };
-  }, [setMidiInputs, setMidiOutputs]);
+  }, [setMidiIn, setMidiOut]);
 
-  const getPrefs = (userId) => {
-    API.get("talkbackBE", "/prefs?userId=" + userId).then((res) => {
-      console.log(res.midi_in);
-      setMidiIn(res.midi_in);
-      openInPort(res.midi_in);
-      setMidiOut(res.midi_out);
-      openOutPort(res.midi_out);
-    });
-  };
-
+  // const getPrefs = (userId) => {
+  //   API.get("talkbackBE", "/prefs?userId=" + userId).then((res) => {
+  //     console.log(res.midi_in);
+  //     setMidiIn(res.midi_in);
+  //     openInPort(res.midi_in);
+  //     setMidiOut(res.midi_out);
+  //     openOutPort(res.midi_out);
+  //   });
+  // };
 
   return (
     isAuthenticated && (
@@ -98,19 +100,21 @@ function App({ signOut }) {
           <div>
             <TopBar signOut={signOut} />
             <NavBar />
-            <div style={{
-              paddingTop: 54,
-              paddingLeft: 210,
-              display: 'flex',
-              flexDirection: 'row'
-            }}>
+            <div
+              style={{
+                paddingTop: 54,
+                paddingLeft: 210,
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
               <Route
                 path="/dashboard"
                 render={(props) => (
                   <Dashboard {...props} getConfig={getConfigFunction} />
                 )}
               />
-              <Route
+              {/* <Route
                 path="/prefs"
                 render={(props) => (
                   <Preferences
@@ -124,7 +128,7 @@ function App({ signOut }) {
                     setMidiOut={setMidiOut}
                   />
                 )}
-              />
+              /> */}
               <Route
                 path="/commands"
                 render={(props) => (

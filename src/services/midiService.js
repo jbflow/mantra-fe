@@ -1,6 +1,8 @@
 import { MidiToJson } from "../utils/MidiToJson";
-import { updateMidiInputs, updateMidiOutputs } from "../App";
+// import { updateMidiInputs, updateMidiOutputs } from "../App";
 // import { updateConfig } from "../components/Dashboard/Dashboard";
+
+import { updateMidiIn, updateMidiOut } from "../App";
 import { updateScriptConnected } from "../components/StatusBar";
 
 let config;
@@ -34,45 +36,53 @@ export const sendMIDIMessage = (msg) => {
   }
 };
 
-export const openInPort = (portName) => {
-  midiInputs.forEach((input) => {
-    if (input.name === portName && input.name !== "Choose...") {
-      midiInput = input;
-    } else if (input.connection === "open") {
-      input.close();
-    }
-  });
+// export const openInPort = (portName) => {
+//   midiInputs.forEach((input) => {
+//     if (input.name === portName && input.name !== "Choose...") {
+//       midiInput = input;
+//     } else if (input.connection === "open") {
+//       input.close();
+//     }
+//   });
 
-  if (midiInput) midiInput.onmidimessage = getMIDIMessage;
-};
+//   if (midiInput) midiInput.onmidimessage = getMIDIMessage;
+// };
 
-const sendInit = () => {
-  if (midiOutput) {
-    midiOutput.send([240, 0, 0, 0, 0, 0, 127, 247]);
-  }
-}
-
-export const openOutPort = (portName) => {
-  console.log('openOutPort: ', openOutPort);
-  midiOutputs.forEach((output) => {
-    if (output.name === portName && output.name !== "Choose...") {
-      midiOutput = output;
-    } else if (output.connection === "open") {
-      output.close();
-    }
-  });
-  if (midiOutput && midiInput && midiOutput.name === midiInput.name) {
-    alert("MIDI In and Out cannot be the same port!");
-  } else {
-    sendInit();
-  }
-};
+// export const openOutPort = (portName) => {
+//   console.log('openOutPort: ', openOutPort);
+//   midiOutputs.forEach((output) => {
+//     if (output.name === portName && output.name !== "Choose...") {
+//       midiOutput = output;
+//     } else if (output.connection === "open") {
+//       output.close();
+//     }
+//   });
+//   if (midiOutput && midiInput && midiOutput.name === midiInput.name) {
+//     alert("MIDI In and Out cannot be the same port!");
+//   } else {
+//     sendInit();
+//   }
+// };
 
 const onMIDISuccess = (midiAccess) => {
   midiInputs = Array.from(midiAccess.inputs.values());
   midiOutputs = Array.from(midiAccess.outputs.values());
-  if (updateMidiInputs) updateMidiInputs(midiInputs);
-  if (updateMidiOutputs) updateMidiOutputs(midiOutputs);
+  midiInputs.forEach((input) => {
+    if (input.name === "TB In") {
+      midiInput = input;
+      console.log(midiInput);
+      if (midiInput) midiInput.onmidimessage = getMIDIMessage;
+    }
+  });
+  midiOutputs.forEach((output) => {
+    if (output.name === "TB Out") {
+      midiOutput = output;
+      console.log(midiOutput);
+    }
+  });
+
+  if (updateMidiIn) updateMidiIn(midiInput.name);
+  if (updateMidiOut) updateMidiOut(midiOutput.name);
 };
 
 const onMIDIFailure = () => {

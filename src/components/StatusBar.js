@@ -6,7 +6,6 @@ export let updateIsListening;
 export let updateTranscript;
 
 export default function StatusBar({ midiIn, midiOut }) {
-  console.log(midiIn);
   const [micConnected, setMicConnected] = useState(false);
   const [scriptConnected, setScriptConnected] = useState(false);
   const [isListening, setIsListening] = useState(false);
