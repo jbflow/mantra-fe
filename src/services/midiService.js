@@ -81,8 +81,8 @@ const onMIDISuccess = (midiAccess) => {
     }
   });
 
-  if (updateMidiIn) updateMidiIn(midiInput.name);
-  if (updateMidiOut) updateMidiOut(midiOutput.name);
+  if (updateMidiIn && midiInput) updateMidiIn(midiInput.name);
+  if (updateMidiOut && midiOutput) updateMidiOut(midiOutput.name);
 };
 
 const onMIDIFailure = () => {
