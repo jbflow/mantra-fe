@@ -13,10 +13,11 @@ export default function CommandBuilder({ userId }) {
     <Container fluid className="modal-open">
       <Row>
         <Col
-          className="border-right vh-87"
+          className="border-right"
           style={{
             backgroundColor: "#FFFFFF",
             padding: 0,
+            height: 'calc(100vh - 100px)'
           }}
         >
           <Commands updateSelected={updateSelected} userId={userId} />

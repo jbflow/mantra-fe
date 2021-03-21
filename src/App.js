@@ -104,8 +104,9 @@ function App({ signOut }) {
               style={{
                 paddingTop: 54,
                 paddingLeft: 210,
-                display: "flex",
-                flexDirection: "row",
+                // display: "flex",
+                // flexDirection: "row",
+                // minHeight: 'calc(100vh-48px)'
               }}
             >
               <Route
