@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Badge } from "react-bootstrap";
 
+import MidiInGood from '../images/MIDI-in-good.svg';
+import MidiInBad from '../images/MIDI-in-bad.svg';
+import MidiOutGood from '../images/MIDI-out-good.svg';
+import MidiOutBad from '../images/MIDI-out-bad.svg';
+import Mic from '../images/mic-fill.svg';
+import MicMute from '../images/mic-mute-fill.svg';
+import DawLinkGood from '../images/daw-link-good.svg';
+import DawLinkBad from '../images/daw-link-bad.svg';
+import TlkBckListening from '../images/tlkbck-listening.svg';
+import TlkBckNotListening from '../images/tlkbck-not-listening.svg';
+
 export let updateScriptConnected;
 export let updateIsListening;
 export let updateTranscript;
@@ -10,6 +21,7 @@ export default function StatusBar({ midiIn, midiOut }) {
   const [scriptConnected, setScriptConnected] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [showTranscript, setShowTranscript] = useState(true);
 
   useEffect(() => {
     updateScriptConnected = setScriptConnected;
@@ -24,53 +36,45 @@ export default function StatusBar({ midiIn, midiOut }) {
   }, []);
 
   return (
-    <div className="fixed-bottom">
-      <Container fluid className="bg-dark text-light">
-        <Row>
-          <Col sm={2}>
-            Mic
-            <Badge
-              className="m-3"
-              variant={micConnected ? "success" : "danger"}
-            >
-              {micConnected ? "Allowed" : "Not Allowed"}
-            </Badge>
-          </Col>
-          <Col sm={2}>
-            Script
-            <Badge
-              className="m-3"
-              variant={scriptConnected ? "success" : "danger"}
-            >
-              {scriptConnected ? "Connected" : "Not Connected"}
-            </Badge>
-          </Col>
-          <Col sm={2}>
-            MIDI In
-            <Badge className="m-3" variant="light">
-              {midiIn}
-            </Badge>
-          </Col>
-          <Col sm={2}>
-            MIDI Out
-            <Badge className="m-3" variant="light">
-              {midiOut}
-            </Badge>
-          </Col>
-          <Col sm={2}>
-            TlkBck
-            <Badge className="m-3" variant={isListening ? "success" : "light"}>
-              {isListening ? "Listening" : "Not Listening"}
-            </Badge>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            {"Transcript:  "}
-            {transcript}
-          </Col>
-        </Row>
-      </Container>
-    </div>
+
+    <div
+      className="fixed-bottom w-100 "
+      style={{ backgroundColor: '#7A7E83' }}
+    >
+      <div
+        className="d-flex flex-row justify-content-end align-items-center"
+      >
+        <img alt="" className="statusItem" src={midiIn && midiIn !== "None" ? MidiInGood : MidiInBad} />
+        <img alt="" className="statusItem" src={midiOut && midiOut !== "None" ? MidiOutGood : MidiOutBad} />
+        <img alt="" className="statusItem" src={micConnected ? Mic : MicMute} />
+        <img alt="" className="statusItem" src={scriptConnected ? DawLinkGood : DawLinkBad} />
+        <div
+          style={{
+            minHeight: 48,
+            backgroundColor: '#656A6F',
+            padding: 12,
+            color: 'white',
+            cursor: 'pointer'
+          }}
+          onClick={() => { setShowTranscript(!showTranscript) }}
+        >
+          {showTranscript ? '>' : '<'}
+        </div>
+        <div className="font-weight-light" style={{
+          display: showTranscript ? 'inline-block' : 'none',
+          backgroundColor: '#595E63',
+          minHeight: 48,
+          maxWidth: 300,
+          minWidth: 300,
+          padding: 12,
+          color: 'white'
+        }}>{transcript || "Open new track..."}</div>
+        <img alt="" src={isListening ? TlkBckListening : TlkBckNotListening} />
+        <div style={{
+          minWidth: 48
+        }} />
+
+      </div>
+    </div >
   );
 }

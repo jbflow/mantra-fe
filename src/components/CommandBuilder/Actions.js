@@ -74,7 +74,11 @@ export default function Actions({ userId, selected: propSelected }) {
   };
 
   return (
-    <Card className="ml-4 mt-3 border-0 h-100 " bg={"light"} text={"dark"}>
+    <Card
+      className="ml-4 mt-3 border-0 h-100 "
+      bg={"light"}
+      text={"dark"}
+    >
       <div className=" bg-white p-4">
         <Card.Header className="text-primary font-weight-bold bg-white border-bottom p-0">
           {command}
@@ -87,7 +91,7 @@ export default function Actions({ userId, selected: propSelected }) {
           )}
         </Card.Header>
       </div>
-      <Card.Body className="bg-white h-100 ">
+      <Card.Body className="bg-white h-100 " >
         <DragDropContext onDragEnd={handleOneDragEnd}>
           <Droppable droppableId="actions" >
             {(provided) => (
@@ -222,6 +226,12 @@ export default function Actions({ userId, selected: propSelected }) {
             </Row>
           </Container>
         )}
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
       </Card.Body>
     </Card>
   );
