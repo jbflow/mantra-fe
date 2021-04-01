@@ -2,6 +2,10 @@ import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
 import { updateIsListening, updateTranscript } from "../components/StatusBar";
 
+
+let tb_data = require('./tb')
+console.log(tb_data)
+
 let config, websocket;
 
 Howler.autoUnlock = true;
@@ -10,9 +14,9 @@ Howler.autoUnlock = true;
 // Setup porcupine/bumblebee
 const bumblebee = new BumbleBee();
 bumblebee.setWorkersPath("bumblebee-workers");
-bumblebee.addHotword("hey_edison");
-bumblebee.setHotword("hey_edison");
-bumblebee.setSensitivity(0.7);
+bumblebee.addHotword('talkback', tb_data, 0.7);
+bumblebee.setHotword("talkback");
+
 
 // Setup webspeech API
 const SpeechRecognition = window.webkitSpeechRecognition;
