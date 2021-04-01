@@ -30,29 +30,9 @@ export default function BetaArea({ ws, getConfig }) {
     <Fragment>
       <div className="jumbotron" style={{ margin: "20px", aligh: "center" }}>
         <h1 className="display-3">
-          Welcome, to the TalkBack Alpha Tesing Phase!
+          Welcome, to the TalkBack testing page!
         </h1>
-        <br />
-        <p className="lead">
-          <a
-            href="https://drive.google.com/file/d/1xr2t5wNLBjC-9tWSFxbV-Y1lGxnrAW9K/view?usp=sharing"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Click here to watch set up and usage instruction video
-          </a>
-        </p>
-        <hr className="my-4" />
-
-        <p className="lead">
-          <a
-            href="https://drive.google.com/file/d/1D3u5vMaxHMSRn-obTuVJPoeEEQvFMOdi/view?usp=sharing"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Click here to download the Ableton Remote Script.
-          </a>
-        </p>
+        
 
         <p className="lead">
           Use the input below to quickly test the intent detection without using
