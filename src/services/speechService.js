@@ -58,7 +58,7 @@ recognition.onresult = (event) => {
   }
 
   console.log("config", config);
-
+  if(transcript[0] === ' '){transcript = transcript.substring(1)}
   websocket.send(
     JSON.stringify({
       message: transcript,
