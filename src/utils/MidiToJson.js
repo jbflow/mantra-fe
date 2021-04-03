@@ -64,7 +64,7 @@ const load_item = (noun_adj, noun, value, config) => {
   // Handles loading an item
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
   for (var i = 0; i < sub_paths.length; i++) {
-    sub_paths[i].splice(index, 0, []);
+    if(sub_paths[i]) sub_paths[i].splice(index, 0, []);
   }
   path.splice(index, 0, value);
 };
@@ -105,6 +105,7 @@ export const MidiToJson = (midiArray, config) => {
   config = config || {
     track: [],
     scene: [],
+    "cue point": [],
     device: [],
     clip: [],
     parameter: [],

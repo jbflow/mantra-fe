@@ -33,6 +33,7 @@ export const NOUNS = {
   transport: 1,
   track: 3,
   scene: 5,
+  "cue point": 6,
   device: 10,
   clip: 11,
   parameter: 22,
@@ -44,6 +45,7 @@ export const NOUNS = {
 export const NOUN_MAP = {
   3: "track",
   5: "scene",
+  6: "cue point",
   10: "device",
   11: "clip",
   22: "parameter",
