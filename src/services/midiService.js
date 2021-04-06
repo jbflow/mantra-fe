@@ -68,14 +68,14 @@ const onMIDISuccess = (midiAccess) => {
   midiInputs = Array.from(midiAccess.inputs.values());
   midiOutputs = Array.from(midiAccess.outputs.values());
   midiInputs.forEach((input) => {
-    if (input.name === "Bridge") {
+    if (input.name === "Bridge B") {
       midiInput = input;
       console.log(midiInput);
       if (midiInput) midiInput.onmidimessage = getMIDIMessage;
     }
   });
   midiOutputs.forEach((output) => {
-    if (output.name === "Bridge") {
+    if (output.name === "Bridge A") {
       midiOutput = output;
       console.log(midiOutput);
     }
