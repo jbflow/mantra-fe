@@ -32,6 +32,7 @@ export const VERBS = {
 export const NOUNS = {
   transport: 1,
   track: 3,
+  "return track": 4,
   scene: 5,
   "cue point": 6,
   device: 10,
@@ -44,6 +45,7 @@ export const NOUNS = {
 
 export const NOUN_MAP = {
   3: "track",
+  4: "return track",
   5: "scene",
   6: "cue point",
   10: "device",
@@ -53,8 +55,6 @@ export const NOUN_MAP = {
   40: "audio_device",
   41: "midi_device",
 };
-
-
 
 export const SUB_NOUNS = {
   3: [10, 11, 22],

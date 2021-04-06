@@ -61,10 +61,11 @@ const rename_item = (noun_adj, noun, value, config) => {
 };
 
 const load_item = (noun_adj, noun, value, config) => {
+  console.log("noun_adj:", noun_adj);
   // Handles loading an item
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
   for (var i = 0; i < sub_paths.length; i++) {
-    if(sub_paths[i]) sub_paths[i].splice(index, 0, []);
+    if (sub_paths[i]) sub_paths[i].splice(index, 0, []);
   }
   path.splice(index, 0, value);
 };
@@ -104,6 +105,7 @@ export const MidiToJson = (midiArray, config) => {
   if (midiArray[0] !== 240) return; // If the message isn't a SysEx message
   config = config || {
     track: [],
+    "return track": [],
     scene: [],
     "cue point": [],
     device: [],
@@ -128,8 +130,8 @@ const updateConfig = (midiArray, config) => {
   const adverb =
     verb === 1 || verb === 2
       ? midiArray
-        .slice(quantity * 3 + 2)
-        .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
+          .slice(quantity * 3 + 2)
+          .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
       : convert_bytes(midiArray.slice(quantity * 3 + 2)) - 1; // convert the bytes to a single int
 
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map
