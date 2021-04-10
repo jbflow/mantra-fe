@@ -53,10 +53,10 @@ export default function Actions({ userId, selected: propSelected }) {
     API.patch(
       "talkbackBE",
       "/commands?userId=" +
-      userId +
-      "&commandId=" +
-      selected +
-      "&patching=actions",
+        userId +
+        "&commandId=" +
+        selected +
+        "&patching=actions",
       { body: actions }
     ).then(() => {
       setSaving(false);
@@ -74,11 +74,7 @@ export default function Actions({ userId, selected: propSelected }) {
   };
 
   return (
-    <Card
-      className="ml-4 mt-3 border-0 h-100 "
-      bg={"light"}
-      text={"dark"}
-    >
+    <Card className="ml-4 mt-3 border-0 h-100 " bg={"light"} text={"dark"}>
       <div className=" bg-white p-4">
         <Card.Header className="text-primary font-weight-bold bg-white border-bottom p-0">
           {command}
@@ -91,9 +87,9 @@ export default function Actions({ userId, selected: propSelected }) {
           )}
         </Card.Header>
       </div>
-      <Card.Body className="bg-white h-100 " >
+      <Card.Body className="bg-white h-100 ">
         <DragDropContext onDragEnd={handleOneDragEnd}>
-          <Droppable droppableId="actions" >
+          <Droppable droppableId="actions">
             {(provided) => (
               <Container
                 className="p-0"
@@ -126,7 +122,7 @@ export default function Actions({ userId, selected: propSelected }) {
                                   value={{
                                     style: {
                                       // fontSize: "30px",
-                                      transform: 'rotate(-90deg)'
+                                      transform: "rotate(-90deg)",
                                     },
                                   }}
                                 >
@@ -147,8 +143,15 @@ export default function Actions({ userId, selected: propSelected }) {
                           </Col>
 
                           <Col sm={4} className="p-0">
-                            <div className="d-flex justify-content-end " style={{ height: 50 }}>
-                              <Col className="border-left svg-container" sm={3} style={{ height: 50 }}>
+                            <div
+                              className="d-flex justify-content-end "
+                              style={{ height: 50 }}
+                            >
+                              <Col
+                                className="border-left svg-container"
+                                sm={3}
+                                style={{ height: 50 }}
+                              >
                                 <IconContext.Provider
                                   value={{
                                     style: {
@@ -196,29 +199,32 @@ export default function Actions({ userId, selected: propSelected }) {
                   </IconContext.Provider>
                 </div>
               </Container>
-            )
-            }
+            )}
           </Droppable>
         </DragDropContext>
 
         {selected && (
           <Container fluid className="mt-5 justify-content-between flex-row">
             <Row className="justify-content-between">
-              <Col md={{ span: 6 }} >
+              <Col md={{ span: 6 }}>
                 <Button
                   disabled={saving}
                   className="btn btn-primary rounded-more text-center"
                   onClick={!saving ? saveActions : null}
                 >
                   {saving ? "Saving..." : "Save"}
-                </Button><Button className="btn btn-primary rounded-more ml-2 text-center">
+                </Button>
+                <Button className="btn btn-outline-primary rounded-more ml-2 text-center">
                   Test
                 </Button>
               </Col>
-              <Col md={{ span: 6 }} className="justify-content-end text-right p-0">
+              <Col
+                md={{ span: 6 }}
+                className="justify-content-end text-right p-0"
+              >
                 <Button
                   disabled
-                  className="btn btn-dark rounded-more text-center mr-1"
+                  className="btn btn-outline-dark rounded-more text-center mr-1"
                 >
                   Make Lesson
                 </Button>

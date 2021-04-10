@@ -3,12 +3,7 @@ import { Link } from "react-router-dom";
 import { Navbar, Button } from "react-bootstrap";
 import { FaCog } from "react-icons/fa";
 import { IconContext } from "react-icons";
-
-const Circ = () => (
-  <svg viewBox="0 0 11 11" width="14" height="14">
-    <circle stroke="#707070" fill="none" cx="5" cy="5" r="4" />
-  </svg>
-);
+import Logo from "../images/tlkbck.svg"; // relative path to image
 
 export default function TopBar({ signOut }) {
   return (
@@ -19,20 +14,25 @@ export default function TopBar({ signOut }) {
       className="fixed-top bg-white"
     >
       <div>
-        <Circ />
-        <Circ />
-        <Circ />
-        <Navbar.Brand>
-          <p
+        <Navbar.Brand style={{ height: 36 }}>
+          <img
+            src={Logo}
+            alt="logo"
+            style={{ display: "inline", width: 30, marginLeft: 25 }}
+          />
+          <span
             style={{
-              color: "#0069D9",
+              color: "#000000",
               margin: 0,
+              // fontSize: "1.5rem",
+              letterSpacing: "1px",
+              fontWeight: "bold",
               marginLeft: "10px",
-              lineHeight: "10px",
+              marginTop: "5px",
             }}
           >
             tlkbck
-          </p>
+          </span>
         </Navbar.Brand>
       </div>
       {/* <Navbar.Toggle aria-controls="navigation" /> */}
