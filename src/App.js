@@ -5,7 +5,7 @@ import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route, BrowserRouter } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
-import Subscription from ".components/Subscription";
+import Subscription from "./components/Subscription";
 // import Preferences from "./components/Preferences";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 // import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
