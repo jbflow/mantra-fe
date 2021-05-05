@@ -1,6 +1,6 @@
 const isLocal = window.location.hostname === "localhost";
 export const isDev = () => {
-  url = window.location.href.toString();
+  const url = window.location.href.toString();
   if (
     url.slice(0, 30) === "https://dev.dbs-talkback.co.uk" ||
     url.slice(0, 21) === "http://localhost:3003"
