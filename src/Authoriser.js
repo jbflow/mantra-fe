@@ -3,10 +3,7 @@ import { Card } from "react-bootstrap";
 import config from "./amplify-config";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
-
-const isDev =
-  window.location.href.toString().slice(0, 30) ===
-  "https://dev.dbs-talkback.co.uk";
+import { isDev } from "./utils/Constants";
 
 Hub.listen(/.*/, ({ channel, payload }) =>
   console.debug(`[hub::${channel}::${payload.event}]`, payload)
@@ -19,7 +16,9 @@ Auth.configure({
 
   // Cognito Hosted UI configuration
   oauth: {
-    domain: "dev-dbs-talkback.auth.eu-west-2.amazoncognito.com",
+    domain: isDev()
+      ? "dev-dbs-talkback.auth.eu-west-2.amazoncognito.com"
+      : "dbs-talkback.auth.eu-west-2.amazoncognito.com",
     scope: [
       "phone",
       "email",
