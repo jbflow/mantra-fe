@@ -1,17 +1,13 @@
-const isDev =
-  window.location.href.toString().slice(0, 30) ===
-  "https://dev.dbs-talkback.co.uk";
+// const isDev =
+//   window.location.href.toString().slice(0, 30) ===
+//   "https://dev.dbs-talkback.co.uk";
 
 const config = {
   cognito: {
     REGION: "eu-west-2",
-    USER_POOL_ID: isDev ? "eu-west-2_7bUrPYCah" : "eu-west-2_B3okzeAV8",
-    APP_CLIENT_ID: isDev
-      ? "26eh118so77dcvognk37camnsb"
-      : "3t52vjt8de0t1jh9k04mh1n3o1",
-    IDENTITY_POOL_ID: isDev
-      ? "eu-west-2:2625b6a3-2b32-41dc-aa24-12b022297f85"
-      : "eu-west-2:cf570493-5c39-4b73-a55a-cfbdbdc40492",
+    USER_POOL_ID: "eu-west-2_7bUrPYCah",
+    APP_CLIENT_ID: "26eh118so77dcvognk37camnsb",
+    IDENTITY_POOL_ID: "eu-west-2:2625b6a3-2b32-41dc-aa24-12b022297f85",
   },
   // cognito: {
   // 	REGION: "eu-west-2",

@@ -19,9 +19,7 @@ Auth.configure({
 
   // Cognito Hosted UI configuration
   oauth: {
-    domain: isDev
-      ? "dev-dbs-talkback.auth.eu-west-2.amazoncognito.com"
-      : "dbs-talkback.auth.eu-west-2.amazoncognito.com",
+    domain: "dev-dbs-talkback.auth.eu-west-2.amazoncognito.com",
     scope: [
       "phone",
       "email",
