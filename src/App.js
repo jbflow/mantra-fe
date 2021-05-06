@@ -61,7 +61,10 @@ function App({ signOut }) {
         const { attributes } = await Auth.currentAuthenticatedUser();
         if (attributes) {
           setuserId(attributes?.sub);
+          console.log(attributes.email);
           localStorage.setItem("userId", attributes?.sub);
+          localStorage.setItem("email", attributes.email);
+
           // getPrefs(attributes?.sub);
         }
 
