@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 
+import { API, button } from "aws-amplify";
+
 import { Button, Modal } from "react-bootstrap";
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-import StripeCardSection from "./StripeCardSection";
+import CheckoutForm from "./CheckoutForm";
 
 export default function Subscription() {
+  const [clientSecret, setClientSecret] = useState("");
   const [show, setShow] = useState(true);
   const handleClose = () => setShow(false); // Handle a redirect to dashboard
 
@@ -16,15 +19,18 @@ export default function Subscription() {
   );
 
   const createCustomer = () => {
+    // render this on page load to have client secret ready for the payment
     const userId = localStorage.getItem("userId");
     const email = localStorage.getItem("email");
-    API.post("talkbackBE", "/create_customer?" + userId, {
+    API.post("talkbackBE", "/create_customer?userId=" + userId, {
       body: { email: email, price_id: "price_1Io5lDJlupQ2Gl7jIAoIfrXb" },
     }).then((res) => {
       console.log(res["client_secret"]);
       console.log(res["sub_id"]);
+      setClientSecret(res["client_secret"]);
     });
   };
+
 
   return (
     <Elements stripe={stripePromise}>
@@ -42,7 +48,7 @@ export default function Subscription() {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body className="m-auto py-3 d-block">
-            <StripeCardSection />
+            <CheckoutForm clientSecret={clientSecret} />
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -54,6 +60,11 @@ export default function Subscription() {
             </Button>
           </Modal.Footer>
         </Modal>
+
+        
+  <Button variant="primary" onClick={createCustomer}>
+  customer
+</Button>;
       </div>
     </Elements>
   );
