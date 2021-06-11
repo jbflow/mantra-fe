@@ -2,12 +2,12 @@ import { isDev } from "./utils/Constants";
 const config = {
   cognito: {
     REGION: "eu-west-2",
-    USER_POOL_ID: isDev() ? "eu-west-2_7bUrPYCah" : "eu-west-2_B3okzeAV8",
+    USER_POOL_ID: isDev() ? "eu-west-2_3B2TYzI2L" : "eu-west-2_B3okzeAV8",
     APP_CLIENT_ID: isDev()
-      ? "26eh118so77dcvognk37camnsb"
+      ? "55m9nj2tvmu8t9o2g327lq1bgp"
       : "3t52vjt8de0t1jh9k04mh1n3o1",
     IDENTITY_POOL_ID: isDev()
-      ? "eu-west-2:2625b6a3-2b32-41dc-aa24-12b022297f85"
+      ? "eu-west-2:67c54d34-b4c6-439a-a1d8-e39dda196ca9"
       : "eu-west-2:cf570493-5c39-4b73-a55a-cfbdbdc40492",
   },
   // cognito: {
