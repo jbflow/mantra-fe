@@ -18,6 +18,6 @@ export const WEBSOCKET_API_URL = isLocal
 console.log("window.location.hostname ", window.location.href);
 export const HTTP_API_URL = isLocal
   ? "http://localhost:3000/dev"
-  : !isDev()
+  : isDev()
   ? "https://iiwhvie43c.execute-api.eu-west-2.amazonaws.com/dev"
   : "https://j4onope2hd.execute-api.eu-west-2.amazonaws.com/prod";
