@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { API, button } from "aws-amplify";
 
@@ -8,6 +8,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
 import CheckoutForm from "./CheckoutForm";
+import Dashboard from "../Dashboard/Dashboard";
 
 export default function Subscription() {
   const [clientSecret, setClientSecret] = useState("");
@@ -19,7 +20,6 @@ export default function Subscription() {
   );
 
   const createCustomer = () => {
-    // render this on page load to have client secret ready for the payment
     const userId = localStorage.getItem("userId");
     const email = localStorage.getItem("email");
     API.post("talkbackBE", "/create_customer?userId=" + userId, {
@@ -31,6 +31,9 @@ export default function Subscription() {
     });
   };
 
+  useEffect(() => {
+    createCustomer();
+  }, []);
 
   return (
     <Elements stripe={stripePromise}>
@@ -44,27 +47,21 @@ export default function Subscription() {
         >
           <Modal.Header>
             <Modal.Title className="mx-auto">
-              Purchase A Subscription
+              Please setup a payment method
             </Modal.Title>
           </Modal.Header>
           <Modal.Body className="m-auto py-3 d-block">
-            <CheckoutForm clientSecret={clientSecret} />
+            <CheckoutForm
+              clientSecret={clientSecret}
+              handleComplete={handleClose}
+            />
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="primary"
-              onClick={handleClose}
-              className="mx-auto my-3"
-            >
-              (Redirect automatically when paid instead of button)
-            </Button>
+            Payment will not be taken until after the 30 day trial is up.
           </Modal.Footer>
         </Modal>
 
-        
-  <Button variant="primary" onClick={createCustomer}>
-  customer
-</Button>;
+        <Dashboard />
       </div>
     </Elements>
   );

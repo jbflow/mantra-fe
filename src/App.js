@@ -3,9 +3,9 @@ import React, { Fragment, useEffect, useState } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
-import { Route, BrowserRouter } from "react-router-dom";
+import { Route, BrowserRouter, useHistory } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
-import Subscription from "./components/Subscription";
+import Subscription from "./components/ManageAccount/Subscription";
 // import Preferences from "./components/Preferences";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 // import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
@@ -47,6 +47,7 @@ export let updateMidiIn;
 export let updateMidiOut;
 
 function App({ signOut }) {
+  let history = useHistory();
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [userId, setuserId] = useState(null);
   // const [midiInputs, setMidiInputs] = useState([]);
@@ -76,6 +77,17 @@ function App({ signOut }) {
       }
     }
     onLoad();
+
+    API.get(
+      "talkbackBE",
+      "/payments?userId=" + localStorage.getItem("userId")
+    ).then((res) => {
+      if (!res) {
+        history.push("/subscription");
+      } else {
+        history.push("/dashboard");
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -100,30 +112,29 @@ function App({ signOut }) {
   return (
     isAuthenticated && (
       <>
-        <BrowserRouter>
-          <div>
-            <TopBar signOut={signOut} />
-            <NavBar />
-            <div
-              style={{
-                paddingTop: 54,
-                paddingLeft: 210,
-                // display: "flex",
-                // flexDirection: "row",
-                // minHeight: 'calc(100vh-48px)'
-              }}
-            >
-              <Route
-                path="/subscription"
-                render={(props) => <Subscription {...props} />}
-              />
-              <Route
-                path="/dashboard"
-                render={(props) => (
-                  <Dashboard {...props} getConfig={getConfigFunction} />
-                )}
-              />
-              {/* <Route
+        <div>
+          <TopBar signOut={signOut} />
+          <NavBar />
+          <div
+            style={{
+              paddingTop: 54,
+              paddingLeft: 210,
+              // display: "flex",
+              // flexDirection: "row",
+              // minHeight: 'calc(100vh-48px)'
+            }}
+          >
+            <Route
+              path="/subscription"
+              render={(props) => <Subscription {...props} />}
+            />
+            <Route
+              path="/dashboard"
+              render={(props) => (
+                <Dashboard {...props} getConfig={getConfigFunction} />
+              )}
+            />
+            {/* <Route
                 path="/prefs"
                 render={(props) => (
                   <Preferences
@@ -138,31 +149,30 @@ function App({ signOut }) {
                   />
                 )}
               /> */}
-              <Route
-                path="/commands"
-                render={(props) => (
-                  <CommandBuilder
-                    {...props}
-                    ws={getWebSocket()}
-                    getConfig={getConfigFunction}
-                    userId={userId}
-                  />
-                )}
-              />
-              <Route
-                path="/beta"
-                render={(props) => (
-                  <BetaArea
-                    {...props}
-                    ws={getWebSocket()}
-                    getConfig={getConfigFunction}
-                  />
-                )}
-              />
-            </div>
-            <StatusBar midiIn={midiIn} midiOut={midiOut} />
+            <Route
+              path="/commands"
+              render={(props) => (
+                <CommandBuilder
+                  {...props}
+                  ws={getWebSocket()}
+                  getConfig={getConfigFunction}
+                  userId={userId}
+                />
+              )}
+            />
+            <Route
+              path="/beta"
+              render={(props) => (
+                <BetaArea
+                  {...props}
+                  ws={getWebSocket()}
+                  getConfig={getConfigFunction}
+                />
+              )}
+            />
           </div>
-        </BrowserRouter>
+          <StatusBar midiIn={midiIn} midiOut={midiOut} />
+        </div>
       </>
     )
   );

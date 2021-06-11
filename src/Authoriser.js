@@ -1,5 +1,6 @@
 import { Auth, Hub } from "aws-amplify";
 import { Card } from "react-bootstrap";
+import { BrowserRouter } from "react-router-dom";
 import config from "./amplify-config";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
@@ -47,7 +48,9 @@ const Authoriser = () => {
     !isLoading &&
     (isAuthenticated ? (
       <>
-        <App signOut={signOut} />
+        <BrowserRouter>
+          <App signOut={signOut} />
+        </BrowserRouter>
       </>
     ) : (
       <>
