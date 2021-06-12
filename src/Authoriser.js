@@ -1,4 +1,4 @@
-import { Auth, Hub } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
 import config from "./amplify-config";
@@ -6,9 +6,9 @@ import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
 import { isDev } from "./utils/Constants";
 
-Hub.listen(/.*/, ({ channel, payload }) =>
-  console.debug(`[hub::${channel}::${payload.event}]`, payload)
-);
+// Hub.listen(/.*/, ({ channel, payload }) =>
+//   console.debug(`[hub::${channel}::${payload.event}]`, payload)
+// );
 // https://aws-amplify.github.io/docs/js/authentication#manual-setup
 Auth.configure({
   region: config.cognito.REGION,
@@ -70,7 +70,7 @@ const Authoriser = () => {
             <Card.Body>
               <Card.Title>Sign In</Card.Title>
               <Card.Text>
-                New user? <a href="#">Create an account</a>
+                New user? <a>Create an account</a>
               </Card.Text>
               <SignInButton style={{ float: "right" }} />
             </Card.Body>

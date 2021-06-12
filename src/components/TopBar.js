@@ -1,8 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Navbar, Button } from "react-bootstrap";
-import { FaCog } from "react-icons/fa";
-import { IconContext } from "react-icons";
 import Logo from "../images/tlkbck.svg"; // relative path to image
 
 export default function TopBar({ signOut }) {

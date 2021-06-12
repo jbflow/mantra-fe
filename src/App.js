@@ -1,15 +1,15 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
-import { Route, BrowserRouter, useHistory } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Subscription from "./components/ManageAccount/Subscription";
 // import Preferences from "./components/Preferences";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 // import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
-import BetaArea from "./components/BetaArea";
+
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import { getWebSocket, getConfigFunction } from "./services/main";
@@ -62,7 +62,6 @@ function App({ signOut }) {
         const { attributes } = await Auth.currentAuthenticatedUser();
         if (attributes) {
           setuserId(attributes?.sub);
-          console.log(attributes.email);
           localStorage.setItem("userId", attributes?.sub);
           localStorage.setItem("email", attributes.email);
 
@@ -158,16 +157,6 @@ function App({ signOut }) {
                   ws={getWebSocket()}
                   getConfig={getConfigFunction}
                   userId={userId}
-                />
-              )}
-            />
-            <Route
-              path="/beta"
-              render={(props) => (
-                <BetaArea
-                  {...props}
-                  ws={getWebSocket()}
-                  getConfig={getConfigFunction}
                 />
               )}
             />

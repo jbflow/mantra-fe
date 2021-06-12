@@ -1,51 +1,58 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
-import './NavBar.css';
+import "./NavBar.css";
 
 const styles = {
   mainbar: {
-    backgroundColor: '#6C757D'
+    backgroundColor: "#6C757D",
   },
   forceColumn: {
-    width: '210px',
-    height: '100%',
-    flexFlow: 'column',
-    alignItems: 'initial',
-    position: 'fixed',
+    width: "210px",
+    height: "100%",
+    flexFlow: "column",
+    alignItems: "initial",
+    position: "fixed",
     paddingTop: 20,
-    paddingRight: 10
+    paddingRight: 10,
   },
   icon: {
-    float: 'right',
-    marginTop: 4
-  }
-}
+    float: "right",
+    marginTop: 4,
+  },
+};
 
 export default function NavBar({ signOut }) {
   return (
     <div>
-      <Navbar variant="dark" expand="lg" style={{ ...styles.forceColumn, ...styles.mainbar }}>
+      <Navbar
+        variant="dark"
+        expand="lg"
+        style={{ ...styles.forceColumn, ...styles.mainbar }}
+      >
         <Navbar.Toggle aria-controls="navigation" />
-        <Navbar.Collapse
-          id="navigation"
-          style={styles.forceColumn}
-        >
-          <Nav
-            className="mr-auto"
-            style={styles.forceColumn}>
-            <Link className="nav-link nav-link-sidebar" to="/dashboard" >
+        <Navbar.Collapse id="navigation" style={styles.forceColumn}>
+          <Nav className="mr-auto" style={styles.forceColumn}>
+            <Link className="nav-link nav-link-sidebar" to="/dashboard">
               Dashboard
-            <img style={styles.icon} alt='Dashboard nav logo' src='./images/menu-icons/speedometer.svg' />
+              <img
+                style={styles.icon}
+                alt="Dashboard nav logo"
+                src="./images/menu-icons/speedometer.svg"
+              />
             </Link>
             <Link className="nav-link nav-link-sidebar" to="/commands">
               Command Builder
-            <img style={styles.icon} alt='Command Builder nav logo' src='./images/menu-icons/command.svg' />
+              <img
+                style={styles.icon}
+                alt="Command Builder nav logo"
+                src="./images/menu-icons/command.svg"
+              />
             </Link>
-            <Link className="nav-link nav-link-sidebar" to="/beta">
+            {/* <Link className="nav-link nav-link-sidebar" to="/beta">
               Testing Area
             <img style={styles.icon} alt='Testing Area nav logo' src='./images/menu-icons/gear-wide-connected.svg' />
-            </Link>
+            </Link> */}
           </Nav>
         </Navbar.Collapse>
       </Navbar>

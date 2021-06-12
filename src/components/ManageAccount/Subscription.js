@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-import { API, button } from "aws-amplify";
+import { API } from "aws-amplify";
 
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";

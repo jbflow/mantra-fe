@@ -2,9 +2,6 @@ import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
 import { updateIsListening, updateTranscript } from "../components/StatusBar";
 
-let tb_data = require("./tb");
-console.log(tb_data);
-
 let config, websocket;
 
 Howler.autoUnlock = true;
@@ -55,7 +52,6 @@ recognition.onresult = (event) => {
     updateTranscript(transcript);
   }
 
-  console.log("config", config);
   if (transcript[0] === " ") {
     transcript = transcript.substring(1);
   }
@@ -76,7 +72,6 @@ recognition.onspeechend = () => {
 
 bumblebee.on("hotword", (hotword) => {
   recognition.start();
-  console.log("listening...");
 });
 
 bumblebee.start();
@@ -88,6 +83,5 @@ export const getConfig = () => {
   return config;
 };
 export const setWebsocket = (ws) => {
-  console.log("setWebsocket: ", ws);
   websocket = ws;
 };
