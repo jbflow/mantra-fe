@@ -82,7 +82,8 @@ function App({ signOut }) {
       "talkbackBE",
       "/payments?userId=" + localStorage.getItem("userId")
     ).then((res) => {
-      if (!res) {
+      if (res !== "succeeded") {
+        localStorage.setItem("payment_status", res);
         history.push("/subscription");
       } else {
         history.push("/dashboard");
