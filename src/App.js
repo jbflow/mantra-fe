@@ -5,7 +5,7 @@ import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route, useHistory } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
-import Subscription from "./components/ManageAccount/Subscription";
+
 // import Preferences from "./components/Preferences";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 // import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
@@ -76,18 +76,6 @@ function App({ signOut }) {
       }
     }
     onLoad();
-
-    API.get(
-      "talkbackBE",
-      "/payments?userId=" + localStorage.getItem("userId")
-    ).then((res) => {
-      if (res !== "succeeded") {
-        localStorage.setItem("payment_status", res);
-        history.push("/subscription");
-      } else {
-        history.push("/dashboard");
-      }
-    });
   }, []);
 
   useEffect(() => {
@@ -124,10 +112,6 @@ function App({ signOut }) {
               // minHeight: 'calc(100vh-48px)'
             }}
           >
-            <Route
-              path="/subscription"
-              render={(props) => <Subscription {...props} />}
-            />
             <Route
               path="/dashboard"
               render={(props) => (

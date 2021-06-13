@@ -1,9 +1,12 @@
-import { Auth } from "aws-amplify";
+import { useEffect, useState } from "react";
+import { Auth, API } from "aws-amplify";
 import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
 import config from "./amplify-config";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
+import useConstructor from "./hooks/useConstructor";
+import Checkout from "./components/Checkout.js";
 import { isDev } from "./utils/Constants";
 
 // Hub.listen(/.*/, ({ channel, payload }) =>
@@ -35,23 +38,33 @@ Auth.configure({
 });
 
 const Authoriser = () => {
-  const {
-    isAuthenticated,
-    isLoading,
-    // user,
-    // error,
-    // signIn,
-    signOut,
-    SignInButton,
-  } = useAuthentication();
+  const [paymentCreated, setPaymentCreated] = useState(false);
+  const { isAuthenticated, isLoading, signOut, SignInButton } =
+    useAuthentication();
+
+  useConstructor(() => {
+    API.get(
+      "talkbackBE",
+      "/check_payment_created?userId=" + localStorage.getItem("userId")
+    ).then((res) => {
+      if (!res) {
+        setPaymentCreated(false);
+      }
+    });
+  });
+
   return (
     !isLoading &&
     (isAuthenticated ? (
-      <>
-        <BrowserRouter>
-          <App signOut={signOut} />
-        </BrowserRouter>
-      </>
+      paymentCreated ? (
+        <>
+          <BrowserRouter>
+            <App signOut={signOut} />
+          </BrowserRouter>
+        </>
+      ) : (
+        <Checkout />
+      )
     ) : (
       <>
         <div
