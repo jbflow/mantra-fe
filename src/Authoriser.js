@@ -38,7 +38,7 @@ Auth.configure({
 });
 
 const Authoriser = () => {
-  const [paymentCreated, setPaymentCreated] = useState(false);
+  const [paymentCreated, setPaymentCreated] = useState(null);
   const { isAuthenticated, isLoading, signOut, SignInButton } =
     useAuthentication();
 
@@ -49,48 +49,55 @@ const Authoriser = () => {
     ).then((res) => {
       if (!res) {
         setPaymentCreated(false);
+      } else {
+        console.log(res);
+        setPaymentCreated(true);
       }
     });
   });
 
-  return (
-    !isLoading &&
-    (isAuthenticated ? (
-      paymentCreated ? (
-        <>
-          <BrowserRouter>
-            <App signOut={signOut} />
-          </BrowserRouter>
-        </>
+  if (paymentCreated == null) {
+    return <div>Checking for Active Subscription</div>;
+  } else {
+    return (
+      !isLoading &&
+      (isAuthenticated ? (
+        paymentCreated ? (
+          <>
+            <BrowserRouter>
+              <App signOut={signOut} />
+            </BrowserRouter>
+          </>
+        ) : (
+          <Checkout paymentCreated={paymentCreated} />
+        )
       ) : (
-        <Checkout />
-      )
-    ) : (
-      <>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100vw", // make sure the parent is full screen
-            height: "80vh", // so that the content will center correctly
-          }}
-        >
-          <Card style={{ width: "18rem" }}>
-            <Card.Header>
-              <p style={{ color: "#0069D9" }}>tlkbck</p>
-            </Card.Header>
-            <Card.Body>
-              <Card.Title>Sign In</Card.Title>
-              <Card.Text>
-                New user? <a>Create an account</a>
-              </Card.Text>
-              <SignInButton style={{ float: "right" }} />
-            </Card.Body>
-          </Card>
-        </div>
-      </>
-    ))
-  );
+        <>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100vw", // make sure the parent is full screen
+              height: "80vh", // so that the content will center correctly
+            }}
+          >
+            <Card style={{ width: "18rem" }}>
+              <Card.Header>
+                <p style={{ color: "#0069D9" }}>tlkbck</p>
+              </Card.Header>
+              <Card.Body>
+                <Card.Title>Sign In</Card.Title>
+                <Card.Text>
+                  New user? <a>Create an account</a>
+                </Card.Text>
+                <SignInButton style={{ float: "right" }} />
+              </Card.Body>
+            </Card>
+          </div>
+        </>
+      ))
+    );
+  }
 };
 export default Authoriser;

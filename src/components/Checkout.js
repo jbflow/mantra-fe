@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { API } from "aws-amplify";
 import { loadStripe } from "@stripe/stripe-js";
 const stripePromise = loadStripe(
   "pk_test_51IHT5IJlupQ2Gl7jK3ZYz4C8HaFKArzlyzAMLFpjH1jJdbpZdIyO9CwY0LJyIb3XZCLrfDJZTwWjShGZ8pd8o44U00Jhvs1NZN"
 );
-export default function () {
+export default function Checkout({ paymentCreated }) {
   useEffect(() => {
-    createCheckoutSession();
+    console.log(paymentCreated);
+    if (!paymentCreated) {
+      createCheckoutSession();
+    }
   }, []);
 
   const createCheckoutSession = async (event) => {
@@ -26,5 +29,5 @@ export default function () {
     }
   };
 
-  return null;
+  return <div>Redirecting to Subscription Checkout</div>;
 }
