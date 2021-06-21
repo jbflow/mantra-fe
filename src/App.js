@@ -8,6 +8,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 
 // import Preferences from "./components/Preferences";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
+import AccountManagement from "./components/AccountManagement";
 // import LessonBuilder from "./components/LessonBuilder/LessonBuilder";
 
 import NavBar from "./components/NavBar";
@@ -118,21 +119,12 @@ function App({ signOut }) {
                 <Dashboard {...props} getConfig={getConfigFunction} />
               )}
             />
-            {/* <Route
-                path="/prefs"
-                render={(props) => (
-                  <Preferences
-                    {...props}
-                    userId={userId}
-                    midiInputs={midiInputs}
-                    midiOutputs={midiOutputs}
-                    midiIn={midiIn}
-                    midiOut={midiOut}
-                    setMidiIn={setMidiIn}
-                    setMidiOut={setMidiOut}
-                  />
-                )}
-              /> */}
+            <Route
+              path="/account"
+              render={(props) => (
+                <AccountManagement {...props} userId={userId} />
+              )}
+            />
             <Route
               path="/commands"
               render={(props) => (

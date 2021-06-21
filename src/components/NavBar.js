@@ -49,10 +49,14 @@ export default function NavBar({ signOut }) {
                 src="./images/menu-icons/command.svg"
               />
             </Link>
-            {/* <Link className="nav-link nav-link-sidebar" to="/beta">
-              Testing Area
-            <img style={styles.icon} alt='Testing Area nav logo' src='./images/menu-icons/gear-wide-connected.svg' />
-            </Link> */}
+            <Link className="nav-link nav-link-sidebar" to="/account">
+              Manage Account
+              <img
+                style={styles.icon}
+                alt="Testing Area nav logo"
+                src="./images/menu-icons/gear-wide-connected.svg"
+              />
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
