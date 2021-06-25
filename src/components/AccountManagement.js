@@ -9,7 +9,7 @@ export default function AccountManagement({ userId }) {
     });
   };
   return (
-    <Container>
+    <Container className="p-2">
       <Row>
         <Col>Email:</Col>
         <Col>Blah</Col>

@@ -16,7 +16,7 @@ export default function Checkout({ paymentCreated }) {
     const stripe = await stripePromise;
     const response = await API.post(
       "talkbackBE",
-      "/create_checkout_session?userId=" + localStorage.getItem("userId")
+      "/create_checkout_session?userId=" + localStorage.getItem("userId") + "&email=" + localStorage.getItem('email')
     );
     const result = await stripe.redirectToCheckout({
       sessionId: response.id,
