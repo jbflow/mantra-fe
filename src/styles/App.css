@@ -6624,9 +6624,9 @@ a.close.disabled {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  /* -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end; */
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
   padding-top: 1.5rem;
 }
 

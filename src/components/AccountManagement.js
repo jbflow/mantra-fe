@@ -1,6 +1,14 @@
 import { API } from "aws-amplify";
 import React, { useState } from "react";
-import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Modal,
+  Form,
+  Alert,
+} from "react-bootstrap";
 import { Auth } from "aws-amplify";
 
 export default function AccountManagement({ userId }) {
@@ -11,16 +19,22 @@ export default function AccountManagement({ userId }) {
   const [changingPassword, setChangingPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   async function changePassword() {
-    console.log(oldPassword, newPassword);
     if (newPassword == newPassword2) {
       setChangingPassword(true);
       const currentUser = await Auth.currentAuthenticatedUser();
       try {
         await Auth.changePassword(currentUser, oldPassword, newPassword);
+        setShowPassword(false);
+        setShowAlert(true);
+        window.setTimeout(() => {
+          setShowAlert(false);
+        }, 5000);
       } catch (error) {
         setErrorMessage(error.message);
+        setShowError(true);
       }
       setChangingPassword(false);
     } else {
@@ -36,6 +50,11 @@ export default function AccountManagement({ userId }) {
   };
   return (
     <>
+      {showAlert ? (
+        <Alert variant="success" dismissable={true}>
+          Password successfully changed.
+        </Alert>
+      ) : null}
       <Container className="p-2">
         <Row className="p-3">
           <Col>Email:</Col>
@@ -47,6 +66,7 @@ export default function AccountManagement({ userId }) {
             <Button
               onClick={() => {
                 setShowPassword(true);
+                setShowError(false);
               }}
             >
               Change
