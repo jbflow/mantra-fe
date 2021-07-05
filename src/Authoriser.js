@@ -38,33 +38,44 @@ Auth.configure({
 });
 
 const Authoriser = () => {
-  const [paymentCreated, setPaymentCreated] = useState(false);
+  const [paymentCreated, setPaymentCreated] = useState(null);
+  const [checkingPayment, setCheckingPayment] = useState(false);
   const { isAuthenticated, isLoading, signOut, SignInButton } =
     useAuthentication();
 
   useEffect(() => {
     if (isAuthenticated) {
+      setCheckingPayment(true);
       API.get(
         "talkbackBE",
         "/check_payment_created?userId=" + localStorage.getItem("userId")
       ).then((res) => {
-        if (res) {
+        console.log("result", res);
+
+        if (!res) {
+          setPaymentCreated(false);
+        } else {
           setPaymentCreated(true);
         }
+        setCheckingPayment(false);
       });
     }
   }, [isAuthenticated]);
 
   if (!isLoading && isAuthenticated) {
-    return paymentCreated ? (
-      <>
-        <BrowserRouter>
-          <App signOut={signOut} />
-        </BrowserRouter>
-      </>
-    ) : (
-      <Checkout paymentCreated={paymentCreated} />
-    );
+    if (checkingPayment) {
+      return <p>checking payment</p>;
+    } else if (paymentCreated) {
+      return (
+        <>
+          <BrowserRouter>
+            <App signOut={signOut} />
+          </BrowserRouter>
+        </>
+      );
+    } else {
+      return <Checkout paymentCreated={paymentCreated} />;
+    }
   } else if (!isLoading) {
     return (
       <>
