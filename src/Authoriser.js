@@ -69,7 +69,7 @@ const Authoriser = () => {
       return (
         <>
           <BrowserRouter>
-            <App signOut={signOut} />
+            <App signOut={signOut} userId={user.attributes?.sub} />
           </BrowserRouter>
         </>
       );

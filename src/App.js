@@ -47,10 +47,9 @@ Amplify.configure({
 export let updateMidiIn;
 export let updateMidiOut;
 
-function App({ signOut }) {
+function App({ signOut, userId }) {
   let history = useHistory();
 
-  const [userId, setuserId] = useState(null);
   // const [midiInputs, setMidiInputs] = useState([]);
   // const [midiOutputs, setMidiOutputs] = useState([]);
   const [midiIn, setMidiIn] = useState("None");
