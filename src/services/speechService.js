@@ -12,7 +12,7 @@ Howler.autoUnlock = true;
 const bumblebee = new BumbleBee();
 bumblebee.setWorkersPath("bumblebee-workers");
 bumblebee.addHotword("talkback", tb_data, 7);
-bumblebee.setHotword("hey_edison");
+bumblebee.setHotword("talkback");
 
 // Setup webspeech API
 const SpeechRecognition = window.webkitSpeechRecognition;
