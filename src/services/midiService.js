@@ -24,8 +24,10 @@ const setConfig = (midi) => {
 
 export const getMIDIMessage = (msg) => {
   // Setting the new Config when MIDI message received
-  if (msg.data !== [240, 0, 0, 0, 0, 0, 127, 247]) {
+  if (msg.data !== [240, 0, 0, 0, 0, 0, 127, 247] && msg.data[6] === 0) {
     setConfig(msg.data);
+  } else if (msg.data === [240, 0, 0, 0, 0, 0, 127, 247]) {
+    sendMIDIMessage([240, 0, 0, 0, 0, 0, 127, 0]);
   }
 };
 

@@ -11,7 +11,7 @@ Howler.autoUnlock = true;
 // Setup porcupine/bumblebee
 const bumblebee = new BumbleBee();
 bumblebee.setWorkersPath("bumblebee-workers");
-bumblebee.addHotword("talkback", tb_data, 7);
+bumblebee.addHotword("talkback", tb_data, 0.7);
 bumblebee.setHotword("talkback");
 
 // Setup webspeech API
