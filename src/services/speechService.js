@@ -3,6 +3,7 @@ import { Howl, Howler } from "howler";
 import { updateIsListening, updateTranscript } from "../components/StatusBar";
 
 let config, websocket;
+let tb_data = require("./talkback");
 
 Howler.autoUnlock = true;
 // const playAlert = require("alert-sound-notify");
@@ -10,7 +11,7 @@ Howler.autoUnlock = true;
 // Setup porcupine/bumblebee
 const bumblebee = new BumbleBee();
 bumblebee.setWorkersPath("bumblebee-workers");
-bumblebee.addHotword("hey_edison");
+bumblebee.addHotword("talkback", tb_data, 7);
 bumblebee.setHotword("hey_edison");
 
 // Setup webspeech API
