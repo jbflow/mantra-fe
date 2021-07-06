@@ -49,35 +49,12 @@ export let updateMidiOut;
 
 function App({ signOut }) {
   let history = useHistory();
-  const [isAuthenticated, userHasAuthenticated] = useState(false);
+
   const [userId, setuserId] = useState(null);
   // const [midiInputs, setMidiInputs] = useState([]);
   // const [midiOutputs, setMidiOutputs] = useState([]);
   const [midiIn, setMidiIn] = useState("None");
   const [midiOut, setMidiOut] = useState("None");
-
-  useEffect(() => {
-    async function onLoad() {
-      try {
-        await Auth.currentSession();
-        const { attributes } = await Auth.currentAuthenticatedUser();
-        if (attributes) {
-          setuserId(attributes?.sub);
-          localStorage.setItem("userId", attributes?.sub);
-          localStorage.setItem("email", attributes.email);
-
-          // getPrefs(attributes?.sub);
-        }
-
-        userHasAuthenticated(true);
-      } catch (e) {
-        if (e !== "No current user") {
-          alert(e);
-        }
-      }
-    }
-    onLoad();
-  }, []);
 
   useEffect(() => {
     updateMidiIn = setMidiIn;
@@ -99,48 +76,44 @@ function App({ signOut }) {
   // };
 
   return (
-    isAuthenticated && (
-      <>
-        <div>
-          <TopBar signOut={signOut} />
-          <NavBar />
-          <div
-            style={{
-              paddingTop: 54,
-              paddingLeft: 210,
-              // display: "flex",
-              // flexDirection: "row",
-              // minHeight: 'calc(100vh-48px)'
-            }}
-          >
-            <Route
-              path="/dashboard"
-              render={(props) => (
-                <Dashboard {...props} getConfig={getConfigFunction} />
-              )}
-            />
-            <Route
-              path="/account"
-              render={(props) => (
-                <AccountManagement {...props} userId={userId} />
-              )}
-            />
-            <Route
-              path="/commands"
-              render={(props) => (
-                <CommandBuilder
-                  {...props}
-                  ws={getWebSocket()}
-                  getConfig={getConfigFunction}
-                  userId={userId}
-                />
-              )}
-            />
-          </div>
-          <StatusBar midiIn={midiIn} midiOut={midiOut} />
+    <>
+      <div>
+        <TopBar signOut={signOut} />
+        <NavBar />
+        <div
+          style={{
+            paddingTop: 54,
+            paddingLeft: 210,
+            // display: "flex",
+            // flexDirection: "row",
+            // minHeight: 'calc(100vh-48px)'
+          }}
+        >
+          <Route
+            path="/dashboard"
+            render={(props) => (
+              <Dashboard {...props} getConfig={getConfigFunction} />
+            )}
+          />
+          <Route
+            path="/account"
+            render={(props) => <AccountManagement {...props} userId={userId} />}
+          />
+          <Route
+            path="/commands"
+            render={(props) => (
+              <CommandBuilder
+                {...props}
+                ws={getWebSocket()}
+                getConfig={getConfigFunction}
+                userId={userId}
+              />
+            )}
+          />
         </div>
-      </>
-    )
+        <StatusBar midiIn={midiIn} midiOut={midiOut} />
+      </div>
+    </>
   );
 }
 

@@ -40,18 +40,18 @@ Auth.configure({
 const Authoriser = () => {
   const [paymentCreated, setPaymentCreated] = useState(null);
   const [checkingPayment, setCheckingPayment] = useState(false);
-  const { isAuthenticated, isLoading, signOut, SignInButton } =
+  const { user, isAuthenticated, isLoading, signOut, SignInButton } =
     useAuthentication();
 
   useEffect(() => {
     if (isAuthenticated) {
       setCheckingPayment(true);
+      localStorage.setItem("userId", user.attibutes?.sub);
+      localStorage.setItem("email", user.attributes.email);
       API.get(
         "talkbackBE",
-        "/check_payment_created?userId=" + localStorage.getItem("userId")
+        "/check_payment_created?userId=" + user.attributes?.sub
       ).then((res) => {
-        console.log("result", res);
-
         if (!res) {
           setPaymentCreated(false);
         } else {
