@@ -117,7 +117,8 @@ export const MidiToJson = (midiArray, config) => {
     sel_track: null,
     sel_device: null,
   };
-  midiArray = midiArray.slice(6, -1);
+
+  midiArray = midiArray.slice(7, -1);
   return updateConfig(midiArray, config);
 };
 
@@ -133,7 +134,7 @@ const updateConfig = (midiArray, config) => {
           .slice(quantity * 3 + 2)
           .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
       : convert_bytes(midiArray.slice(quantity * 3 + 2)) - 1; // convert the bytes to a single int
-
+  console.log(verb);
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map
 
   return config;

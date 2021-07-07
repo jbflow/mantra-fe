@@ -46,7 +46,7 @@ const Authoriser = () => {
   useEffect(() => {
     if (isAuthenticated) {
       setCheckingPayment(true);
-      localStorage.setItem("userId", user.attibutes?.sub);
+      localStorage.setItem("userId", user.attributes?.sub);
       localStorage.setItem("email", user.attributes.email);
       API.get(
         "talkbackBE",

@@ -16,18 +16,29 @@ var setConfigOnSpeech;
 
 const setConfig = (midi) => {
   config = MidiToJson(midi, config);
-  // console.log('config: ', config);
+  console.log("config: ", config);
   updateScriptConnected(true);
   setConfigOnSpeech(config);
   // updateConfig(config);
 };
 
+function arraysEqual(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
 export const getMIDIMessage = (msg) => {
+  const init = [240, 0, 0, 0, 0, 0, 127, 247];
   // Setting the new Config when MIDI message received
-  if (msg.data !== [240, 0, 0, 0, 0, 0, 127, 247] && msg.data[6] === 0) {
+  if (!arraysEqual(Array.from(msg.data), init) && msg.data[6] === 0) {
     setConfig(msg.data);
-  } else if (msg.data === [240, 0, 0, 0, 0, 0, 127, 247]) {
-    sendMIDIMessage([240, 0, 0, 0, 0, 0, 127, 0]);
+  } else if (arraysEqual(init, Array.from(msg.data))) {
+    sendMIDIMessage([240, 0, 0, 0, 0, 0, 1, 247]);
   }
 };
 
@@ -70,14 +81,15 @@ const onMIDISuccess = (midiAccess) => {
   midiInputs = Array.from(midiAccess.inputs.values());
   midiOutputs = Array.from(midiAccess.outputs.values());
   midiInputs.forEach((input) => {
-    if (input.name === "Bridge B") {
+    if (input.name == "tlkbck") {
       midiInput = input;
+
+      midiInput.onmidimessage = getMIDIMessage;
       console.log(midiInput);
-      if (midiInput) midiInput.onmidimessage = getMIDIMessage;
     }
   });
   midiOutputs.forEach((output) => {
-    if (output.name === "Bridge A") {
+    if (output.name == "tlkbck") {
       midiOutput = output;
       console.log(midiOutput);
     }
