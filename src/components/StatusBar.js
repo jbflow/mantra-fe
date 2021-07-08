@@ -10,25 +10,20 @@ import DawLinkGood from "../images/daw-link-good.svg";
 import DawLinkBad from "../images/daw-link-bad.svg";
 import TlkBckListening from "../images/tlkbck-listening.svg";
 import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
+import { emptyConfig } from "../utils/MidiConstants";
 
-export let updateScriptConnected;
-export let updateIsListening;
-export let updateTranscript;
-
-export default function StatusBar({ midiIn, midiOut }) {
+export default function StatusBar({
+  midiInputOpen,
+  midiOutputOpen,
+  isListening,
+  config,
+  transcript,
+}) {
   const [micConnected, setMicConnected] = useState(false);
-  const [scriptConnected, setScriptConnected] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
   const [showTranscript, setShowTranscript] = useState(true);
 
   useEffect(() => {
-    updateScriptConnected = setScriptConnected;
-    updateIsListening = setIsListening;
-    updateTranscript = setTranscript;
-
     const constraints = { audio: true };
-
     navigator.mediaDevices.getUserMedia(constraints).then(() => {
       setMicConnected(true);
     });
@@ -40,18 +35,18 @@ export default function StatusBar({ midiIn, midiOut }) {
         <img
           alt=""
           className="statusItem"
-          src={midiIn && midiIn !== "None" ? MidiInGood : MidiInBad}
+          src={midiInputOpen ? MidiInGood : MidiInBad}
         />
         <img
           alt=""
           className="statusItem"
-          src={midiOut && midiOut !== "None" ? MidiOutGood : MidiOutBad}
+          src={midiOutputOpen ? MidiOutGood : MidiOutBad}
         />
         <img alt="" className="statusItem" src={micConnected ? Mic : MicMute} />
         <img
           alt=""
           className="statusItem"
-          src={scriptConnected ? DawLinkGood : DawLinkBad}
+          src={config !== emptyConfig ? DawLinkGood : DawLinkBad}
         />
         <div
           style={{
@@ -79,7 +74,7 @@ export default function StatusBar({ midiIn, midiOut }) {
             color: "white",
           }}
         >
-          {transcript || "Open new track..."}
+          {transcript}
         </div>
         <img alt="" src={isListening ? TlkBckListening : TlkBckNotListening} />
         <div

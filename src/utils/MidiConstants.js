@@ -5,6 +5,21 @@ export const SYSEX_START = 240;
 export const MANUFACTURER_ID = [0, 0, 0, 0, 0];
 export const SYSEX_END = 247;
 
+export const emptyConfig = {
+  track: [],
+  "return track": [],
+  scene: [],
+  "cue point": [],
+  device: [],
+  clip: [],
+  parameter: [],
+  instrument: [],
+  audio_device: [],
+  midi_device: [],
+  sel_track: null,
+  sel_device: null,
+};
+
 export const VERBS = {
   rename: 1,
   load: 2,

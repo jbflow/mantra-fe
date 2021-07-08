@@ -103,21 +103,6 @@ const convert_bytes = (byteArray) => {
 
 export const MidiToJson = (midiArray, config) => {
   if (midiArray[0] !== 240) return; // If the message isn't a SysEx message
-  config = config || {
-    track: [],
-    "return track": [],
-    scene: [],
-    "cue point": [],
-    device: [],
-    clip: [],
-    parameter: [],
-    instrument: [],
-    audio_device: [],
-    midi_device: [],
-    sel_track: null,
-    sel_device: null,
-  };
-
   midiArray = midiArray.slice(7, -1);
   return updateConfig(midiArray, config);
 };
