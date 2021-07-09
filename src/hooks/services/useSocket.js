@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { WEBSOCKET_API_URL } from "../../utils/Constants";
 
 let connectInterval = null;
 let timeout = 250;
 
 export default function useSocket(sendMIDIMessage) {
-  const [websocket, setWebsocket] = useState(null);
+  const websocket = useRef(null);
   const [lastSubject, setLastSubject] = useState(null);
 
   const connectWebSocket = () => {
@@ -52,7 +52,10 @@ export default function useSocket(sendMIDIMessage) {
 
   useEffect(() => {
     connectInterval = setInterval(check, timeout);
-    setWebsocket(connectWebSocket());
+    websocket.current = connectWebSocket();
+    return () => {
+      websocket.current.close();
+    };
   }, []);
 
   return [websocket, lastSubject];

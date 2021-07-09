@@ -45,20 +45,21 @@ const Authoriser = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      setCheckingPayment(true);
+      // setCheckingPayment(true);
       localStorage.setItem("userId", user.attributes?.sub);
       localStorage.setItem("email", user.attributes.email);
-      API.get(
-        "talkbackBE",
-        "/check_payment_created?userId=" + user.attributes?.sub
-      ).then((res) => {
-        if (!res) {
-          setPaymentCreated(false);
-        } else {
-          setPaymentCreated(true);
-        }
-        setCheckingPayment(false);
-      });
+      setPaymentCreated(true);
+      // API.get(
+      //   "talkbackBE",
+      //   "/check_payment_created?userId=" + user.attributes?.sub
+      // ).then((res) => {
+      //   if (!res) {
+      //     setPaymentCreated(false);
+      //   } else {
+      //     setPaymentCreated(true);
+      //   }
+      //   setCheckingPayment(false);
+      // });
     }
   }, [isAuthenticated]);
 

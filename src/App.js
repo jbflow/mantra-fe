@@ -40,8 +40,8 @@ function App({ signOut, userId }) {
     config,
     midiInputOpen,
     midiOutputOpen,
+    dawLink,
     websocket,
-    lastSubject,
     isListening,
     transcript,
   ] = useServices(userId);
@@ -79,9 +79,9 @@ function App({ signOut, userId }) {
         </div>
         <StatusBar
           midiInputOpen={midiInputOpen}
-          midiOutput={midiOutputOpen}
+          midiOutputOpen={midiOutputOpen}
           isListening={isListening}
-          config={config}
+          dawLink={dawLink}
           transcript={transcript}
         />
       </div>

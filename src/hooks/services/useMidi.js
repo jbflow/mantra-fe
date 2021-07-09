@@ -10,10 +10,10 @@ let midiOutput;
 export default function useMidi(config, setConfig) {
   const [midiInputOpen, setMidiInput] = useState(null);
   const [midiOutputOpen, setMidiOutput] = useState(null);
+  const [dawLink, setDawLink] = useState(false);
 
   const sendMIDIMessage = (msg) => {
     if (msg) {
-      console.log("sendMIDIMessage: ", msg);
       midiOutput.send(msg);
     }
   };
@@ -22,6 +22,9 @@ export default function useMidi(config, setConfig) {
     const init = [240, 0, 0, 0, 0, 0, 127, 247];
     if (!arraysEqual(Array.from(msg.data), init) && msg.data[6] === 0) {
       setConfig(MidiToJson(msg.data, config));
+      if (!dawLink) {
+        setDawLink(true);
+      }
     } else if (arraysEqual(init, Array.from(msg.data))) {
       sendMIDIMessage([240, 0, 0, 0, 0, 0, 1, 247]);
     }
@@ -57,5 +60,5 @@ export default function useMidi(config, setConfig) {
       .then(onMIDISuccess, onMIDIFailure);
   }, []);
 
-  return [midiInputOpen, midiOutputOpen, sendMIDIMessage];
+  return [midiInputOpen, midiOutputOpen, sendMIDIMessage, dawLink];
 }

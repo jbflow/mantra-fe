@@ -61,7 +61,6 @@ const rename_item = (noun_adj, noun, value, config) => {
 };
 
 const load_item = (noun_adj, noun, value, config) => {
-  console.log("noun_adj:", noun_adj);
   // Handles loading an item
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
   for (var i = 0; i < sub_paths.length; i++) {
@@ -119,7 +118,6 @@ const updateConfig = (midiArray, config) => {
           .slice(quantity * 3 + 2)
           .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
       : convert_bytes(midiArray.slice(quantity * 3 + 2)) - 1; // convert the bytes to a single int
-  console.log(verb);
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map
 
   return config;

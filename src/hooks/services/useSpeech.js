@@ -37,14 +37,12 @@ export default function useSpeech(websocket, config, userId, lastSubject) {
     };
 
     recognition.onresult = (event) => {
+      console.log(websocket);
       var transcript = "";
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         transcript += event.results[i][0].transcript;
       }
 
-      if (transcript.includes("stop listening")) {
-        recognition.abort();
-      }
       if (transcript) {
         setTranscript(transcript);
       }
@@ -52,22 +50,28 @@ export default function useSpeech(websocket, config, userId, lastSubject) {
       if (transcript[0] === " ") {
         transcript = transcript.substring(1);
       }
-      websocket.send(
-        JSON.stringify({
-          message: transcript,
-          config: config,
-          action: "command",
-          userId: userId,
-          last_subject: lastSubject,
-        })
-      );
+
+      if (transcript.includes("stop listening")) {
+        recognition.abort();
+      } else {
+        websocket.current.send(
+          JSON.stringify({
+            message: transcript,
+            config: config,
+            action: "command",
+            userId: userId,
+            last_subject: lastSubject,
+          })
+        );
+      }
     };
 
     recognition.onspeechend = () => {
-      recognition.stop();
+      recognition.abort();
     };
 
     bumblebee.on("hotword", (hotword) => {
+      console.log(hotword);
       recognition.start();
     });
     bumblebee.start();

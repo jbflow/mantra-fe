@@ -6,7 +6,8 @@ import { emptyConfig } from "../../utils/MidiConstants";
 
 export default function useServices(userId) {
   const [config, setConfig] = useState(emptyConfig);
-  const [midiInputOpen, midiOutputOpen, sendMIDIMessage] = useMidi(
+
+  const [midiInputOpen, midiOutputOpen, sendMIDIMessage, dawLink] = useMidi(
     config,
     setConfig
   );
@@ -21,6 +22,7 @@ export default function useServices(userId) {
     config,
     midiInputOpen,
     midiOutputOpen,
+    dawLink,
     websocket,
     isListening,
     transcript,

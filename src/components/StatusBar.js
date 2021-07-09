@@ -16,7 +16,7 @@ export default function StatusBar({
   midiInputOpen,
   midiOutputOpen,
   isListening,
-  config,
+  dawLink,
   transcript,
 }) {
   const [micConnected, setMicConnected] = useState(false);
@@ -46,7 +46,7 @@ export default function StatusBar({
         <img
           alt=""
           className="statusItem"
-          src={config !== emptyConfig ? DawLinkGood : DawLinkBad}
+          src={dawLink ? DawLinkGood : DawLinkBad}
         />
         <div
           style={{
