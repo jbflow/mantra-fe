@@ -1,16 +1,10 @@
-import { useState } from "react";
 import useMidi from "./useMidi";
 import useSpeech from "./useSpeech";
 import useSocket from "./useSocket";
-import { emptyConfig } from "../../utils/MidiConstants";
 
 export default function useServices(userId) {
-  const [config, setConfig] = useState(emptyConfig);
-
-  const [midiInputOpen, midiOutputOpen, sendMIDIMessage, dawLink] = useMidi(
-    config,
-    setConfig
-  );
+  const [midiInputOpen, midiOutputOpen, sendMIDIMessage, dawLink, config] =
+    useMidi();
   const [websocket, lastSubject] = useSocket(sendMIDIMessage);
   const [isListening, transcript] = useSpeech(
     websocket,
@@ -18,6 +12,7 @@ export default function useServices(userId) {
     userId,
     lastSubject
   );
+
   return [
     config,
     midiInputOpen,

@@ -1,50 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Container, Tabs, Tab } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import General from "./General";
 import Tracks from "./Tracks";
 import Devices from "./Devices";
 import Clips from "./Clips";
 import Parameters from "./Parameters";
 import Browser from "./Browser";
-export let updateConfig;
 
-const tabArray = [
-  "General",
-  "Tracks",
-  "Devices",
-  "Clips",
-  "Parameters",
-  "Browser",
-];
-
-export default function Dashboard() {
-  const [config, setConfig] = useState(null);
-
-  useEffect(() => {
-    updateConfig = setConfig;
-    return () => {
-      updateConfig = null;
-    };
-  }, [setConfig]);
-
-  const tabComponents = [
-    <General config={config} />,
-    <Tracks config={config} />,
-    <Devices config={config} />,
-    <Clips config={config} />,
-    <Parameters config={config} />,
-    <Browser config={config} />,
-  ];
-
+export default function Dashboard({ config }) {
   return (
     <Container className="h-100">
-      <Tabs defaultActiveKey="Tracks" id="uncontrolled-tab-example">
-        {tabArray.map((tab, index) => (
-          <Tab key={tab} eventKey={tab} title={tab}>
-            {tabComponents[index]}
-          </Tab>
-        ))}
-      </Tabs>
+      <Row>
+        <Col>
+          <Tracks tracks={config ? config.track : null} />
+        </Col>
+        <Col>
+          <Devices
+            sel_track={config ? config.sel_track : null}
+            devices={config ? config.device : null}
+          />
+        </Col>
+      </Row>
     </Container>
   );
 }

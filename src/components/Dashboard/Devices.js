@@ -1,42 +1,19 @@
 import React from "react";
 import { Container, Table } from "react-bootstrap";
 
-export default function Devices() {
+export default function Devices({ sel_track, devices }) {
+  console.log(devices);
+  console.log(sel_track);
   return (
     <Container>
-      <Table bordered striped responsive="sm">
-        <thead>
-          <tr>
-            <th>Track</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>MIDI Devices</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-          </tr>
-          <tr>
-            <td>Audio Devices</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-          </tr>
-        </tbody>
-      </Table>
+      <ul>
+        <h5>Devices</h5>
+        {devices[sel_track || 0]
+          ? devices[sel_track || 0].map((device, id) => (
+              <li key={id}>{device}</li>
+            ))
+          : null}
+      </ul>
     </Container>
   );
 }

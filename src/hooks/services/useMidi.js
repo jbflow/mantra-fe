@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { arraysEqual } from "../../utils/utils";
 import { MidiToJson } from "../../utils/MidiToJson";
+import { emptyConfig } from "../../utils/MidiConstants";
 
 let midiInputs;
 let midiOutputs;
 let midiInput;
 let midiOutput;
 
-export default function useMidi(config, setConfig) {
+export default function useMidi() {
   const [midiInputOpen, setMidiInput] = useState(null);
   const [midiOutputOpen, setMidiOutput] = useState(null);
   const [dawLink, setDawLink] = useState(false);
+  const [config, setConfig] = useState(emptyConfig);
 
   const sendMIDIMessage = (msg) => {
     if (msg) {
@@ -20,13 +22,16 @@ export default function useMidi(config, setConfig) {
 
   const getMIDIMessage = (msg) => {
     const init = [240, 0, 0, 0, 0, 0, 127, 247];
+    if (arraysEqual(init, Array.from(msg.data))) {
+      setConfig(emptyConfig);
+      sendMIDIMessage([240, 0, 0, 0, 0, 0, 1, 247]);
+    }
     if (!arraysEqual(Array.from(msg.data), init) && msg.data[6] === 0) {
-      setConfig(MidiToJson(msg.data, config));
+      let configStore = Object.assign({}, config);
+      setConfig(MidiToJson(msg.data, configStore));
       if (!dawLink) {
         setDawLink(true);
       }
-    } else if (arraysEqual(init, Array.from(msg.data))) {
-      sendMIDIMessage([240, 0, 0, 0, 0, 0, 1, 247]);
     }
   };
 
@@ -60,5 +65,5 @@ export default function useMidi(config, setConfig) {
       .then(onMIDISuccess, onMIDIFailure);
   }, []);
 
-  return [midiInputOpen, midiOutputOpen, sendMIDIMessage, dawLink];
+  return [midiInputOpen, midiOutputOpen, sendMIDIMessage, dawLink, config];
 }
