@@ -10,7 +10,6 @@ import DawLinkGood from "../images/daw-link-good.svg";
 import DawLinkBad from "../images/daw-link-bad.svg";
 import TlkBckListening from "../images/tlkbck-listening.svg";
 import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
-import { emptyConfig } from "../utils/MidiConstants";
 
 export default function StatusBar({
   midiInputOpen,

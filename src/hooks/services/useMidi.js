@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { arraysEqual } from "../../utils/utils";
+import { arraysEqual, clearConfig } from "../../utils/utils";
 import { MidiToJson } from "../../utils/MidiToJson";
 import { emptyConfig } from "../../utils/MidiConstants";
 
@@ -23,6 +23,7 @@ export default function useMidi() {
   const getMIDIMessage = (msg) => {
     const init = [240, 0, 0, 0, 0, 0, 127, 247];
     if (arraysEqual(init, Array.from(msg.data))) {
+      clearConfig();
       setConfig(emptyConfig);
       sendMIDIMessage([240, 0, 0, 0, 0, 0, 1, 247]);
     }

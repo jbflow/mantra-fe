@@ -16,8 +16,8 @@ export const emptyConfig = {
   instrument: [],
   audio_device: [],
   midi_device: [],
-  sel_track: null,
-  sel_device: null,
+  sel_track: 0,
+  sel_device: 0,
 };
 
 export const VERBS = {
