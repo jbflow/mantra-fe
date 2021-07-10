@@ -36,9 +36,12 @@ const get_all_paths = (noun_adj, noun, config) => {
 };
 
 const select_item = (noun_adj, noun, value, config) => {
-  let path = noun === 3 && "sel_track";
-  if (noun === 10) path = "sel_device";
-  if (path) config[path] = convert_bytes(noun_adj.slice(-2));
+  if (noun_adj.length === 3) {
+    config["sel_track"] = convert_bytes(noun_adj.slice(1, 3));
+  } else if (noun_adj.length === 6) {
+    config["sel_track"] = convert_bytes(noun_adj.slice(1, 3));
+    config["sel_device"] = convert_bytes(noun_adj.slice(3, 5));
+  }
 };
 
 const move_item = (noun_adj, noun, value, config) => {

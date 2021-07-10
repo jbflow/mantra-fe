@@ -20,7 +20,15 @@ export default function Dashboard({ config }) {
             devices={config ? config.device : null}
           />
         </Col>
+        <Col>Clips</Col>
+        <Col>Parameters</Col>
       </Row>
+
+      <Browser
+        instruments={config ? config.instrument : null}
+        audio_effects={config ? config.audio_device : null}
+        midi_effects={config ? config.midi_device : null}
+      />
     </Container>
   );
 }
