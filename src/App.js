@@ -42,6 +42,8 @@ function App({ signOut, userId }) {
     midiOutputOpen,
     dawLink,
     websocket,
+    totalTime,
+    totalCommands,
     isListening,
     transcript,
   ] = useServices(userId);
@@ -59,7 +61,14 @@ function App({ signOut, userId }) {
         >
           <Route
             path="/dashboard"
-            render={(props) => <Dashboard {...props} config={config} />}
+            render={(props) => (
+              <Dashboard
+                {...props}
+                config={config}
+                totalTime={totalTime}
+                totalCommands={totalCommands}
+              />
+            )}
           />
           <Route
             path="/account"

@@ -7,6 +7,8 @@ let timeout = 250;
 export default function useSocket(sendMIDIMessage) {
   const websocket = useRef(null);
   const [lastSubject, setLastSubject] = useState(null);
+  const [totalTime, setTotalTime] = useState(0);
+  const [totalCommands, setTotalCommands] = useState(0);
 
   const connectWebSocket = () => {
     const ws = new WebSocket(WEBSOCKET_API_URL);
@@ -17,9 +19,10 @@ export default function useSocket(sendMIDIMessage) {
 
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      const midi = data["command"];
-      setLastSubject(data["last_subject"]);
-      sendMIDIMessage(midi);
+      setLastSubject(data.last_subject);
+      setTotalTime(data.time);
+      setTotalCommands(data.total_commands);
+      sendMIDIMessage(data.command);
     };
 
     // websocket onclose event listener
@@ -58,5 +61,5 @@ export default function useSocket(sendMIDIMessage) {
     };
   }, []);
 
-  return [websocket, lastSubject];
+  return [websocket, lastSubject, totalTime, totalCommands];
 }

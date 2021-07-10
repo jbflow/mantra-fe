@@ -16,6 +16,10 @@
   height: 20rem;
   width: 20.75rem;
 }
+.db-xlg {
+  height: 30rem;
+  width: 66rem;
+}
 
 .dashboard-card-title {
   border-bottom: 1px solid #e0e0e0;

@@ -2,16 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
 import "./Dashboard.css";
-
+import General from "./General";
 import Tracks from "./Tracks";
 import Devices from "./Devices";
 import Clips from "./Clips";
 import Parameters from "./Parameters";
 import Browser from "./Browser";
 
-export default function Dashboard({ config }) {
+export default function Dashboard({ config, totalTime, totalCommands }) {
   return (
     <Container>
+      <Row>
+        <General totalTime={totalTime} totalCommands={totalCommands} />
+      </Row>
       <Row>
         <Tracks tracks={config ? config.track : null} />
 

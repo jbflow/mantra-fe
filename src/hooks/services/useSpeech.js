@@ -21,9 +21,22 @@ recognition.maxAlternatives = 1;
 const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
 const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
 
+let interval;
+let time = 0;
 export default function useSpeech(websocket, config, userId, lastSubject) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [speechTime, setSpeechTime] = useState(0);
+
+  useEffect(() => {
+    if (isListening) {
+      interval = setInterval(() => {
+        time = time + 10;
+      }, 10);
+    } else {
+      clearInterval(interval);
+    }
+  }, [isListening]);
 
   useEffect(() => {
     recognition.onstart = () => {
@@ -37,7 +50,7 @@ export default function useSpeech(websocket, config, userId, lastSubject) {
     };
 
     recognition.onresult = (event) => {
-      console.log(websocket);
+      recognition.abort();
       var transcript = "";
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         transcript += event.results[i][0].transcript;
@@ -61,9 +74,11 @@ export default function useSpeech(websocket, config, userId, lastSubject) {
             action: "command",
             userId: userId,
             last_subject: lastSubject,
+            time: time,
           })
         );
       }
+      time = 0;
     };
 
     recognition.onspeechend = () => {
@@ -71,7 +86,6 @@ export default function useSpeech(websocket, config, userId, lastSubject) {
     };
 
     bumblebee.on("hotword", (hotword) => {
-      console.log(hotword);
       recognition.start();
     });
     bumblebee.start();
