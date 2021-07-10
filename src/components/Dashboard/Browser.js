@@ -4,38 +4,44 @@ import { Container, Row, Col } from "react-bootstrap";
 export default function Browser({ instruments, audio_effects, midi_effects }) {
   return (
     <>
-      <Row>
-        <Col>
-          <h5>Instruments</h5>
-          <ul>
-            {instruments
-              ? instruments.map((instrument, id) => (
-                  <li key={id}>{instrument}</li>
-                ))
-              : null}
-          </ul>
-        </Col>
-        <Col>
-          <h5>Audio Effects</h5>
-          <ul>
-            {audio_effects
-              ? audio_effects.map((audio_effect, id) => (
-                  <li key={id}>{audio_effect}</li>
-                ))
-              : null}
-          </ul>
-        </Col>
-        <Col>
-          <h5>MIDI Effects</h5>
-          <ul>
-            {midi_effects
-              ? midi_effects.map((midi_effect, id) => (
-                  <li key={id}>{midi_effect}</li>
-                ))
-              : null}
-          </ul>
-        </Col>
-      </Row>
+      <div className="mt-3 mb-5 dashboard-card db-lg">
+        <div className="dashboard-card-title">
+          <p className="dashboard-contents m-2">Instruments </p>
+        </div>
+        {instruments
+          ? instruments.map((instrument, id) => (
+              <p className="dashboard-contents m-2" key={id}>
+                {instrument}
+              </p>
+            ))
+          : null}
+      </div>
+
+      <div className="mt-3 mb-5 dashboard-card db-lg">
+        <div className="dashboard-card-title">
+          <p className="dashboard-contents m-2">Audio Effects</p>
+        </div>
+        {audio_effects
+          ? audio_effects.map((audio_effect, id) => (
+              <p className="dashboard-contents m-2" key={id}>
+                {audio_effect}
+              </p>
+            ))
+          : null}
+      </div>
+
+      <div className="mt-3 mb-5 dashboard-card db-lg">
+        <div className="dashboard-card-title">
+          <p className="dashboard-contents m-2">MIDI Effects </p>
+        </div>
+        {midi_effects
+          ? midi_effects.map((midi_effect, id) => (
+              <p className="dashboard-contents m-2" key={id}>
+                {midi_effect}
+              </p>
+            ))
+          : null}
+      </div>
     </>
   );
 }

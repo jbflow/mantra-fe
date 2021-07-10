@@ -4,12 +4,24 @@ import { Container, Table } from "react-bootstrap";
 export default function Clips({ sel_track, clips }) {
   return (
     <>
-      <ul>
-        <h5>Clips</h5>
+      <div className="mt-3 dashboard-card db-sm">
+        <div className="dashboard-card-title">
+          <p className="dashboard-contents m-2">
+            Clips{" "}
+            <span className="font-italic text-right text-muted">
+              (selected track)
+            </span>
+          </p>
+        </div>
+
         {clips[sel_track - 1]
-          ? clips[sel_track - 1].map((clip, id) => <li key={id}>{clip}</li>)
+          ? clips[sel_track - 1].map((clip, id) => (
+              <p className="dashboard-contents m-2" key={id}>
+                {clip}
+              </p>
+            ))
           : null}
-      </ul>
+      </div>
     </>
   );
 }

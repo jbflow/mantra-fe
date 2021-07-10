@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import General from "./General";
+
+import "./Dashboard.css";
+
 import Tracks from "./Tracks";
 import Devices from "./Devices";
 import Clips from "./Clips";
@@ -9,37 +11,33 @@ import Browser from "./Browser";
 
 export default function Dashboard({ config }) {
   return (
-    <Container className="h-100">
+    <Container>
       <Row>
-        <Col>
-          <Tracks tracks={config ? config.track : null} />
-        </Col>
-        <Col>
-          <Devices
-            sel_track={config ? config.sel_track : null}
-            devices={config ? config.device : null}
-          />
-        </Col>
-        <Col>
-          <Clips
-            sel_track={config ? config.sel_track : null}
-            clips={config ? config.clip : null}
-          />
-        </Col>
-        <Col>
-          <Parameters
-            sel_track={config ? config.sel_track : null}
-            sel_device={config ? config.sel_device : null}
-            parameters={config ? config.parameter : null}
-          />
-        </Col>
-      </Row>
+        <Tracks tracks={config ? config.track : null} />
 
-      <Browser
-        instruments={config ? config.instrument : null}
-        audio_effects={config ? config.audio_device : null}
-        midi_effects={config ? config.midi_device : null}
-      />
+        <Devices
+          sel_track={config ? config.sel_track : null}
+          devices={config ? config.device : null}
+        />
+
+        <Clips
+          sel_track={config ? config.sel_track : null}
+          clips={config ? config.clip : null}
+        />
+
+        <Parameters
+          sel_track={config ? config.sel_track : null}
+          sel_device={config ? config.sel_device : null}
+          parameters={config ? config.parameter : null}
+        />
+      </Row>
+      <Row>
+        <Browser
+          instruments={config ? config.instrument : null}
+          audio_effects={config ? config.audio_device : null}
+          midi_effects={config ? config.midi_device : null}
+        />
+      </Row>
     </Container>
   );
 }

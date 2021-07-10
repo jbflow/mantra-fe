@@ -1,0 +1,35 @@
+.dashboard-card {
+  background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  opacity: 1;
+  overflow-y: auto !important;
+  margin: 1rem;
+}
+.db-sm {
+  height: 15rem;
+  width: 15rem;
+}
+.db-lg {
+  height: 20rem;
+  width: 20.75rem;
+}
+
+.dashboard-card-title {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dashboard-contents {
+  font: var(--unnamed-font-style-normal) normal
+    var(--unnamed-font-weight-normal) var(--unnamed-font-size-16) / 18px
+    var(--unnamed-font-family-helveticaneue-medium);
+  letter-spacing: var(--unnamed-character-spacing-0);
+  color: var(--dark-343a40);
+  text-align: left;
+  font: normal normal normal 16px/18px HelveticaNeue-Medium;
+  letter-spacing: 0px;
+  color: #343a40;
+  opacity: 1;
+}
