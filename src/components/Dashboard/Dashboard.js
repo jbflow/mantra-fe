@@ -20,8 +20,19 @@ export default function Dashboard({ config }) {
             devices={config ? config.device : null}
           />
         </Col>
-        <Col>Clips</Col>
-        <Col>Parameters</Col>
+        <Col>
+          <Clips
+            sel_track={config ? config.sel_track : null}
+            clips={config ? config.clip : null}
+          />
+        </Col>
+        <Col>
+          <Parameters
+            sel_track={config ? config.sel_track : null}
+            sel_device={config ? config.sel_device : null}
+            parameters={config ? config.parameter : null}
+          />
+        </Col>
       </Row>
 
       <Browser

@@ -1,33 +1,19 @@
 import React from "react";
 import { Container, Table } from "react-bootstrap";
 
-export default function Parameters() {
+export default function Parameters({ sel_track, sel_device, parameters }) {
   return (
-    <Container>
-      <Table bordered striped responsive="sm">
-        <thead>
-          <tr>
-            <th>Device</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Parameters</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-          </tr>
-        </tbody>
-      </Table>
-    </Container>
+    <>
+      <ul>
+        <h5>Parameters</h5>
+        {parameters[sel_track - 1]
+          ? parameters[sel_track - 1][sel_device - 1]
+            ? parameters[sel_track - 1][sel_device - 1].map((parameter, id) => (
+                <li key={id}>{parameter}</li>
+              ))
+            : null
+          : null}
+      </ul>
+    </>
   );
 }

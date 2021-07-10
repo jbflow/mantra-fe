@@ -1,42 +1,15 @@
 import React from "react";
 import { Container, Table } from "react-bootstrap";
 
-export default function Clips() {
+export default function Clips({ sel_track, clips }) {
   return (
-    <Container>
-      <Table bordered striped responsive="sm">
-        <thead>
-          <tr>
-            <th>Track</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-            <th>Table heading</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Audio Clips</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-          </tr>
-          <tr>
-            <td>MIDI Clips</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-            <td>Table cell</td>
-          </tr>
-        </tbody>
-      </Table>
-    </Container>
+    <>
+      <ul>
+        <h5>Clips</h5>
+        {clips[sel_track - 1]
+          ? clips[sel_track - 1].map((clip, id) => <li key={id}>{clip}</li>)
+          : null}
+      </ul>
+    </>
   );
 }

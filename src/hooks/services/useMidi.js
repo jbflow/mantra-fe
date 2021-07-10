@@ -15,7 +15,7 @@ export default function useMidi() {
   const [config, setConfig] = useState(emptyConfig);
 
   useEffect(() => {
-    console.log(config.sel_track);
+    console.log(config);
   }, [config]);
 
   const sendMIDIMessage = (msg) => {

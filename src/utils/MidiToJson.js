@@ -40,7 +40,7 @@ const select_item = (noun_adj, noun, value, config) => {
     config["sel_track"] = convert_bytes(noun_adj.slice(1, 3));
   } else if (noun_adj.length === 6) {
     config["sel_track"] = convert_bytes(noun_adj.slice(1, 3));
-    config["sel_device"] = convert_bytes(noun_adj.slice(3, 5));
+    config["sel_device"] = convert_bytes(noun_adj.slice(4, 6));
   }
 };
 
