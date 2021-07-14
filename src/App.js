@@ -35,7 +35,6 @@ Amplify.configure({
 });
 
 function App({ signOut, userId }) {
-  let history = useHistory();
   const [
     config,
     midiInputOpen,
