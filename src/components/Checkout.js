@@ -4,7 +4,7 @@ import { loadStripe } from "@stripe/stripe-js";
 const stripePromise = loadStripe(
   "pk_test_51IHT5IJlupQ2Gl7jK3ZYz4C8HaFKArzlyzAMLFpjH1jJdbpZdIyO9CwY0LJyIb3XZCLrfDJZTwWjShGZ8pd8o44U00Jhvs1NZN"
 );
-export default function Checkout({ paymentCreated }) {
+export default function Checkout({ paymentCreated, user }) {
   useEffect(() => {
     console.log(paymentCreated);
     if (!paymentCreated) {
@@ -16,7 +16,10 @@ export default function Checkout({ paymentCreated }) {
     const stripe = await stripePromise;
     const response = await API.post(
       "talkbackBE",
-      "/create_checkout_session?userId=" + localStorage.getItem("userId") + "&email=" + localStorage.getItem('email')
+      "/create_checkout_session?userId=" +
+        user.attributes?.sub +
+        "&email=" +
+        user.attributes.email
     );
     const result = await stripe.redirectToCheckout({
       sessionId: response.id,

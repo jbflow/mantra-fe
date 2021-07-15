@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetFromApi, useReducer } from "../hooks/useGetFromApi";
+import { useGetFromApi } from "../hooks/useGetFromApi";
 
 export const CommandsContext = React.createContext(null);
 

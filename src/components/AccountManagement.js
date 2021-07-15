@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Container,
   Row,
@@ -10,8 +10,10 @@ import {
   Alert,
 } from "react-bootstrap";
 import { Auth } from "aws-amplify";
+import { UserContext } from "../contexts/UserContext";
 
-export default function AccountManagement({ userId }) {
+export default function AccountManagement() {
+  const userId = useContext(UserContext).userId;
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPassword2, setNewPassword2] = useState("");

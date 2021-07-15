@@ -18,11 +18,7 @@ export default function Dashboard({
   return (
     <Container>
       <Row>
-        <General
-          totalTime={totalTime}
-          totalCommands={totalCommands}
-          userId={userId}
-        />
+        <General totalTime={totalTime} totalCommands={totalCommands} />
       </Row>
       <Row>
         <Tracks tracks={config ? config.track : null} />

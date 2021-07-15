@@ -8,10 +8,8 @@ import useAuthentication from "./hooks/useAuthentication";
 import Checkout from "./components/Checkout.js";
 import { isDev } from "./utils/Constants";
 
-// Hub.listen(/.*/, ({ channel, payload }) =>
-//   console.debug(`[hub::${channel}::${payload.event}]`, payload)
-// );
-// https://aws-amplify.github.io/docs/js/authentication#manual-setup
+import ContextComposer from "./contexts/ContextComposer";
+
 Auth.configure({
   region: config.cognito.REGION,
   userPoolId: config.cognito.USER_POOL_ID,
@@ -45,8 +43,7 @@ const Authoriser = () => {
   useEffect(() => {
     if (isAuthenticated) {
       // setCheckingPayment(true);
-      localStorage.setItem("userId", user.attributes?.sub);
-      localStorage.setItem("email", user.attributes.email);
+
       setPaymentCreated(true);
       // API.get(
       //   "talkbackBE",
@@ -69,12 +66,14 @@ const Authoriser = () => {
       return (
         <>
           <BrowserRouter>
-            <App signOut={signOut} userId={user.attributes?.sub} />
+            <ContextComposer user={user}>
+              <App signOut={signOut} userId={user.attributes?.sub} />
+            </ContextComposer>
           </BrowserRouter>
         </>
       );
     } else {
-      return <Checkout paymentCreated={paymentCreated} />;
+      return <Checkout paymentCreated={paymentCreated} user={user} />;
     }
   } else if (!isLoading) {
     return (

@@ -14,7 +14,6 @@ import { HTTP_API_URL } from "./utils/Constants";
 import StatusBar from "./components/StatusBar";
 
 import useServices from "./hooks/services/useServices";
-import CommandsProvider from "./contexts/CommandsContext";
 
 Amplify.configure({
   Auth: {
@@ -51,54 +50,44 @@ function App({ signOut, userId }) {
   return (
     <>
       <div>
-        <CommandsProvider url={`/commands?userId=${userId}`}>
-          <TopBar signOut={signOut} />
-          <NavBar />
-          <div
-            style={{
-              paddingTop: 54,
-              paddingLeft: 210,
-            }}
-          >
-            <Route
-              path="/dashboard"
-              render={(props) => (
-                <Dashboard
-                  {...props}
-                  config={config}
-                  totalTime={totalTime}
-                  totalCommands={totalCommands}
-                  userId={userId}
-                />
-              )}
-            />
-
-            <Route
-              path="/account"
-              render={(props) => (
-                <AccountManagement {...props} userId={userId} />
-              )}
-            />
-            <Route
-              path="/commands"
-              render={(props) => (
-                <CommandBuilder
-                  {...props}
-                  ws={websocket}
-                  config={config}
-                  userId={userId}
-                />
-              )}
-            />
-          </div>
-          <StatusBar
-            midiInputOpen={midiInputOpen}
-            midiOutputOpen={midiOutputOpen}
-            isListening={isListening}
-            dawLink={dawLink}
-            transcript={transcript}
+        <TopBar signOut={signOut} />
+        <NavBar />
+        <div
+          style={{
+            paddingTop: 54,
+            paddingLeft: 210,
+          }}
+        >
+          <Route
+            path="/dashboard"
+            render={(props) => (
+              <Dashboard
+                {...props}
+                config={config}
+                totalTime={totalTime}
+                totalCommands={totalCommands}
+              />
+            )}
           />
-        </CommandsProvider>
+
+          <Route
+            path="/account"
+            render={(props) => <AccountManagement {...props} />}
+          />
+          <Route
+            path="/commands"
+            render={(props) => (
+              <CommandBuilder {...props} ws={websocket} config={config} />
+            )}
+          />
+        </div>
+        <StatusBar
+          midiInputOpen={midiInputOpen}
+          midiOutputOpen={midiOutputOpen}
+          isListening={isListening}
+          dawLink={dawLink}
+          transcript={transcript}
+        />
       </div>
     </>
   );
