@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Commands from "./Commands";
 import Actions from "./Actions";
 import { Container, Row, Col } from "react-bootstrap";
+
+import { CommandsContext } from "../../contexts/CommandsContext";
 
 export default function CommandBuilder({ userId }) {
   const [selected, setSelected] = useState(null);
@@ -17,7 +19,7 @@ export default function CommandBuilder({ userId }) {
           style={{
             backgroundColor: "#FFFFFF",
             padding: 0,
-            height: 'calc(100vh - 100px)'
+            height: "calc(100vh - 100px)",
           }}
         >
           <Commands updateSelected={updateSelected} userId={userId} />
@@ -27,6 +29,6 @@ export default function CommandBuilder({ userId }) {
           <Actions selected={selected} userId={userId} />
         </Col>
       </Row>
-    </Container >
+    </Container>
   );
 }
