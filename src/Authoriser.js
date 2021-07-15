@@ -5,7 +5,6 @@ import { BrowserRouter } from "react-router-dom";
 import config from "./amplify-config";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
-import useConstructor from "./hooks/useConstructor";
 import Checkout from "./components/Checkout.js";
 import { isDev } from "./utils/Constants";
 

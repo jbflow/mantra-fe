@@ -27,6 +27,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
+    "recharts": "^2.0.9",
     "reconnecting-websocket": "^4.4.0",
     "stripe": "^8.146.0",
     "web-vitals": "^0.2.4"

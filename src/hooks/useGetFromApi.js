@@ -1,0 +1,25 @@
+import { API } from "aws-amplify";
+import { useState, useEffect } from "react";
+
+export const useGetFromApi = (url) => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!url) return;
+    const getData = async () => {
+      try {
+        setLoading(true);
+        setData(await API.get("talkbackBE", url));
+      } catch ({ message }) {
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getData();
+  }, [url]);
+
+  return { data, error, loading };
+};
