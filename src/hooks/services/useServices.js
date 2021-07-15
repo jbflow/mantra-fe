@@ -14,15 +14,19 @@ export default function useServices(userId) {
     lastSubject
   );
 
-  return [
-    config,
+  const status = {
     midiInputOpen,
     midiOutputOpen,
     dawLink,
-    websocket,
-    totalTime,
-    totalCommands,
     isListening,
     transcript,
-  ];
+  };
+  const usage = { totalTime, totalCommands };
+
+  return {
+    config,
+    websocket,
+    status,
+    usage,
+  };
 }

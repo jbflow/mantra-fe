@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import Commands from "./Commands";
 import Actions from "./Actions";
 import { Container, Row, Col } from "react-bootstrap";
-import { UserContext } from "../contexts/UserContext";
+import { UserContext } from "../../contexts/UserContext";
 import { CommandsContext } from "../../contexts/CommandsContext";
 
 export default function CommandBuilder() {

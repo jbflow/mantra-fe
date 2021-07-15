@@ -5,7 +5,6 @@ import { CommandsContext } from "../../contexts/CommandsContext";
 
 export default function General({ totalTime, totalCommands }) {
   const { data } = useContext(CommandsContext);
-  console.log(data);
   return (
     <>
       <div className="mt-3 dashboard-card db-xlg">

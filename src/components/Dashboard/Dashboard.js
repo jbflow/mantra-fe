@@ -9,16 +9,14 @@ import Clips from "./Clips";
 import Parameters from "./Parameters";
 import Browser from "./Browser";
 
-export default function Dashboard({
-  config,
-  totalTime,
-  totalCommands,
-  userId,
-}) {
+export default function Dashboard({ config, usage }) {
   return (
     <Container>
       <Row>
-        <General totalTime={totalTime} totalCommands={totalCommands} />
+        <General
+          totalTime={usage.totalTime}
+          totalCommands={usage.totalCommands}
+        />
       </Row>
       <Row>
         <Tracks tracks={config ? config.track : null} />

@@ -11,13 +11,7 @@ import DawLinkBad from "../images/daw-link-bad.svg";
 import TlkBckListening from "../images/tlkbck-listening.svg";
 import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 
-export default function StatusBar({
-  midiInputOpen,
-  midiOutputOpen,
-  isListening,
-  dawLink,
-  transcript,
-}) {
+export default function StatusBar({ status }) {
   const [micConnected, setMicConnected] = useState(false);
   const [showTranscript, setShowTranscript] = useState(true);
 
@@ -34,18 +28,18 @@ export default function StatusBar({
         <img
           alt=""
           className="statusItem"
-          src={midiInputOpen ? MidiInGood : MidiInBad}
+          src={status.midiInputOpen ? MidiInGood : MidiInBad}
         />
         <img
           alt=""
           className="statusItem"
-          src={midiOutputOpen ? MidiOutGood : MidiOutBad}
+          src={status.midiOutputOpen ? MidiOutGood : MidiOutBad}
         />
         <img alt="" className="statusItem" src={micConnected ? Mic : MicMute} />
         <img
           alt=""
           className="statusItem"
-          src={dawLink ? DawLinkGood : DawLinkBad}
+          src={status.dawLink ? DawLinkGood : DawLinkBad}
         />
         <div
           style={{
@@ -73,9 +67,12 @@ export default function StatusBar({
             color: "white",
           }}
         >
-          {transcript}
+          {status.transcript}
         </div>
-        <img alt="" src={isListening ? TlkBckListening : TlkBckNotListening} />
+        <img
+          alt=""
+          src={status.isListening ? TlkBckListening : TlkBckNotListening}
+        />
         <div
           style={{
             minWidth: 48,

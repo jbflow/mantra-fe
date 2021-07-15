@@ -67,7 +67,7 @@ const Authoriser = () => {
         <>
           <BrowserRouter>
             <ContextComposer user={user}>
-              <App signOut={signOut} userId={user.attributes?.sub} />
+              <App signOut={signOut} />
             </ContextComposer>
           </BrowserRouter>
         </>

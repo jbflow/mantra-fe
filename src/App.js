@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
-import { Route, useHistory } from "react-router-dom";
+import { Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard/Dashboard";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import AccountManagement from "./components/AccountManagement";
@@ -12,7 +12,7 @@ import Amplify, { API, Auth } from "aws-amplify";
 import config from "./amplify-config";
 import { HTTP_API_URL } from "./utils/Constants";
 import StatusBar from "./components/StatusBar";
-
+import { UserContext } from "./contexts/UserContext";
 import useServices from "./hooks/services/useServices";
 
 Amplify.configure({
@@ -34,18 +34,10 @@ Amplify.configure({
   },
 });
 
-function App({ signOut, userId }) {
-  const [
-    config,
-    midiInputOpen,
-    midiOutputOpen,
-    dawLink,
-    websocket,
-    totalTime,
-    totalCommands,
-    isListening,
-    transcript,
-  ] = useServices(userId);
+function App({ signOut }) {
+  const { config, websocket, status, usage } = useServices(
+    useContext(UserContext).userId
+  );
 
   return (
     <>
@@ -61,12 +53,7 @@ function App({ signOut, userId }) {
           <Route
             path="/dashboard"
             render={(props) => (
-              <Dashboard
-                {...props}
-                config={config}
-                totalTime={totalTime}
-                totalCommands={totalCommands}
-              />
+              <Dashboard {...props} config={config} usage={usage} />
             )}
           />
 
@@ -81,13 +68,7 @@ function App({ signOut, userId }) {
             )}
           />
         </div>
-        <StatusBar
-          midiInputOpen={midiInputOpen}
-          midiOutputOpen={midiOutputOpen}
-          isListening={isListening}
-          dawLink={dawLink}
-          transcript={transcript}
-        />
+        <StatusBar status={status} />
       </div>
     </>
   );
