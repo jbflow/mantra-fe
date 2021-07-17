@@ -14,10 +14,6 @@ export default function useMidi() {
   const [dawLink, setDawLink] = useState(false);
   const [config, setConfig] = useState(emptyConfig);
 
-  useEffect(() => {
-    console.log(config);
-  }, [config]);
-
   const sendMIDIMessage = (msg) => {
     if (msg) {
       midiOutput.send(msg);
@@ -25,7 +21,6 @@ export default function useMidi() {
   };
 
   const getMIDIMessage = (msg) => {
-    console.log("getmidi:", msg);
     const init = [240, 0, 0, 0, 0, 0, 127, 247];
     if (arraysEqual(init, Array.from(msg.data))) {
       clearConfig();

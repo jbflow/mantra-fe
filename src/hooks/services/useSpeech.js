@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
 
+import CleanupTranscript from "../../utils/CleanupTranscript";
+
 let tb_data = require("./talkback");
 Howler.autoUnlock = true;
 // Setup porcupine/bumblebee
@@ -16,7 +18,7 @@ const recognition = new SpeechRecognition();
 recognition.continuous = true;
 recognition.lang = "en-GB";
 recognition.interimResults = false;
-recognition.maxAlternatives = 1;
+recognition.maxAlternatives = 20;
 
 const startSound = new Howl({ src: ["sounds/start_sound.mp3"] });
 const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
@@ -52,33 +54,28 @@ export default function useSpeech(websocket, config, userId, lastSubject) {
     recognition.onresult = (event) => {
       recognition.abort();
       var transcript = "";
-      for (var i = event.resultIndex; i < event.results.length; ++i) {
-        transcript += event.results[i][0].transcript;
-      }
+
+      transcript = CleanupTranscript(event.results);
 
       if (transcript) {
         setTranscript(transcript);
       }
 
-      if (transcript[0] === " ") {
-        transcript = transcript.substring(1);
-      }
-
-      if (transcript.includes("stop listening")) {
-        recognition.abort();
-      } else {
-        websocket.current.send(
-          JSON.stringify({
-            message: transcript,
-            config: config,
-            action: "command",
-            userId: userId,
-            last_subject: lastSubject,
-            time: time,
-          })
-        );
-      }
-      time = 0;
+      // if (transcript.includes("stop listening")) {
+      //   return;
+      // } else {
+      //   websocket.current.send(
+      //     JSON.stringify({
+      //       message: transcript,
+      //       config: config,
+      //       action: "command",
+      //       userId: userId,
+      //       last_subject: lastSubject,
+      //       time: time,
+      //     })
+      //   );
+      // }
+      // time = 0;
     };
 
     recognition.onspeechend = () => {
