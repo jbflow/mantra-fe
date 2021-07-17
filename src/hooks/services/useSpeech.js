@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
-
-import CleanupTranscript from "../../utils/CleanupTranscript";
+import useCommands from "./useCommands";
+import { CleanupTranscript, CheckCommands } from "../../utils/TranscriptUtils";
+import { CommandsContext } from "../../contexts/CommandsContext";
 
 let tb_data = require("./talkback");
 Howler.autoUnlock = true;
@@ -25,10 +26,12 @@ const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
 
 let interval;
 let time = 0;
-export default function useSpeech(websocket, config, userId, lastSubject) {
+export default function useSpeech(socketDispatch, confirm, setConfirm) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
-  const [speechTime, setSpeechTime] = useState(0);
+  const [actions, setActions] = useState(false);
+  const commands = useContext(CommandsContext);
+  useCommands(actions, setActions, socketDispatch, confirm, setConfirm);
 
   useEffect(() => {
     if (isListening) {
@@ -60,22 +63,9 @@ export default function useSpeech(websocket, config, userId, lastSubject) {
       if (transcript) {
         setTranscript(transcript);
       }
-
-      // if (transcript.includes("stop listening")) {
-      //   return;
-      // } else {
-      //   websocket.current.send(
-      //     JSON.stringify({
-      //       message: transcript,
-      //       config: config,
-      //       action: "command",
-      //       userId: userId,
-      //       last_subject: lastSubject,
-      //       time: time,
-      //     })
-      //   );
-      // }
-      // time = 0;
+      if (transcript in commands) {
+        setActions(commands[transcript].actions);
+      } else socketDispatch(transcript, time);
     };
 
     recognition.onspeechend = () => {

@@ -15,7 +15,7 @@ const phrases = [
   "eq3",
 ];
 
-export default function CleanupTranscript(results) {
+export function CleanupTranscript(results) {
   console.log(results);
   // Loop through the alternatives to check if any of our hot phrases are contained in them.
   for (let result in results[0]) {

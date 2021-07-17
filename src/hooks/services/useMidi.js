@@ -13,6 +13,7 @@ export default function useMidi() {
   const [midiOutputOpen, setMidiOutput] = useState(null);
   const [dawLink, setDawLink] = useState(false);
   const [config, setConfig] = useState(emptyConfig);
+  const [confirm, setConfirm] = useState([]);
 
   const sendMIDIMessage = (msg) => {
     if (msg) {
@@ -67,5 +68,13 @@ export default function useMidi() {
       .then(onMIDISuccess, onMIDIFailure);
   }, []);
 
-  return [midiInputOpen, midiOutputOpen, sendMIDIMessage, dawLink, config];
+  return [
+    midiInputOpen,
+    midiOutputOpen,
+    sendMIDIMessage,
+    dawLink,
+    config,
+    confirm,
+    setConfirm,
+  ];
 }

@@ -13,7 +13,6 @@ import config from "./amplify-config";
 import { HTTP_API_URL } from "./utils/Constants";
 import StatusBar from "./components/StatusBar";
 import { UserContext } from "./contexts/UserContext";
-import useServices from "./hooks/services/useServices";
 
 Amplify.configure({
   Auth: {
@@ -35,10 +34,6 @@ Amplify.configure({
 });
 
 function App({ signOut }) {
-  const { config, websocket, status, usage } = useServices(
-    useContext(UserContext).userId
-  );
-
   return (
     <>
       <div>
@@ -52,9 +47,7 @@ function App({ signOut }) {
         >
           <Route
             path="/dashboard"
-            render={(props) => (
-              <Dashboard {...props} config={config} usage={usage} />
-            )}
+            render={(props) => <Dashboard {...props} />}
           />
 
           <Route
@@ -63,12 +56,10 @@ function App({ signOut }) {
           />
           <Route
             path="/commands"
-            render={(props) => (
-              <CommandBuilder {...props} ws={websocket} config={config} />
-            )}
+            render={(props) => <CommandBuilder {...props} />}
           />
         </div>
-        <StatusBar status={status} />
+        <StatusBar />
       </div>
     </>
   );

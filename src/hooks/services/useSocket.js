@@ -1,14 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { WEBSOCKET_API_URL } from "../../utils/Constants";
+
+import { UserContext } from "../../contexts/UserContext";
 
 let connectInterval = null;
 let timeout = 250;
 
-export default function useSocket(sendMIDIMessage) {
+export default function useSocket(sendMIDIMessage, config) {
   const websocket = useRef(null);
   const [lastSubject, setLastSubject] = useState(null);
   const [totalTime, setTotalTime] = useState(0);
   const [totalCommands, setTotalCommands] = useState(0);
+  const userId = useContext(UserContext);
 
   const connectWebSocket = () => {
     const ws = new WebSocket(WEBSOCKET_API_URL);
@@ -51,6 +54,19 @@ export default function useSocket(sendMIDIMessage) {
   const check = () => {
     if (!websocket || websocket.readyState === WebSocket.CLOSED)
       connectWebSocket(); //check if websocket instance is closed, if so call `connect` function.
+  };
+
+  const socketDispatch = (message, time) => {
+    websocket.current.send(
+      JSON.stringify({
+        message: message,
+        config: config,
+        action: "command",
+        userId: userId,
+        last_subject: lastSubject,
+        time: time,
+      })
+    );
   };
 
   useEffect(() => {

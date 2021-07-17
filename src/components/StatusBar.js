@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import MidiInGood from "../images/MIDI-in-good.svg";
 import MidiInBad from "../images/MIDI-in-bad.svg";
@@ -11,7 +11,10 @@ import DawLinkBad from "../images/daw-link-bad.svg";
 import TlkBckListening from "../images/tlkbck-listening.svg";
 import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 
-export default function StatusBar({ status }) {
+import { ServicesContext } from "../contexts/ServicesContext";
+
+export default function StatusBar() {
+  const { status } = useContext(ServicesContext);
   const [micConnected, setMicConnected] = useState(false);
   const [showTranscript, setShowTranscript] = useState(true);
 

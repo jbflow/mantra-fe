@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
 import "./Dashboard.css";
@@ -9,7 +9,10 @@ import Clips from "./Clips";
 import Parameters from "./Parameters";
 import Browser from "./Browser";
 
-export default function Dashboard({ config, usage }) {
+import { ServicesContext } from "../../contexts/ServicesContext";
+
+export default function Dashboard() {
+  const { config, usage } = useContext(ServicesContext);
   return (
     <Container>
       <Row>
