@@ -45,11 +45,16 @@ const select_item = (noun_adj, noun, value, config) => {
 };
 
 const move_item = (noun_adj, noun, value, config) => {
+  console.log("noun_adj", noun_adj);
+  console.log("value", value);
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
+  console.log("index", index);
+  console.log("path", path);
   sub_paths.forEach((sub_path) => {
-    sub_path.splice(value, 0, sub_path.pop(index));
+    sub_path.splice(value, 0, sub_path.splice(index, 1)[0]);
   });
-  path.splice(value, 0, path.pop(index));
+  path.splice(value, 0, path.splice(index, 1)[0]);
+  console.log(path);
 };
 
 const rename_item = (noun_adj, noun, value, config) => {
@@ -121,7 +126,9 @@ const updateConfig = (midiArray, config) => {
           .slice(quantity * 3 + 2)
           .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
       : convert_bytes(midiArray.slice(quantity * 3 + 2)) - 1; // convert the bytes to a single int
+  console.log("adverb", adverb);
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map
+  console.log(config);
 
   return config;
 };

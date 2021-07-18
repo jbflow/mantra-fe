@@ -13,10 +13,8 @@ export default function useCommands(
   useEffect(() => {
     if (actions && current < actions.length) {
       if (actions[current].slice(-1) === "*") {
-        console.log(actions[current]);
         socketDispatch(actions[current].slice(0, -1), 0);
       } else {
-        console.log(actions[current]);
         socketDispatch(actions[current], 0);
         setCurrent(current + 1);
       }
@@ -31,12 +29,9 @@ export default function useCommands(
   }, [current, actions]);
 
   useEffect(() => {
-    console.log("confirm", confirm);
     if (confirm.length !== 0 && actionCount.current > 0) {
       confirmCount.current = confirmCount.current + 1;
     }
-    console.log("confirm", confirmCount.current);
-    console.log("action", actionCount.current);
     if (confirmCount.current == actionCount.current) {
       setCurrent(confirmCount.current);
     }

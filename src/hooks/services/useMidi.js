@@ -21,7 +21,6 @@ export default function useMidi() {
   useEffect(() => {
     // Effect for the config timer, if the timer has started, and there hasn't been a config message for 100 ms
     if (configTimer >= 100) {
-      console.log("clearing", interval.current);
       clearInterval(interval.current); // stop the interval
       interval.current = false; // and set it to false
       setConfirm(confirmRef.current); // store the confirmation message to state
@@ -58,8 +57,6 @@ export default function useMidi() {
       }
     } else if (msg.data[6] === 96) {
       // If the message is a confirmation, store it as a ref and create a 50ms timer
-      console.log(msg.data);
-      console.log("creating timer");
       if (interval.current) {
         clearInterval(interval.current);
         setConfirm(confirmRef.current);
