@@ -11,7 +11,7 @@ export default function useSocket(sendMIDIMessage, config) {
   const [lastSubject, setLastSubject] = useState(null);
   const [totalTime, setTotalTime] = useState(0);
   const [totalCommands, setTotalCommands] = useState(0);
-  const userId = useContext(UserContext);
+  const userId = useContext(UserContext).userId;
 
   const connectWebSocket = () => {
     const ws = new WebSocket(WEBSOCKET_API_URL);
@@ -22,6 +22,7 @@ export default function useSocket(sendMIDIMessage, config) {
 
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
+      console.log(data.command);
       setLastSubject(data.last_subject);
       setTotalTime(data.time);
       setTotalCommands(data.total_commands);
@@ -77,5 +78,5 @@ export default function useSocket(sendMIDIMessage, config) {
     };
   }, []);
 
-  return [websocket, lastSubject, totalTime, totalCommands];
+  return [socketDispatch, totalTime, totalCommands];
 }

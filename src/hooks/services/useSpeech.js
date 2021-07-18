@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
 import useCommands from "./useCommands";
-import { CleanupTranscript, CheckCommands } from "../../utils/TranscriptUtils";
+import { CleanupTranscript } from "../../utils/TranscriptUtils";
 import { CommandsContext } from "../../contexts/CommandsContext";
 
 let tb_data = require("./talkback");
@@ -30,7 +30,7 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [actions, setActions] = useState(false);
-  const commands = useContext(CommandsContext);
+  const { data } = useContext(CommandsContext);
   useCommands(actions, setActions, socketDispatch, confirm, setConfirm);
 
   useEffect(() => {
@@ -54,20 +54,6 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
       endSound.play();
     };
 
-    recognition.onresult = (event) => {
-      recognition.abort();
-      var transcript = "";
-
-      transcript = CleanupTranscript(event.results);
-
-      if (transcript) {
-        setTranscript(transcript);
-      }
-      if (transcript in commands) {
-        setActions(commands[transcript].actions);
-      } else socketDispatch(transcript, time);
-    };
-
     recognition.onspeechend = () => {
       recognition.abort();
     };
@@ -77,6 +63,21 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
     });
     bumblebee.start();
   }, []);
+
+  useEffect(() => {
+    recognition.onresult = (event) => {
+      recognition.abort();
+      var transcript = "";
+      transcript = CleanupTranscript(event.results);
+
+      const macro = data.map((d) => d.command).indexOf(transcript);
+      if (macro !== -1) {
+        console.log(data[macro].actions);
+        setActions(data[macro].actions);
+      } else socketDispatch(transcript, time);
+      setTranscript(transcript);
+    };
+  }, [data]);
 
   return [isListening, transcript];
 }
