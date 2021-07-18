@@ -1,0 +1,82 @@
+.command-builder-container {
+  display: table;
+}
+
+.commands-container {
+  background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 1px solid #e4e4e4;
+  opacity: 1;
+  height: calc(100vh - 100px);
+  width: 396px;
+  display: table-cell;
+}
+.actions-container {
+  display: table-cell;
+}
+
+.cmd-row-editing {
+  background: #f7f7f7 0% 0% no-repeat padding-box;
+  opacity: 1;
+  height: 61px;
+  padding: auto;
+  display: table;
+}
+
+.cmd-row-default {
+  background: #ffffff 0% 0% no-repeat padding-box;
+  opacity: 1;
+  height: 61px;
+  padding: auto;
+  display: table;
+}
+
+.cmd-button {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  width: 61px;
+  height: 61px;
+  cursor: pointer;
+}
+
+.cmd-button-tick {
+  background: #28a745 0% 0% no-repeat padding-box;
+}
+
+.cmd-button-tick:hover {
+  background: #279640;
+}
+
+.cmd-button-close:hover {
+  background: #dc3545;
+}
+
+.trash-button {
+  width: 12px;
+  height: 14px;
+}
+
+.check-button {
+  fill: #ffffff;
+  width: 24px;
+  height: 17px;
+}
+.close-button {
+  width: 19px;
+  height: 19px;
+}
+
+.cmd-input-container {
+  display: table-cell;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  width: 213px;
+}
+
+.cmd-input {
+  border: #e4e4e4;
+  background: None;
+  width: 100%;
+}
