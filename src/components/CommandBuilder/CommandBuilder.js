@@ -6,7 +6,7 @@ import { CommandsContext } from "../../contexts/CommandsContext";
 import "./Commands.css";
 
 export default function CommandBuilder() {
-  const commands = useContext(CommandsContext).data;
+  const { commands, dispatch } = useContext(CommandsContext);
   const [selected, setSelected] = useState(null);
   return (
     <>
@@ -15,6 +15,7 @@ export default function CommandBuilder() {
           commands={commands}
           selected={selected}
           setSelected={setSelected}
+          dispatch={dispatch}
         />
       </div>
       <Actions />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { BsPencil } from "react-icons/bs";
 
 export default function CommandItem({
@@ -7,25 +7,64 @@ export default function CommandItem({
   selected,
   setSelected,
   setEditing,
-  del,
-  accept,
-  cancel,
+  addCommand,
+  dispatch,
 }) {
-  console.log(editing);
+  const changedValue = useRef(null);
+  const newValue = useRef(null);
+
+  const updateCmd = (id) => {
+    dispatch({
+      type: "UPDATE_CMD",
+      payload: { id: id, command: changedValue.current },
+    });
+    setEditing(null);
+  };
+
+  const delCmd = (id) => {
+    dispatch({
+      type: "DELETE_CMD",
+      payload: { id: id },
+    });
+  };
+
+  const addCmd = (cmd) => {
+    dispatch({
+      type: "ADD_CMD",
+      payload: newValue.current,
+    });
+  };
+
   if (editing) {
     return (
       <>
-        <div className="cmd-row-editing">
-          <div className="cmd-button cmd-button-close">
+        <div className="cmd-row cmd-r-editing">
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              delCmd(command.id);
+            }}
+          >
             <img
               className="trash-button"
               src="./images/menu-icons/trash2.svg"
             />
           </div>
           <div className="cmd-input-container">
-            <input className="cmd-input" defaultValue={command.command} />
+            <input
+              className="cmd-input"
+              defaultValue={command.command}
+              onChange={(e) => {
+                changedValue.current = e.target.value;
+              }}
+            />
           </div>
-          <div className="cmd-button cmd-button-tick">
+          <div
+            className="cmd-button cmd-button-tick"
+            onClick={() => {
+              updateCmd(command.id);
+            }}
+          >
             <img className="check-button" src="./images/menu-icons/check.svg" />
           </div>
           <div
@@ -42,8 +81,13 @@ export default function CommandItem({
   } else if (selected) {
     return (
       <>
-        <div className="cmd-row-editing">
-          <div className="cmd-button">
+        <div className="cmd-row cmd-r-selected">
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              delCmd(command.id);
+            }}
+          >
             <img
               className="trash-button"
               src="./images/menu-icons/trash2.svg"
@@ -56,7 +100,7 @@ export default function CommandItem({
           </div>
           <div className="cmd-button"></div>
           <div
-            className="cmd-button"
+            className="cmd-button cmd-button-edit"
             onClick={() => {
               setEditing(command.id);
             }}
@@ -66,11 +110,39 @@ export default function CommandItem({
         </div>
       </>
     );
+  } else if (addCommand) {
+    return (
+      <>
+        <div className="cmd-row cmd-r-add">
+          <div className="cmd-input-container">
+            <input
+              className="cmd-input"
+              onChange={(e) => {
+                newValue.current = e.target.value;
+              }}
+            />
+          </div>
+
+          <div
+            style={{ width: "61px" }}
+            className="cmd-button cmd-button-tick"
+            onClick={() => {
+              addCmd();
+            }}
+          ></div>
+        </div>
+      </>
+    );
   } else {
     return (
       <>
-        <div className="cmd-row-default">
-          <div className="cmd-button">
+        <div className="cmd-row cmd-r-default">
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              delCmd(command.id);
+            }}
+          >
             <img
               className="trash-button"
               src="./images/menu-icons/trash2.svg"
@@ -86,6 +158,8 @@ export default function CommandItem({
               {command.command}
             </span>
           </div>
+          <div className="cmd-button"></div>
+          <div className="cmd-button"></div>
         </div>
       </>
     );

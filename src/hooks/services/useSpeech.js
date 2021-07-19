@@ -30,7 +30,7 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [actions, setActions] = useState(false);
-  const { data } = useContext(CommandsContext);
+  const { commands } = useContext(CommandsContext);
   useCommands(actions, setActions, socketDispatch, confirm, setConfirm);
 
   useEffect(() => {
@@ -70,14 +70,14 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
       var transcript = "";
       transcript = CleanupTranscript(event.results);
 
-      const macro = data.map((d) => d.command).indexOf(transcript);
+      const macro = commands.map((d) => d.command).indexOf(transcript);
       if (macro !== -1) {
-        console.log(data[macro].actions);
-        setActions(data[macro].actions);
+        console.log(commands[macro].actions);
+        setActions(commands[macro].actions);
       } else socketDispatch(transcript, time);
       setTranscript(transcript);
     };
-  }, [data]);
+  }, [commands]);
 
   return [isListening, transcript];
 }

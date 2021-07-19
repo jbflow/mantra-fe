@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import CommandItem from "./CommandItem";
 
-export default function Commands({ commands, selected, setSelected }) {
+export default function Commands({
+  commands,
+  selected,
+  setSelected,
+  dispatch,
+}) {
   const [editing, setEditing] = useState(null);
   return (
     <>
@@ -14,9 +19,12 @@ export default function Commands({ commands, selected, setSelected }) {
               editing={editing == command.id}
               setSelected={setSelected}
               setEditing={setEditing}
+              dispatch={dispatch}
             />
           ))
         : "no commands"}
+
+      <CommandItem addCommand dispatch={dispatch} />
     </>
   );
 }

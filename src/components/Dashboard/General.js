@@ -4,7 +4,6 @@ import Chart from "./Chart.js";
 import { CommandsContext } from "../../contexts/CommandsContext";
 
 export default function General({ totalTime, totalCommands }) {
-  const { data } = useContext(CommandsContext);
   return (
     <>
       <div className="mt-3 dashboard-card db-xlg">
