@@ -1,23 +1,23 @@
 .command-builder-container {
-  display: table;
+  background: #ffffff;
+  display: flex;
 }
 
 .commands-container {
   background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
   background: #ffffff 0% 0% no-repeat padding-box;
-  border: 1px solid #e4e4e4;
-  border-left: None;
-  border-bottom: 3px solid #e4e4e4;
+  border-right: 1px solid #e4e4e4;
   height: calc(100vh - 150px);
   width: 396px;
-  /* display: table-cell; */
   overflow-x: hidden;
   overflow-y: visible;
 }
 
 .cmd-row {
   height: 61px;
-  display: table;
+  display: flex;
+  justify-content: left;
+  align-items: center;
 }
 
 .cmd-r-editing {
@@ -35,25 +35,39 @@
 
 .cmd-r-default:hover {
   background: #f7f7f7;
-  border-left: 2px solid #2283fc;
-  border-right: 2px solid #2283fc;
+  border-right: 1px solid #2283fc;
 }
 
 .cmd-r-add {
   height: 50px;
-  display: table;
+  border: 1px solid #e4e4e4;
+  display: flex;
+}
+
+.cmd-r-add input {
+  margin-left: auto;
+  text-indent: 10px;
+  width: 345px;
   border: 1px solid #e4e4e4;
   border-radius: 30px 0px 0px 30px;
-  width: 396px;
+}
+
+.cmd-r-add input:focus {
+  outline: None;
 }
 
 .cmd-button {
-  display: table-cell;
-  text-align: center;
-  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 61px;
   height: 61px;
   cursor: pointer;
+}
+
+.cmd-button img {
+  width: 15px;
+  height: 15px;
 }
 
 .cmd-button-tick {
@@ -69,36 +83,38 @@
 }
 
 .cmd-button-edit:hover {
-  background: #ffffff;
+  background: #e4e4e4;
 }
 
-.trash-button {
-  width: 12px;
-  height: 14px;
+.cmd-button-add {
+  margin: auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 }
 
-.check-button {
-  fill: #ffffff;
-  width: 24px;
-  height: 17px;
-}
-.close-button {
-  width: 19px;
-  height: 19px;
-}
-
-.cmd-input-container {
-  display: table-cell;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-  width: 213px;
-  cursor: pointer;
+.cmd-button-add:hover {
+  background: #e4e4e4;
 }
 
 .cmd-input {
-  border: #e4e4e4;
+  height: 61px;
+  width: 212px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.cmd-input input {
+  border: None;
+  width: 205px;
   background: None;
-  width: 100%;
-  float: left;
+}
+
+.cmd-input input:focus {
+  outline: None;
+}
+
+.actions-container {
+  display: flex;
 }

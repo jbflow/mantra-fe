@@ -10,17 +10,19 @@ export default function CommandBuilder() {
   const { commands, dispatch } = useContext(CommandsContext);
   const [selected, setSelected] = useState(null);
   return (
-    <>
-      <div className="commands-container">
-        <Commands
-          commands={commands}
-          selected={selected}
-          setSelected={setSelected}
-          dispatch={dispatch}
-        />
+    <div className="command-builder-container">
+      <div>
+        <div className="commands-container">
+          <Commands
+            commands={commands}
+            selected={selected}
+            setSelected={setSelected}
+            dispatch={dispatch}
+          />
+        </div>
+        <CommandItem addCommand dispatch={dispatch} />
       </div>
-      <CommandItem addCommand dispatch={dispatch} />
-      <Actions />
-    </>
+      <Actions className="actions-container" />
+    </div>
   );
 }

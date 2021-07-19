@@ -8,6 +8,7 @@ export const CommandsContext = React.createContext(null);
 export default function CommandsProvider({ children, url }) {
   const { data, error, loading } = useGetFromApi(url);
   const reducer = (state, action) => {
+    if (loading) return state;
     switch (action.type) {
       case "INIT":
         return action.payload;

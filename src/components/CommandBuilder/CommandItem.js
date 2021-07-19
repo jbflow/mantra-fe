@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { BsPencil } from "react-icons/bs";
 
 export default function CommandItem({
@@ -45,17 +45,18 @@ export default function CommandItem({
               delCmd(command.id);
             }}
           >
-            <img
-              className="trash-button"
-              src="./images/menu-icons/trash2.svg"
-            />
+            <img src="./images/menu-icons/trash2.svg" />
           </div>
-          <div className="cmd-input-container">
+          <div className="cmd-input">
             <input
-              className="cmd-input"
+              type="text"
+              autoFocus
               defaultValue={command.command}
               onChange={(e) => {
                 changedValue.current = e.target.value;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") updateCmd(command.id);
               }}
             />
           </div>
@@ -65,7 +66,7 @@ export default function CommandItem({
               updateCmd(command.id);
             }}
           >
-            <img className="check-button" src="./images/menu-icons/check.svg" />
+            <img src="./images/menu-icons/check.svg" />
           </div>
           <div
             className="cmd-button cmd-button-close"
@@ -88,21 +89,25 @@ export default function CommandItem({
               delCmd(command.id);
             }}
           >
-            <img
-              className="trash-button"
-              src="./images/menu-icons/trash2.svg"
-            />
+            <img src="./images/menu-icons/trash2.svg" />
           </div>
-          <div className="cmd-input-container">
-            <span style={{ margin: "2px" }} className="cmd-input">
-              {command.command}
-            </span>
+
+          <div
+            className="cmd-input"
+            style={{ width: "273px" }}
+            onDoubleClick={() => {
+              setEditing(command.id);
+              changedValue.current = command.command;
+            }}
+          >
+            <span style={{ margin: "2px" }}>{command.command}</span>
           </div>
-          <div className="cmd-button"></div>
+
           <div
             className="cmd-button cmd-button-edit"
             onClick={() => {
               setEditing(command.id);
+              changedValue.current = command.command;
             }}
           >
             <BsPencil />
@@ -113,22 +118,20 @@ export default function CommandItem({
   } else if (addCommand) {
     return (
       <>
-        <div className="cmd-r-add">
-          <div className="cmd-input-container">
-            <input
-              className="cmd-input"
-              onChange={(e) => {
-                newValue.current = e.target.value;
-              }}
-            />
-          </div>
-          <div
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
+        <div className="cmd-row cmd-r-add">
+          <input
+            placeholder="Type new command here"
+            type="text"
+            onChange={(e) => {
+              newValue.current = e.target.value;
             }}
-            className="cmd-button cmd-button-edit"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") addCmd();
+            }}
+          />
+
+          <div
+            className="cmd-button cmd-button-add"
             onClick={() => {
               addCmd();
             }}
@@ -148,23 +151,24 @@ export default function CommandItem({
               delCmd(command.id);
             }}
           >
-            <img
-              className="trash-button"
-              src="./images/menu-icons/trash2.svg"
-            />
+            <img src="./images/menu-icons/trash2.svg" />
           </div>
           <div
-            className="cmd-input-container"
+            style={{ width: "335px" }}
+            className="cmd-input"
             onClick={() => {
               setSelected(command.id);
+              setEditing(null);
+            }}
+            onDoubleClick={() => {
+              setEditing(command.id);
+              changedValue.current = command.command;
             }}
           >
             <span style={{ margin: "2px" }} className="cmd-input">
               {command.command}
             </span>
           </div>
-          <div className="cmd-button"></div>
-          <div className="cmd-button"></div>
         </div>
       </>
     );
