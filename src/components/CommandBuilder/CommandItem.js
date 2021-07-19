@@ -113,7 +113,7 @@ export default function CommandItem({
   } else if (addCommand) {
     return (
       <>
-        <div className="cmd-row cmd-r-add">
+        <div className="cmd-r-add">
           <div className="cmd-input-container">
             <input
               className="cmd-input"
@@ -122,14 +122,19 @@ export default function CommandItem({
               }}
             />
           </div>
-
           <div
-            style={{ width: "61px" }}
-            className="cmd-button cmd-button-tick"
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+            }}
+            className="cmd-button cmd-button-edit"
             onClick={() => {
               addCmd();
             }}
-          ></div>
+          >
+            <img className="trash-button" src="./images/menu-icons/plus.svg" />
+          </div>
         </div>
       </>
     );

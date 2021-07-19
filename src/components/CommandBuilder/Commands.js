@@ -23,8 +23,6 @@ export default function Commands({
             />
           ))
         : "no commands"}
-
-      <CommandItem addCommand dispatch={dispatch} />
     </>
   );
 }

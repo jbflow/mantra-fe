@@ -6,13 +6,13 @@
   background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
   background: #ffffff 0% 0% no-repeat padding-box;
   border: 1px solid #e4e4e4;
-  opacity: 1;
-  height: calc(100vh - 100px);
+  border-left: None;
+  border-bottom: 3px solid #e4e4e4;
+  height: calc(100vh - 150px);
   width: 396px;
-  display: table-cell;
-}
-.actions-container {
-  display: table-cell;
+  /* display: table-cell; */
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .cmd-row {
@@ -35,13 +35,16 @@
 
 .cmd-r-default:hover {
   background: #f7f7f7;
-  border-right: 1px solid #2283fc;
+  border-left: 2px solid #2283fc;
+  border-right: 2px solid #2283fc;
 }
 
 .cmd-r-add {
+  height: 50px;
+  display: table;
   border: 1px solid #e4e4e4;
   border-radius: 30px 0px 0px 30px;
-  width: 395px;
+  width: 396px;
 }
 
 .cmd-button {
