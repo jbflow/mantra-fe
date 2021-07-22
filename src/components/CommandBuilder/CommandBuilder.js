@@ -22,7 +22,17 @@ export default function CommandBuilder() {
         </div>
         <CommandItem addCommand dispatch={dispatch} />
       </div>
-      <Actions className="actions-container" />
+      <div className="actions-container">
+        {selected ? (
+          <Actions commands={commands} selected={selected} />
+        ) : (
+          <center>
+            <div className="actions-placeholder">
+              <p>Select a command to edit...</p>
+            </div>
+          </center>
+        )}
+      </div>
     </div>
   );
 }
