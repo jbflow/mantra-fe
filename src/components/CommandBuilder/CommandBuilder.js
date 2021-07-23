@@ -24,7 +24,16 @@ export default function CommandBuilder() {
       </div>
       <div className="actions-container">
         {selected ? (
-          <Actions commands={commands} selected={selected} />
+          <Actions
+            command={
+              commands
+                ? commands.filter((cmd) => {
+                    if (cmd.id === selected) return cmd;
+                  })[0]
+                : null
+            }
+            selected={selected}
+          />
         ) : (
           <center>
             <div className="actions-placeholder">
