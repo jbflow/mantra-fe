@@ -7,7 +7,7 @@ import { CommandsContext } from "../../contexts/CommandsContext";
 import "./Commands.css";
 
 export default function CommandBuilder() {
-  const { commands, dispatch } = useContext(CommandsContext);
+  const { commands, dispatch, postLoading } = useContext(CommandsContext);
   const [selected, setSelected] = useState(null);
   return (
     <div className="command-builder-container">
@@ -34,6 +34,8 @@ export default function CommandBuilder() {
             }
             selected={selected}
             setSelected={setSelected}
+            dispatch={dispatch}
+            postLoading={postLoading}
           />
         ) : (
           <center>

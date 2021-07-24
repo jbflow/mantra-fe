@@ -27,20 +27,23 @@ export default function CommandsProvider({ children, url }) {
       case "DELETE_CMD":
         return state.filter((cmd) => cmd.id !== action.payload.id);
       case "UPDATE_ACTIONS":
-        return;
+        const actions = action.payload.actions;
+        return state.map((cmd) =>
+          cmd.id == action.payload.id ? { ...cmd, actions } : cmd
+        );
     }
   };
 
   const [commands, dispatch] = useReducer(reducer, null);
 
-  usePostToApi(commands, url);
+  const { postLoading } = usePostToApi(commands, url);
 
   useEffect(() => {
     dispatch({ type: "INIT", payload: data });
   }, [data]);
 
   return (
-    <CommandsContext.Provider value={{ commands, dispatch }}>
+    <CommandsContext.Provider value={{ commands, dispatch, postLoading }}>
       {children}
     </CommandsContext.Provider>
   );

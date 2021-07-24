@@ -1,9 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import VoiceAction from "./VoiceAction";
+import { ServicesContext } from "../../contexts/ServicesContext";
+import useCommands from "../../hooks/services/useCommands";
 
-export default function Actions({ command, selected, setSelected }) {
+export default function Actions({
+  command,
+  selected,
+  setSelected,
+  dispatch,
+  postLoading,
+}) {
   const [actions, setActions] = useState(command.actions);
+  const [testActions, setTestActions] = useState([]);
+  const { socketDispatch, confirmation } = useContext(ServicesContext);
+  useCommands(
+    testActions,
+    setTestActions,
+    socketDispatch,
+    confirmation.confirm,
+    confirmation.setConfirm
+  );
 
   const actionChanged = (e, i) => {
     const newActions = [...actions];
@@ -108,10 +125,24 @@ export default function Actions({ command, selected, setSelected }) {
         </DragDropContext>
 
         <div className="actions-card-footer">
-          <button className="btn-lg">
-            <p>Save</p>
+          <button
+            className="btn-lg"
+            onClick={() => {
+              dispatch({
+                type: "UPDATE_ACTIONS",
+                payload: { id: command.id, actions: actions },
+              });
+            }}
+            disabled={postLoading}
+          >
+            <p>{postLoading ? "Saving..." : "Save"}</p>
           </button>
-          <button className="btn-lg">
+          <button
+            className="btn-lg"
+            onClick={() => {
+              setTestActions(actions);
+            }}
+          >
             <p>Test</p>
           </button>
         </div>
