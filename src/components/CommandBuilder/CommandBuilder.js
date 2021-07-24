@@ -33,11 +33,13 @@ export default function CommandBuilder() {
                 : null
             }
             selected={selected}
+            setSelected={setSelected}
           />
         ) : (
           <center>
             <div className="actions-placeholder">
               <p>Select a command to edit...</p>
+              <img src="./images/menu-icons/command-dark.svg" />
             </div>
           </center>
         )}
