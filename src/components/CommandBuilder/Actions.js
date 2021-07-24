@@ -4,46 +4,44 @@ import VoiceAction from "./VoiceAction";
 
 export default function Actions({ command, selected, setSelected }) {
   const [actions, setActions] = useState(command.actions);
-  const actionsCopy = useRef(null);
-  const focusedRef = useRef(null);
 
   const actionChanged = (e, i) => {
-    actionsCopy.current = actions.slice();
-    actionsCopy.current[i] = e.target.value;
-    focusedRef.current = i;
-    setActions(false);
+    const newActions = [...actions];
+    newActions[i] = e.target.value;
+    setActions(newActions);
   };
 
   const addAction = () => {
-    actionsCopy.current = actions.slice();
-    setActions([...actionsCopy.current, ""]);
+    setActions([...actions, ""]);
   };
 
   const delAction = (i) => {
-    actionsCopy.current = actions.slice();
-    actionsCopy.current.splice(i, 1);
-    setActions(false);
+    const newActions = [...actions];
+    newActions.splice(i, 1);
+    setActions(newActions);
   };
 
   const duplAction = (i) => {
-    console.log(i);
-    actionsCopy.current = actions.slice();
-    actionsCopy.current.splice(i, 0, actions[i]);
-    console.log(actionsCopy.current);
-    setActions(false);
+    const newActions = [...actions];
+    const action = newActions[i];
+    newActions.splice(i, 0, action);
+    setActions(newActions);
+  };
+
+  const handleOneDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+    const items = Array.from(actions);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setActions(items);
   };
 
   useEffect(() => {
-    setActions([]);
+    setActions(command.actions);
   }, [selected, command]);
 
-  useEffect(() => {
-    if (actions && actions.length === 0) {
-      setActions(command.actions);
-    } else if (!actions) {
-      setActions(actionsCopy.current);
-    }
-  }, [actions]);
   return (
     <>
       <div className="actions-card">
@@ -60,29 +58,54 @@ export default function Actions({ command, selected, setSelected }) {
           <p>Actions</p>
         </div>
         <hr />
-        <div className="actions-card-body">
-          {actions
-            ? actions.map((action, key) => (
-                <VoiceAction
-                  key={`${key}`}
-                  index={key}
-                  action={action}
-                  actionChanged={actionChanged}
-                  delAction={delAction}
-                  duplAction={duplAction}
-                  focus={focusedRef.current === key}
-                />
-              ))
-            : null}
-          <button
-            className="add-action-button"
-            onClick={() => {
-              addAction();
-            }}
-          >
-            +
-          </button>
-        </div>
+        <DragDropContext onDragEnd={handleOneDragEnd}>
+          <Droppable droppableId="actions">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="actions-card-body"
+              >
+                {actions
+                  ? actions.map((action, key) => (
+                      <Draggable
+                        key={key}
+                        draggableId={key.toString()}
+                        index={key}
+                      >
+                        {(provided) => (
+                          <div
+                            {...provided.draggableProps}
+                            ref={provided.innerRef}
+                          >
+                            <VoiceAction
+                              key={`${key}`}
+                              index={key}
+                              action={action}
+                              actionChanged={actionChanged}
+                              delAction={delAction}
+                              duplAction={duplAction}
+                              provided={provided}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))
+                  : null}
+
+                {provided.placeholder}
+                <button
+                  className="add-action-button"
+                  onClick={() => {
+                    addAction();
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
 
         <div className="actions-card-footer">
           <button className="btn-lg">

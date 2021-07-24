@@ -6,23 +6,24 @@ export default function VoiceAction({
   actionChanged,
   delAction,
   duplAction,
-  focus,
+  provided,
 }) {
   return (
     <>
       <div key={`c${index}`} className="action-container">
         <div key={`a${index}`} className="action-input">
           <div className="action-grab">
-            <img src="./images/menu-icons/grip.svg" />
+            <img
+              src="./images/menu-icons/grip.svg"
+              {...provided.dragHandleProps}
+            />
           </div>
           <input
-            key={`i${index}`}
             type="text"
             value={action}
             onChange={(e) => {
               actionChanged(e, index);
             }}
-            autoFocus={focus} // FIX THIS
           />
         </div>
         <div>
