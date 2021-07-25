@@ -13,6 +13,7 @@ export default function Actions({
 }) {
   const [actions, setActions] = useState(command.actions);
   const [testActions, setTestActions] = useState([]);
+  const [showAddButtons, setShowAddButtons] = useState(false);
   const { socketDispatch, confirmation } = useContext(ServicesContext);
   useCommands(
     testActions,
@@ -111,40 +112,73 @@ export default function Actions({
                   : null}
 
                 {provided.placeholder}
-                <button
-                  className="add-action-button"
-                  onClick={() => {
-                    addAction();
-                  }}
-                >
-                  +
-                </button>
               </div>
             )}
           </Droppable>
         </DragDropContext>
 
         <div className="actions-card-footer">
-          <button
-            className="btn-lg"
-            onClick={() => {
-              dispatch({
-                type: "UPDATE_ACTIONS",
-                payload: { id: command.id, actions: actions },
-              });
-            }}
-            disabled={postLoading}
-          >
-            <p>{postLoading ? "Saving..." : "Save"}</p>
-          </button>
-          <button
-            className="btn-lg"
-            onClick={() => {
-              setTestActions(actions);
-            }}
-          >
-            <p>Test</p>
-          </button>
+          <div>
+            <div className="add-action">
+              <button
+                className="add-action-button"
+                onClick={() => {
+                  setShowAddButtons(true);
+                }}
+                onBlur={() => {
+                  setShowAddButtons(false);
+                }}
+              >
+                <img src="./images/menu-icons/plus.svg" />
+              </button>
+              {showAddButtons ? (
+                <div className="add-action-list">
+                  <button
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                    }}
+                    onClick={(e) => {
+                      console.log(e);
+                      addAction();
+                    }}
+                  >
+                    <img src="./images/menu-icons/soundwave.svg" />
+                    Add voice action
+                  </button>
+                  <button disabled={true}>
+                    <img src="./images/menu-icons/midi.svg" />
+                    Add MIDI action
+                  </button>
+                  <button disabled={true}>
+                    <img src="./images/menu-icons/keyboard.svg" />
+                    Add keyboard action
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div>
+            <button
+              className="btn-lg"
+              onClick={() => {
+                dispatch({
+                  type: "UPDATE_ACTIONS",
+                  payload: { id: command.id, actions: actions },
+                });
+              }}
+              disabled={postLoading}
+            >
+              <p>{postLoading ? "Saving..." : "Save"}</p>
+            </button>
+            <button
+              className="btn-lg"
+              onClick={() => {
+                setTestActions(actions);
+              }}
+            >
+              <p>Test</p>
+            </button>
+          </div>
         </div>
       </div>
     </>

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { IoMdCopy } from "react-icons/io";
 
 export default function VoiceAction({
   index,
@@ -10,13 +11,13 @@ export default function VoiceAction({
 }) {
   return (
     <>
-      <div key={`c${index}`} className="action-container">
-        <div key={`a${index}`} className="action-input">
-          <div className="action-grab">
-            <img
-              src="./images/menu-icons/grip.svg"
-              {...provided.dragHandleProps}
-            />
+      <div className="action-container">
+        <div className="action-input">
+          <div className="action-icon">
+            <img src="./images/menu-icons/soundwave.svg" />
+          </div>
+          <div className="action-grab" {...provided.dragHandleProps}>
+            <img src="./images/menu-icons/grip.svg" />
           </div>
           <input
             type="text"
@@ -24,6 +25,7 @@ export default function VoiceAction({
             onChange={(e) => {
               actionChanged(e, index);
             }}
+            autoFocus
           />
         </div>
         <div>
@@ -33,7 +35,7 @@ export default function VoiceAction({
               duplAction(index);
             }}
           >
-            d
+            <IoMdCopy />
           </div>
           <div
             className="cmd-button cmd-button-close"
