@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { BsPencil } from "react-icons/bs";
+import DeleteModal from "./DeleteModal";
 
 export default function CommandItem({
   command,
@@ -12,6 +13,7 @@ export default function CommandItem({
 }) {
   const changedValue = useRef(null);
   const newValue = useRef(null);
+  const [showModal, setShowModal] = useState(false);
 
   const updateCmd = (id) => {
     dispatch({
@@ -39,12 +41,7 @@ export default function CommandItem({
     return (
       <>
         <div className="cmd-row cmd-r-editing">
-          <div
-            className="cmd-button cmd-button-close"
-            onClick={() => {
-              delCmd(command.id);
-            }}
-          >
+          <div className="cmd-button cmd-button-close" onClick={() => {}}>
             <img src="./images/menu-icons/trash2.svg" />
           </div>
           <div className="cmd-input">
@@ -148,7 +145,7 @@ export default function CommandItem({
           <div
             className="cmd-button cmd-button-close"
             onClick={() => {
-              delCmd(command.id);
+              setShowModal(true);
             }}
           >
             <img src="./images/menu-icons/trash2.svg" />
@@ -170,6 +167,13 @@ export default function CommandItem({
             </span>
           </div>
         </div>
+        {showModal ? (
+          <DeleteModal
+            delCmd={delCmd}
+            id={command.id}
+            setShowModal={setShowModal}
+          />
+        ) : null}
       </>
     );
   }
