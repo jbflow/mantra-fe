@@ -42,20 +42,19 @@ const Authoriser = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // setCheckingPayment(true);
-
       setPaymentCreated(true);
-      // API.get(
-      //   "talkbackBE",
-      //   "/check_payment_created?userId=" + user.attributes?.sub
-      // ).then((res) => {
-      //   if (!res) {
-      //     setPaymentCreated(false);
-      //   } else {
-      //     setPaymentCreated(true);
-      //   }
-      //   setCheckingPayment(false);
-      // });
+      setCheckingPayment(true);
+      API.get(
+        "talkbackBE",
+        "/check_payment_created?userId=" + user.attributes?.sub
+      ).then((res) => {
+        if (!res) {
+          setPaymentCreated(false);
+        } else {
+          setPaymentCreated(true);
+        }
+        setCheckingPayment(false);
+      });
     }
   }, [isAuthenticated]);
 

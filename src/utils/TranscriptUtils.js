@@ -2,7 +2,6 @@ const phrases = [
   "arm track [0-9]",
   "arm the [a-z]*",
   "track [0-9] to",
-  "rename track [0-9]",
   "load [a-z]*",
   "load a [a-z]*",
   "load an [a-z]*",
@@ -59,9 +58,7 @@ const checkPhrases = (results) => {
 };
 
 const directReplace = (transcript, find, rep) => {
-  console.log(transcript);
   transcript = transcript.replace(find, rep);
-  console.log(transcript);
   return transcript;
 };
 

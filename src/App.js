@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
@@ -8,11 +8,10 @@ import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import AccountManagement from "./components/AccountManagement";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
-import Amplify, { API, Auth } from "aws-amplify";
+import Amplify from "aws-amplify";
 import config from "./amplify-config";
 import { HTTP_API_URL } from "./utils/Constants";
 import StatusBar from "./components/StatusBar";
-import { UserContext } from "./contexts/UserContext";
 
 Amplify.configure({
   Auth: {

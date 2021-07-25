@@ -24,7 +24,7 @@ export default function AccountManagement() {
   const [showAlert, setShowAlert] = useState(false);
 
   async function changePassword() {
-    if (newPassword == newPassword2) {
+    if (newPassword === newPassword2) {
       setChangingPassword(true);
       const currentUser = await Auth.currentAuthenticatedUser();
       try {
