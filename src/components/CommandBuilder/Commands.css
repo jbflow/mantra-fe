@@ -292,10 +292,7 @@
 .action-input input:focus {
   outline: None;
 }
-.add-action {
-  overflow: hidden;
-  border: None;
-}
+
 .add-action-button {
   background: #ffffff;
   border: 1px solid #eeeeee;
@@ -303,7 +300,6 @@
   width: 61px;
   height: 61px;
   z-index: 1;
-
   position: relative;
   transition: transform 0.3s;
 }
@@ -331,6 +327,7 @@
 
 .add-action-list {
   position: relative;
+  border: 1px solid #dddddd;
   right: 30px;
   top: 4px;
   height: 50px;
@@ -345,8 +342,9 @@
   align-items: center;
   background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
   background: #ffffff 0% 0% no-repeat padding-box;
-  border: 1px solid #dddddd;
-  border-radius: 4px 4px 4px 4px;
+  border: None;
+  border-bottom: 1px solid #dddddd;
+  border-left: 1px solid #dddddd;
   opacity: 1;
 }
 

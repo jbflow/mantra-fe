@@ -119,43 +119,41 @@ export default function Actions({
 
         <div className="actions-card-footer">
           <div>
-            <div className="add-action">
-              <button
-                className="add-action-button"
-                onClick={() => {
-                  setShowAddButtons(true);
-                }}
-                onBlur={() => {
-                  setShowAddButtons(false);
-                }}
-              >
-                <img src="./images/menu-icons/plus.svg" />
-              </button>
-              {showAddButtons ? (
-                <div className="add-action-list">
-                  <button
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                    }}
-                    onClick={(e) => {
-                      console.log(e);
-                      addAction();
-                    }}
-                  >
-                    <img src="./images/menu-icons/soundwave.svg" />
-                    Add voice action
-                  </button>
-                  <button disabled={true}>
-                    <img src="./images/menu-icons/midi.svg" />
-                    Add MIDI action
-                  </button>
-                  <button disabled={true}>
-                    <img src="./images/menu-icons/keyboard.svg" />
-                    Add keyboard action
-                  </button>
-                </div>
-              ) : null}
-            </div>
+            <button
+              className="add-action-button"
+              onClick={() => {
+                setShowAddButtons(true);
+              }}
+              onBlur={() => {
+                setShowAddButtons(false);
+              }}
+            >
+              <img src="./images/menu-icons/plus.svg" />
+            </button>
+            {showAddButtons ? (
+              <div className="add-action-list">
+                <button
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                  }}
+                  onClick={(e) => {
+                    console.log(e);
+                    addAction();
+                  }}
+                >
+                  <img src="./images/menu-icons/soundwave.svg" />
+                  Add voice action
+                </button>
+                <button disabled={true}>
+                  <img src="./images/menu-icons/midi.svg" />
+                  Add MIDI action
+                </button>
+                <button disabled={true}>
+                  <img src="./images/menu-icons/keyboard.svg" />
+                  Add keyboard action
+                </button>
+              </div>
+            ) : null}
           </div>
           <div>
             <button
