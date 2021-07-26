@@ -10,6 +10,10 @@ import { isDev } from "./utils/Constants";
 
 import ContextComposer from "./contexts/ContextComposer";
 
+import ReactGA from "react-ga";
+
+ReactGA.initialize("UA-203301966-1");
+
 Auth.configure({
   region: config.cognito.REGION,
   userPoolId: config.cognito.USER_POOL_ID,

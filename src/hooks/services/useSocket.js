@@ -1,6 +1,6 @@
+import ReactGA from "react-ga";
 import { useState, useEffect, useRef, useContext } from "react";
 import { WEBSOCKET_API_URL } from "../../utils/Constants";
-
 import { UserContext } from "../../contexts/UserContext";
 
 let connectInterval = null;
@@ -58,16 +58,20 @@ export default function useSocket(sendMIDIMessage, config) {
   };
 
   const socketDispatch = (message, time) => {
-    websocket.current.send(
-      JSON.stringify({
-        message: message,
-        config: config,
-        action: "command",
-        userId: userId,
-        last_subject: lastSubject,
-        time: time,
-      })
-    );
+    const payload = JSON.stringify({
+      message: message,
+      config: config,
+      action: "command",
+      userId: userId,
+      last_subject: lastSubject,
+      time: time,
+    });
+    ReactGA.event({
+      category: "WEBSOCKET",
+      action: "VOICE_COMMAND",
+      label: payload,
+    });
+    websocket.current.send(payload);
   };
 
   useEffect(() => {

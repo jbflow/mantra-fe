@@ -1,4 +1,5 @@
 import React, { useReducer, useEffect } from "react";
+import ReactGA from "react-ga";
 import { useGetFromApi } from "../hooks/useGetFromApi";
 import { usePostToApi } from "../hooks/usePostToApi";
 import * as uuid from "uuid";
@@ -9,6 +10,7 @@ export default function CommandsProvider({ children, url }) {
   const { data, error, loading } = useGetFromApi(url);
   const reducer = (state, action) => {
     if (loading) return state;
+    ReactGA.event({ category: "COMMANDS", action: action.type });
     switch (action.type) {
       case "INIT":
         return action.payload;
