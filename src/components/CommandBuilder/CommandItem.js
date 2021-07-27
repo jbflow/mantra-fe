@@ -41,7 +41,13 @@ export default function CommandItem({
     return (
       <>
         <div className="cmd-row cmd-r-editing">
-          <div className="cmd-button cmd-button-close" onClick={() => {}}>
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              setSelected(null);
+              setShowModal(true);
+            }}
+          >
             <img src="./images/menu-icons/trash2.svg" />
           </div>
           <div className="cmd-input">
@@ -74,6 +80,13 @@ export default function CommandItem({
             <img className="close-button" src="./images/menu-icons/close.svg" />
           </div>
         </div>
+        {showModal ? (
+          <DeleteModal
+            delCmd={delCmd}
+            id={command.id}
+            setShowModal={setShowModal}
+          />
+        ) : null}
       </>
     );
   } else if (selected) {
@@ -83,7 +96,8 @@ export default function CommandItem({
           <div
             className="cmd-button cmd-button-close"
             onClick={() => {
-              delCmd(command.id);
+              setSelected(null);
+              setShowModal(true);
             }}
           >
             <img src="./images/menu-icons/trash2.svg" />
@@ -110,6 +124,13 @@ export default function CommandItem({
             <BsPencil />
           </div>
         </div>
+        {showModal ? (
+          <DeleteModal
+            delCmd={delCmd}
+            id={command.id}
+            setShowModal={setShowModal}
+          />
+        ) : null}
       </>
     );
   } else if (addCommand) {
