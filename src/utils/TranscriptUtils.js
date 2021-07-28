@@ -36,6 +36,8 @@ const replace = {
   "phaser flanger": "Phaser-Flanger",
   "phase of lounger": "Phaser-Flanger",
   "load a saturated": "load a Saturator",
+  "un solo": "unsolo",
+  "on arm": "unarm",
 };
 
 export function CleanupTranscript(results) {
