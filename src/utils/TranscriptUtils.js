@@ -1,4 +1,6 @@
 const phrases = [
+  "un arm the",
+  "un arm track [0-9]",
   "arm track [0-9]",
   "arm the [a-z]*",
   "track [0-9] to",
