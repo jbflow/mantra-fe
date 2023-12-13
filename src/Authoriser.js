@@ -22,8 +22,8 @@ Auth.configure({
   // Cognito Hosted UI configuration
   oauth: {
     domain: isDev()
-      ? "devdbs-talkback.auth.eu-west-2.amazoncognito.com"
-      : "dbs-talkback.auth.eu-west-2.amazoncognito.com",
+      ? "tlkbck.auth.eu-west-2.amazoncognito.com"
+      : "",
     scope: [
       "phone",
       "email",
@@ -46,39 +46,23 @@ const Authoriser = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      setPaymentCreated(true);
-      setCheckingPayment(true);
-      API.get(
-        "talkbackBE",
-        "/check_payment_created?userId=" + user.attributes?.sub
-      ).then((res) => {
-        if (!res) {
-          setPaymentCreated(false);
-        } else {
-          setPaymentCreated(true);
-        }
-        setCheckingPayment(false);
-      });
+
     }
   }, [isAuthenticated]);
 
   if (!isLoading && isAuthenticated) {
-    if (checkingPayment) {
-      return <p>checking payment</p>;
-    } else if (paymentCreated) {
-      return (
-        <>
-          <BrowserRouter>
-            <ContextComposer user={user}>
-              <App signOut={signOut} />
-            </ContextComposer>
-          </BrowserRouter>
-        </>
-      );
-    } else {
-      return <Checkout paymentCreated={paymentCreated} user={user} />;
-    }
-  } else if (!isLoading) {
+
+    return (
+      <>
+        <BrowserRouter>
+          <ContextComposer user={user}>
+            <App signOut={signOut} />
+          </ContextComposer>
+        </BrowserRouter>
+      </>
+    );
+  }
+  else if (!isLoading) {
     return (
       <>
         <div

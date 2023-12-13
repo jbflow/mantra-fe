@@ -3,7 +3,7 @@ export const isDev = () => {
   const url = window.location.href.toString();
   if (
     url.slice(0, 30) === "https://dev.dbs-talkback.co.uk" ||
-    url.slice(0, 21) === "http://localhost:3004"
+    url.slice(0, 21) === "http://localhost:3003"
   ) {
     return true;
   } else {
