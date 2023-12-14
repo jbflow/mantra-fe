@@ -11,7 +11,7 @@ export const isDev = () => {
   }
 };
 export const WEBSOCKET_API_URL = isLocal
-  ? "ws://localhost:3001"
+  ? "ws://localhost:8080"
   : isDev()
   ? "wss://eqdb4hgwtl.execute-api.eu-west-2.amazonaws.com/dev"
   : "wss://qxrtbva9bl.execute-api.eu-west-2.amazonaws.com/prod";

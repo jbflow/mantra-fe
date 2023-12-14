@@ -70,14 +70,15 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
       var transcript = "";
       transcript = CleanupTranscript(event.results);
 
-      const macro = commands.map((d) => d.command).indexOf(transcript);
-      if (macro !== -1) {
-        console.log(commands[macro].actions);
-        setActions(commands[macro].actions);
-      } else socketDispatch(transcript, time);
+      // const macro = commands.map((d) => d.command).indexOf(transcript);
+      // if (macro !== -1) {
+      //   console.log(commands[macro].actions);
+      //   setActions(commands[macro].actions);
+      // } else 
+      socketDispatch(transcript, time);
       setTranscript(transcript);
     };
-  }, [commands]);
+  }, []);
 
   return [isListening, transcript];
 }

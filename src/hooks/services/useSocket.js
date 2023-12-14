@@ -58,20 +58,7 @@ export default function useSocket(sendMIDIMessage, config) {
   };
 
   const socketDispatch = (message, time) => {
-    const payload = JSON.stringify({
-      message: message,
-      config: config,
-      action: "command",
-      userId: userId,
-      last_subject: lastSubject,
-      time: time,
-    });
-    ReactGA.event({
-      category: "WEBSOCKET",
-      action: "VOICE_COMMAND",
-      label: payload,
-    });
-    websocket.current.send(payload);
+    websocket.current.send(message);
   };
 
   useEffect(() => {
