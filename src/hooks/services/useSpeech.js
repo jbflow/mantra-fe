@@ -44,32 +44,22 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
   }, [isListening]);
 
   useEffect(() => {
-    recognition.onstart = () => {
-      setIsListening(true);
-      startSound.play();
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-      endSound.play();
-    };
-
     recognition.onspeechend = () => {
       recognition.abort();
     };
 
     bumblebee.on("hotword", (hotword) => {
       recognition.start();
+      setIsListening(true);
+      startSound.play();
     });
     bumblebee.start();
   }, []);
 
   useEffect(() => {
     recognition.onresult = (event) => {
-      recognition.abort();
       var transcript = "";
       transcript = CleanupTranscript(event.results);
-
       // const macro = commands.map((d) => d.command).indexOf(transcript);
       // if (macro !== -1) {
       //   console.log(commands[macro].actions);
@@ -77,6 +67,14 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
       // } else 
       socketDispatch(transcript, time);
       setTranscript(transcript);
+      if (transcript === "stop listening") {
+        setIsListening(false);
+        endSound.play();
+      }
+      else {
+        recognition.abort();
+        setTimeout(function(){ recognition.start(); }, 100);
+      }
     };
   }, []);
 
