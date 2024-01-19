@@ -2,15 +2,17 @@ import { useState, useEffect, useContext } from "react";
 import BumbleBee from "bumblebee-hotword";
 import { Howl, Howler } from "howler";
 import useCommands from "./useCommands";
-import { CleanupTranscript } from "../../utils/TranscriptUtils";
+import { TranscriptParser } from "../../utils/TranscriptParser";
 import { CommandsContext } from "../../contexts/CommandsContext";
 
+
+const transcriptParser = new TranscriptParser()
 let tb_data = require("./talkback");
 Howler.autoUnlock = true;
 // Setup porcupine/bumblebee
 const bumblebee = new BumbleBee();
 bumblebee.setWorkersPath("bumblebee-workers");
-bumblebee.addHotword('computer');
+bumblebee.addHotword("computer");
 bumblebee.setHotword("computer");
 
 // Setup webspeech API
@@ -33,50 +35,54 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
   const { commands } = useContext(CommandsContext);
   useCommands(actions, setActions, socketDispatch, confirm, setConfirm);
 
-  useEffect(() => {
-    if (isListening) {
-      interval = setInterval(() => {
-        time = time + 10;
-      }, 10);
-    } else {
-      clearInterval(interval);
-    }
-  }, [isListening]);
+
 
   useEffect(() => {
+    recognition.onstart = () => {
+      setIsListening(true);
+      startSound.play();
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      endSound.play();
+    };
+
     recognition.onspeechend = () => {
       recognition.abort();
     };
 
     bumblebee.on("hotword", (hotword) => {
       recognition.start();
-      setIsListening(true);
-      startSound.play();
     });
     bumblebee.start();
   }, []);
 
   useEffect(() => {
     recognition.onresult = (event) => {
-      var transcript = "";
-      transcript = CleanupTranscript(event.results);
-      // const macro = commands.map((d) => d.command).indexOf(transcript);
-      // if (macro !== -1) {
-      //   console.log(commands[macro].actions);
-      //   setActions(commands[macro].actions);
-      // } else 
-      socketDispatch(transcript, time);
-      setTranscript(transcript);
-      if (transcript === "stop listening") {
-        setIsListening(false);
-        endSound.play();
+
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+
+        transcript += event.results[i]
+
       }
-      else {
-        recognition.abort();
-        setTimeout(function(){ recognition.start(); }, 100);
+      if (transcript.includes("stop listening")) {
+        recognition.stop()
       }
+      console.log("RESULTS", event.results)
+      console.log("TRANSCRIPT", transcript)
+      console.log("RESULTINDEX", event.resultIndex)
+
+      const final = transcriptParser.cleanupTranscript(event);
+      console.log("FINAL", final)
+      if (final) {
+        socketDispatch(final);
+        setTranscript(final);
+      }
+
     };
-  }, []);
+  }, [commands]);
 
   return [isListening, transcript];
 }
