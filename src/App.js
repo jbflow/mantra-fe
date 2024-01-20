@@ -44,10 +44,7 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
-          <Route
-            path="/dashboard"
-            render={(props) => <Dashboard {...props} />}
-          />
+          
 
           <Route
             path="/account"

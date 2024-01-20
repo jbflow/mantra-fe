@@ -1,7 +1,6 @@
-const IntentDetectionBase = require("./IntentDetectionBase")
-const {NounSearchEngine} = require("./NounClasses")
-const config = require("./test_data")
-
+import { IntentDetectionBase } from "./IntentDetectionBase";
+import { NounSearchEngine } from "./NounClasses"
+import { config } from "./test_data"
 export class IntentDetection extends IntentDetectionBase {
     constructor() {
         super();
@@ -14,14 +13,14 @@ export class IntentDetection extends IntentDetectionBase {
 
     runDetection(textInput = "", config = {}) {
         this.textInput = textInput;
-        this.config = config 
-        this.tokenizedInput =  this.parseInput(textInput, 3)
+        this.config = config
+        this.tokenizedInput = this.parseInput(textInput, 3)
         if (textInput.split(" ").length === 1 && Object.keys(this.SINGLE_WORD).includes(textInput)) {
             return this.SINGLE_WORD[textInput]
         }
-        
+
         const verb = this.getVerb();
-        
+
         const nounAdj = this.nounSearcher.search(verb, this.tokenizedInput, this.config)
         console.log("verb: ", verb)
         console.log("potential nouns found: ", nounAdj)
@@ -41,7 +40,7 @@ export class IntentDetection extends IntentDetectionBase {
         }
     }
 
-    
+
 
     getAdverb(verb) {
         if (verb === 1) {
@@ -102,8 +101,8 @@ export class IntentDetection extends IntentDetectionBase {
             }
 
             msg.push(this.SYSEX_END);
-            
-          
+
+
             return msg;
         }
     }

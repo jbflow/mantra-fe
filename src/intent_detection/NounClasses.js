@@ -1,5 +1,4 @@
-const IntentDetectionBase = require("./IntentDetectionBase");
-
+import { IntentDetectionBase } from "./IntentDetectionBase";
 export class NounSearchEngine extends IntentDetectionBase {
     constructor() {
         super()

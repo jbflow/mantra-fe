@@ -8,7 +8,7 @@ import { IntentDetection } from "../../intent_detection/IntentDetection";
 
 
 const transcriptParser = new TranscriptParser()
-const de
+const detector = new IntentDetection()
 let tb_data = require("./talkback");
 Howler.autoUnlock = true;
 // Setup porcupine/bumblebee
@@ -35,7 +35,7 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
   const [transcript, setTranscript] = useState("");
   const [actions, setActions] = useState(false);
   const { commands } = useContext(CommandsContext);
-  useCommands(actions, setActions, socketDispatch, confirm, setConfirm);
+  // useCommands(actions, setActions, confirm, setConfirm);
 
 
 

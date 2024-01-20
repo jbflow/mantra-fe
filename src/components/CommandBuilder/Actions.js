@@ -14,14 +14,13 @@ export default function Actions({
   const [actions, setActions] = useState(command.actions);
   const [testActions, setTestActions] = useState([]);
   const [showAddButtons, setShowAddButtons] = useState(false);
-  const { socketDispatch, confirmation } = useContext(ServicesContext);
-  useCommands(
-    testActions,
-    setTestActions,
-    socketDispatch,
-    confirmation.confirm,
-    confirmation.setConfirm
-  );
+  const {confirmation } = useContext(ServicesContext);
+  // useCommands(
+  //   testActions,
+  //   setTestActions,
+  //   confirmation.confirm,
+  //   confirmation.setConfirm
+  // );
 
   const actionChanged = (e, i) => {
     const newActions = [...actions];
