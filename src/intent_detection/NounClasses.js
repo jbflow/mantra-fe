@@ -3,7 +3,7 @@ const IntentDetectionBase = require("./IntentDetectionBase");
 export class NounSearchEngine extends IntentDetectionBase {
     constructor() {
         super()
-        this.nounAdjArray;
+        this.nounAdjArray = [];
         this.fullPath = ""
         this.lastSubject = "";
     }
@@ -36,7 +36,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             const t = track.index
             // then check if one of its devices have been mentioned
             devices.push(...this.getNounAdj("device", config.device[t], tokenizedInput, [['track', t]]));
-            log("DEVICES", devices)
+            console.log("DEVICES", devices)
             // check for mixer params as well
             const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['send']), tokenizedInput, [['track', t]]);
             parameters.push(...mixerParams);
@@ -130,10 +130,10 @@ export class NounSearchEngine extends IntentDetectionBase {
         return [...audio_devices, ...midi_devices, ...instruments]
     }
     getNounAdj(noun, list, tokenizedInput, parents = []) {
-        log("NOUN: ", noun)
-        log("list: ", list)
-        log("tokenizedInput: ", tokenizedInput)
-        log("parents: ", parents)
+        console.log("NOUN: ", noun)
+        console.log("list: ", list)
+        console.log("tokenizedInput: ", tokenizedInput)
+        console.log("parents: ", parents)
         const nounAdj = [];
         for (const token of tokenizedInput) {
 
@@ -150,7 +150,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
                 });
             } else if (levi) {
-                log("LEVI: ", levi)
+                console.log("LEVI: ", levi)
                 for (let l of levi) {
                     nounAdj.push({
                         token: token,
@@ -164,13 +164,13 @@ export class NounSearchEngine extends IntentDetectionBase {
 
             }
         }
-        log("nounAdj: ", nounAdj)
+        console.log("nounAdj: ", nounAdj)
         return nounAdj;
     }
     removeDuplicateResults(nounAdjArray) {
         const uniquePaths = new Set();
         const filteredNouns = [];
-        log("NOUN ADJ ARRAY", nounAdjArray)
+        console.log("NOUN ADJ ARRAY", nounAdjArray)
         for (const nounAdj of nounAdjArray) {
             this.fullPath = `${nounAdj.path}_${nounAdj.subject}`
             if (!uniquePaths.has(this.fullPath)) {
@@ -181,7 +181,7 @@ export class NounSearchEngine extends IntentDetectionBase {
         return filteredNouns;
     }
     makeBytesFromFullPath() {
-        log("I AM PATH: ", this.fullPath)
+        console.log("I AM PATH: ", this.fullPath)
         this.lastSubject = this.fullPath
         const pattern = /([a-zA-Z]+_\d+)/g;
         const matches = this.fullPath.match(pattern);
@@ -199,12 +199,12 @@ export class NounSearchEngine extends IntentDetectionBase {
                 else {
                     bytes.push(this.NOUNS[word])
                     bytes.push(...this.convertInt(parseInt(number) + 1, true))
-                    log("NOUNS WORD", this.NOUNS[word])
-                    log("CONVERT INT", this.convertInt(number, true))
+                    console.log("NOUNS WORD", this.NOUNS[word])
+                    console.log("CONVERT INT", this.convertInt(number, true))
                 }
             })
         }
-        log("bytes: ", bytes)
+        console.log("bytes: ", bytes)
         return bytes
 
 

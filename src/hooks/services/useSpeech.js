@@ -4,9 +4,11 @@ import { Howl, Howler } from "howler";
 import useCommands from "./useCommands";
 import { TranscriptParser } from "../../utils/TranscriptParser";
 import { CommandsContext } from "../../contexts/CommandsContext";
+import { IntentDetection } from "../../intent_detection/IntentDetection";
 
 
 const transcriptParser = new TranscriptParser()
+const de
 let tb_data = require("./talkback");
 Howler.autoUnlock = true;
 // Setup porcupine/bumblebee

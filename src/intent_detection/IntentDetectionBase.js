@@ -52,7 +52,7 @@ export class IntentDetectionBase {
     };
     makeSubjObjQuant(obj, subj) { return parseInt(`0x${obj}${subj}`, 16) }
 
-    getSubjObjQuant(quant) { [quant >> 4, quant & 0x07] }
+    getSubjObjQuant(quant) { return [quant >> 4, quant & 0x07] }
 
     convertInt(i, slicing) {
         const bytes = [
