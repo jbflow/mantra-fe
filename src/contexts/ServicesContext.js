@@ -23,7 +23,7 @@ export default function ServicesProvider({ children }) {
   // confirm and setConfirm are used by the command/macro builder and later the TTS confirmation.
   // They store the confirmation MIDI from Ableton and are used to notify it's safe to send the next macro voice action.
 
-  
+
   const [isListening, transcript] = useSpeech(
     config,
     sendMIDIMessage,
@@ -45,12 +45,12 @@ export default function ServicesProvider({ children }) {
     isListening,
     transcript,
   };
-  
+
   const confirmation = { confirm, setConfirm };
 
   return (
     <ServicesContext.Provider
-      value={{ config, status, confirmation }}
+      value={{ config, status, confirmation, sendMIDIMessage }}
     >
       {children}
     </ServicesContext.Provider>

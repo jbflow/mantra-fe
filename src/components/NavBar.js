@@ -49,6 +49,10 @@ export default function NavBar({ signOut }) {
                 src="./images/menu-icons/gear-wide-connected.svg"
               />
             </Link>
+
+            <Link className="nav-link nav-link-sidebar" to="/testing">
+              Testing
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

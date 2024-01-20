@@ -5,6 +5,7 @@ import "./styles/Transitions.css";
 import { Route } from "react-router-dom";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import AccountManagement from "./components/AccountManagement";
+import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
@@ -50,6 +51,10 @@ function App({ signOut }) {
           <Route
             path="/commands"
             render={(props) => <CommandBuilder {...props} />}
+          />
+           <Route
+            path="/testing"
+            render={(props) => <CommandTesting {...props} />}
           />
         </div>
         <StatusBar />
