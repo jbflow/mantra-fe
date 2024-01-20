@@ -3,7 +3,6 @@ import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route } from "react-router-dom";
-import Dashboard from "./components/Dashboard/Dashboard";
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import AccountManagement from "./components/AccountManagement";
 import NavBar from "./components/NavBar";
@@ -44,8 +43,6 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
-          
-
           <Route
             path="/account"
             render={(props) => <AccountManagement {...props} />}

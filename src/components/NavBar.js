@@ -33,14 +33,6 @@ export default function NavBar({ signOut }) {
         <Navbar.Toggle aria-controls="navigation" />
         <Navbar.Collapse id="navigation" style={styles.forceColumn}>
           <Nav className="mr-auto" style={styles.forceColumn}>
-            <Link className="nav-link nav-link-sidebar" to="/dashboard">
-              Dashboard
-              <img
-                style={styles.icon}
-                alt="Dashboard nav logo"
-                src="./images/menu-icons/speedometer.svg"
-              />
-            </Link>
             <Link className="nav-link nav-link-sidebar" to="/commands">
               Command Builder
               <img
