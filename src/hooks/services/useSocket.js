@@ -23,9 +23,9 @@ export default function useSocket(sendMIDIMessage, config) {
     ws.onmessage = (e) => {
       const data = JSON.parse(e.data);
       console.log(data.command);
-      setLastSubject(data.last_subject);
-      setTotalTime(data.time);
-      setTotalCommands(data.total_commands);
+      // setLastSubject(data.last_subject);
+      // setTotalTime(data.time);
+      // setTotalCommands(data.total_commands);
       sendMIDIMessage(data.command);
     };
 
@@ -57,8 +57,8 @@ export default function useSocket(sendMIDIMessage, config) {
       connectWebSocket(); //check if websocket instance is closed, if so call `connect` function.
   };
 
-  const socketDispatch = (message, time) => {
-    websocket.current.send(message);
+  const socketDispatch = (message) => {
+    websocket.current.send(JSON.stringify({"message": message, "config": config, type: "command"}));
   };
 
   useEffect(() => {

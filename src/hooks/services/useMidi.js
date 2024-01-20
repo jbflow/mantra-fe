@@ -74,7 +74,7 @@ export default function useMidi() {
     midiOutputs = Array.from(midiAccess.outputs.values());
 
     midiOutputs.forEach((output) => {
-      if (output.name == "tlkbck") {
+      if (output.name == "IAC Driver Bus 1") {
         output.open();
         midiOutput = output;
         setMidiOutput(true);
@@ -82,7 +82,7 @@ export default function useMidi() {
       }
     });
     midiInputs.forEach((input) => {
-      if (input.name == "tlkbck") {
+      if (input.name == "IAC Driver Bus 2") {
         midiInput = input;
         input.onmidimessage = getMIDIMessage;
         setMidiInput(true);
