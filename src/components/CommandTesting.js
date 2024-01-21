@@ -4,9 +4,9 @@ import { ServicesContext } from "../contexts/ServicesContext";
 import { IntentDetection } from "../intent_detection/IntentDetection";
 
 
-
+const detector = new IntentDetection()
 export default function CommandTesting() {
-  const detector = new IntentDetection()
+  
   const {config, sendMIDIMessage} = useContext(ServicesContext)
   const command = useRef("")
   const runTest = () => {

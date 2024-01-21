@@ -47,7 +47,7 @@ const VERBS = {
   play: 19,
   stop: 20,
   record: 21,
-  loop: 22,
+  // loop: 22,
 };
 
 const NOUNS = {
