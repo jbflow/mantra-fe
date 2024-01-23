@@ -26,9 +26,7 @@ export default function ServicesProvider({ children }) {
 
   const [isListening, transcript] = useSpeech(
     config,
-    sendMIDIMessage,
-    confirm,
-    setConfirm
+    sendMIDIMessage
   );
   // Now initilize the speech to text, passing the config and sendMIDIMessage so intent detection can take place and send the message
   // confirm and setConfirm are used by the useCommands hook internally, if the transcription matches one of the
