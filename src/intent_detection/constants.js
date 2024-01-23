@@ -62,8 +62,8 @@ const NOUNS = {
   clip: 11,
   parameter: 22,
   instrument: 39,
-  audio_device: 40,
-  midi_device: 41,
+  audioDevice: 40,
+  midiDevice: 41,
 };
 
 const NOUN_MAP = {
@@ -75,12 +75,12 @@ const NOUN_MAP = {
   11: 'clip',
   22: 'parameter',
   39: 'instrument',
-  40: 'audio_device',
-  41: 'midi_device',
+  40: 'audioDevice',
+  41: 'midiDevice',
 };
 
 const SUB_NOUN_BYTES = {
-  3: Object.values(NOUNS).filter(x => ['device', 'clip', 'instrument', 'audio_device', 'midi_device'].includes(x)),
+  3: Object.values(NOUNS).filter(x => ['device', 'clip', 'instrument', 'audioDevice', 'midiDevice'].includes(x)),
   10: Object.values(NOUNS).filter(x => ['parameter'].includes(x)),
 };
 
@@ -94,7 +94,7 @@ const THRESH = {
   parameter: 100,
   instrument: 100,
   audio_device: 100,
-  midi_device: 100,
+  midiDevice: 100,
 };
 
 const UNITS = {

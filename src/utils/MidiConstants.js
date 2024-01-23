@@ -14,8 +14,8 @@ export const emptyConfig = {
   clip: [],
   parameter: [],
   instrument: [],
-  audio_device: [],
-  midi_device: [],
+  audioDevice: [],
+  midiDevice: [],
   sel_track: 0,
   sel_device: 0,
 };
@@ -54,8 +54,8 @@ export const NOUNS = {
   clip: 11,
   parameter: 22,
   instrument: 39,
-  audio_device: 40,
-  midi_device: 41,
+  audioDevice: 40,
+  midiDevice: 41,
 };
 
 export const NOUN_MAP = {
@@ -67,8 +67,8 @@ export const NOUN_MAP = {
   11: "clip",
   22: "parameter",
   39: "instrument",
-  40: "audio_device",
-  41: "midi_device",
+  40: "audioDevice",
+  41: "midiDevice",
 };
 
 export const SUB_NOUNS = {
