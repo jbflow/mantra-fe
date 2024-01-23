@@ -22,12 +22,12 @@ export class IntentDetection extends IntentDetectionBase {
         const verb = this.getVerb();
 
         const nounAdj = this.nounSearcher.search(verb, this.tokenizedInput, this.config)
-        console.log("verb: ", verb)
-        console.log("potential nouns found: ", nounAdj)
+        // console.log("verb: ", verb)
+        // console.log("potential nouns found: ", nounAdj)
         const adverb = this.getAdverb(verb);
-        console.log("adverb: ", adverb)
+        // console.log("adverb: ", adverb)
         const units = this.getUnits();
-        console.log("units: ", units)
+        // console.log("units: ", units)
         const modifiedVerb = this.VERBS['select'] && nounAdj && !verb ? this.VERBS['select'] : verb;
         return this.encodeMidi(nounAdj, modifiedVerb, adverb, units)
     }

@@ -35,7 +35,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             const t = track.index
             // then check if one of its devices have been mentioned
             devices.push(...this.getNounAdj("device", config.device[t], tokenizedInput, [['track', t]]));
-            console.log("DEVICES", devices)
+            // console.log("DEVICES", devices)
             // check for mixer params as well
             const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['send']), tokenizedInput, [['track', t]]);
             parameters.push(...mixerParams);
@@ -115,19 +115,19 @@ export class NounSearchEngine extends IntentDetectionBase {
         return [...tracks, ...scenes, ...cuePoints, ...devices, ...clips]
     }
     getLoadable(config, tokenizedInput) {
-        let audio_devices, midi_devices, instruments
-        const trackIndex = [config.selTrack - 1];
+        const audioDevices = []
+        const midiDevices = []
+        const instruments = []
         const tracks = this.getNounAdj("track", config.track, tokenizedInput);
-        for (const track of tracks) {
-            trackIndex.push(track.index);
+        for (let track of tracks) {
+            const t = track.index
+            audioDevices.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', t]]))
+            midiDevices.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', t]]))
+            instruments.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', t]]))
         }
-        for (const t of trackIndex) {
-            audio_devices = this.getNounAdj("audio_device", config.audio_device, tokenizedInput, [['track', t]])
-            midi_devices = this.getNounAdj("midi_device", config.midi_device, tokenizedInput, [['track', t]])
-            instruments = this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', t]])
-        }
-        return [...audio_devices, ...midi_devices, ...instruments]
+        return [...audioDevices, ...midiDevices, ...instruments]
     }
+
     getNounAdj(noun, list, tokenizedInput, parents = []) {
         console.log("NOUN: ", noun)
         console.log("list: ", list)
@@ -135,10 +135,10 @@ export class NounSearchEngine extends IntentDetectionBase {
         console.log("parents: ", parents)
         const nounAdj = [];
         for (const token of tokenizedInput) {
-
-            this.threshold = this.THRESH[noun];
             const integer = this.integerSearch(token, noun);
             const levi = this.leviSearch(token, list);
+            console.log("LEVI", levi)
+
 
             if (integer) {
                 nounAdj.push({
@@ -169,7 +169,7 @@ export class NounSearchEngine extends IntentDetectionBase {
     removeDuplicateResults(nounAdjArray) {
         const uniquePaths = new Set();
         const filteredNouns = [];
-        console.log("NOUN ADJ ARRAY", nounAdjArray)
+        // console.log("NOUN ADJ ARRAY", nounAdjArray)
         for (const nounAdj of nounAdjArray) {
             this.fullPath = `${nounAdj.path}_${nounAdj.subject}`
             if (!uniquePaths.has(this.fullPath)) {
@@ -180,7 +180,7 @@ export class NounSearchEngine extends IntentDetectionBase {
         return filteredNouns;
     }
     makeBytesFromFullPath() {
-        console.log("I AM PATH: ", this.fullPath)
+        // console.log("I AM PATH: ", this.fullPath)
         this.lastSubject = this.fullPath
         const pattern = /([a-zA-Z]+_\d+)/g;
         const matches = this.fullPath.match(pattern);
@@ -198,8 +198,8 @@ export class NounSearchEngine extends IntentDetectionBase {
                 else {
                     bytes.push(this.NOUNS[word])
                     bytes.push(...this.convertInt(parseInt(number) + 1, true))
-                    console.log("NOUNS WORD", this.NOUNS[word])
-                    console.log("CONVERT INT", this.convertInt(number, true))
+                    // console.log("NOUNS WORD", this.NOUNS[word])
+                    // console.log("CONVERT INT", this.convertInt(number, true))
                 }
             })
         }

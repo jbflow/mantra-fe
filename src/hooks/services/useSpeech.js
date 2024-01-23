@@ -7,6 +7,7 @@ import { CommandsContext } from "../../contexts/CommandsContext";
 import { IntentDetection } from "../../intent_detection/IntentDetection";
 
 
+
 const transcriptParser = new TranscriptParser()
 const detector = new IntentDetection()
 let tb_data = require("./talkback");
@@ -30,11 +31,12 @@ const endSound = new Howl({ src: ["sounds/stop_sound.mp3"] });
 
 let interval;
 let time = 0;
-export default function useSpeech(socketDispatch, confirm, setConfirm) {
+export default function useSpeech(config, sendMIDIMessage) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [actions, setActions] = useState(false);
   const { commands } = useContext(CommandsContext);
+  
   // useCommands(actions, setActions, confirm, setConfirm);
 
 
@@ -79,7 +81,9 @@ export default function useSpeech(socketDispatch, confirm, setConfirm) {
       const final = transcriptParser.cleanupTranscript(event);
       console.log("FINAL", final)
       if (final) {
-        socketDispatch(final);
+        const midiMessage = detector.runDetection(final, config)
+        console.log(midiMessage)
+        sendMIDIMessage(midiMessage)
         setTranscript(final);
       }
 
