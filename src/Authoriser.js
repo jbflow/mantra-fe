@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Auth, API } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
 import config from "./amplify-config";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
-import Checkout from "./components/Checkout.js";
-import { isDev } from "./utils/Constants";
+
 
 
 import ContextComposer from "./contexts/ContextComposer";
@@ -23,9 +22,7 @@ Auth.configure({
 
   // Cognito Hosted UI configuration
   oauth: {
-    domain: isDev()
-      ? "tlkbck.auth.eu-west-2.amazoncognito.com"
-      : "",
+    domain: process.env.REACT_APP_COGNITO_DOMAIN,
     scope: [
       "phone",
       "email",
