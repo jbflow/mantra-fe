@@ -8,11 +8,13 @@ import useAuthentication from "./hooks/useAuthentication";
 import Checkout from "./components/Checkout.js";
 import { isDev } from "./utils/Constants";
 
+
 import ContextComposer from "./contexts/ContextComposer";
 
-import ReactGA from "react-ga";
+require('dotenv').config()
+console.log(process.env)
 
-ReactGA.initialize("UA-203301966-1");
+
 
 Auth.configure({
   region: config.cognito.REGION,

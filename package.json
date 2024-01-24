@@ -16,6 +16,7 @@
     "bumblebee-hotword": "^0.2.0",
     "caniuse-lite": "^1.0.30001237",
     "classnames": "^2.2.6",
+    "dotenv": "^16.4.1",
     "fuzzball": "^2.1.2",
     "howler": "^2.2.1",
     "node-sass": "4.14.1",

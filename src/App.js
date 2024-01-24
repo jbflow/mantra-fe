@@ -10,8 +10,8 @@ import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
 import config from "./amplify-config";
-import { HTTP_API_URL } from "./utils/Constants";
 import StatusBar from "./components/StatusBar";
+
 
 Amplify.configure({
   Auth: {
@@ -25,7 +25,7 @@ Amplify.configure({
     endpoints: [
       {
         name: "talkbackBE",
-        endpoint: HTTP_API_URL,
+        endpoint: process.env.REACT_APP_HTTP_API_URL,
         region: "eu-west-2",
       },
     ],
