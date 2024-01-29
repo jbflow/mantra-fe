@@ -9,24 +9,23 @@ import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
-import config from "./amplify-config";
 import StatusBar from "./components/StatusBar";
 
 
 Amplify.configure({
   Auth: {
     mandatorySignIn: true,
-    region: config.cognito.REGION,
-    userPoolId: config.cognito.USER_POOL_ID,
-    identityPoolId: config.cognito.IDENTITY_POOL_ID,
-    userPoolWebClientId: config.cognito.APP_CLIENT_ID,
+    region: process.env.REACT_APP_AMPLIFY_REGION,
+    userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
+    identityPoolId: process.env.REACT_APP_AMPLIFY_IDENTITY_POOL_ID,
+    userPoolWebClientId: process.env.REACT_APP_AMPLIFY_APP_CLIENT_ID,
   },
   API: {
     endpoints: [
       {
-        name: "talkbackBE",
+        name: process.env.REACT_APP_AMPLIFY_ENDPOINT,
         endpoint: process.env.REACT_APP_HTTP_API_URL,
-        region: "eu-west-2",
+        region: process.env.REACT_APP_AMPLIFY_REGION,
       },
     ],
   },
