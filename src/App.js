@@ -23,7 +23,7 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: process.env.REACT_APP_AMPLIFY_ENDPOINT,
+        name: "talkbackBE",
         endpoint: process.env.REACT_APP_HTTP_API_URL,
         region: process.env.REACT_APP_AMPLIFY_REGION,
       },
