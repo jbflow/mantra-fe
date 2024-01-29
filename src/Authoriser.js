@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
 import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
-import config from "./amplify-config";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
 
@@ -16,9 +15,9 @@ console.log(process.env)
 
 
 Auth.configure({
-  region: config.cognito.REGION,
-  userPoolId: config.cognito.USER_POOL_ID,
-  userPoolWebClientId: config.cognito.APP_CLIENT_ID,
+  region: process.env.REACT_APP_AMPLIFY_REGION,
+  userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
+  userPoolWebClientId: process.env.REACT_APP_AMPLIFY_APP_CLIENT_ID,
 
   // Cognito Hosted UI configuration
   oauth: {
@@ -32,7 +31,7 @@ Auth.configure({
     ],
     redirectSignIn: `${document.location.origin}/callback`,
     redirectSignOut: `${document.location.origin}/signout`,
-    userPoolId: config.cognito.USER_POOL_ID,
+    userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
     responseType: "code",
   },
 });
