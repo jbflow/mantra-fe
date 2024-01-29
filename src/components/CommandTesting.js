@@ -1,18 +1,17 @@
 
-import React, { useRef, useContext } from "react";
-import { ServicesContext } from "../contexts/ServicesContext";
+import React, { useRef } from "react";
 import { IntentDetection } from "../intent_detection/IntentDetection";
 
 
 const detector = new IntentDetection()
 export default function CommandTesting() {
   
-  const {config, sendMIDIMessage} = useContext(ServicesContext)
+  
   const command = useRef("")
   const runTest = () => {
-    const midiMessage = detector.runDetection(command.current, config)
+    const midiMessage = detector.runDetection(command.current)
     console.log(midiMessage)
-    sendMIDIMessage(midiMessage)
+    // sendMIDIMessage(midiMessage)
 
   }
 

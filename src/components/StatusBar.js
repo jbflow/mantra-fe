@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 
 import MidiInGood from "../images/MIDI-in-good.svg";
 import MidiInBad from "../images/MIDI-in-bad.svg";
@@ -11,10 +11,7 @@ import DawLinkBad from "../images/daw-link-bad.svg";
 import TlkBckListening from "../images/tlkbck-listening.svg";
 import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 
-import { ServicesContext } from "../contexts/ServicesContext";
-
 export default function StatusBar() {
-  const { status } = useContext(ServicesContext);
   const [micConnected, setMicConnected] = useState(false);
   const [showTranscript, setShowTranscript] = useState(true);
 
@@ -31,18 +28,18 @@ export default function StatusBar() {
         <img
           alt=""
           className="statusItem"
-          src={status.midiInputOpen ? MidiInGood : MidiInBad}
+          src={true ? MidiInGood : MidiInBad} // Update me
         />
         <img
           alt=""
           className="statusItem"
-          src={status.midiOutputOpen ? MidiOutGood : MidiOutBad}
+          src={true ? MidiOutGood : MidiOutBad} // Update me
         />
         <img alt="" className="statusItem" src={micConnected ? Mic : MicMute} />
         <img
           alt=""
           className="statusItem"
-          src={status.dawLink ? DawLinkGood : DawLinkBad}
+          src={true ? DawLinkGood : DawLinkBad} // Update me
         />
         <div
           style={{
@@ -70,11 +67,11 @@ export default function StatusBar() {
             color: "white",
           }}
         >
-          {status.transcript}
+          {"transcript goes here"}
         </div>
         <img
           alt=""
-          src={status.isListening ? TlkBckListening : TlkBckNotListening}
+          src={true ? TlkBckListening : TlkBckNotListening}
         />
         <div
           style={{

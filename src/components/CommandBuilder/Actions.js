@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import VoiceAction from "./VoiceAction";
-import { ServicesContext } from "../../contexts/ServicesContext";
-import useCommands from "../../hooks/services/useCommands";
+
 
 export default function Actions({
   command,
@@ -14,13 +13,7 @@ export default function Actions({
   const [actions, setActions] = useState(command.actions);
   const [testActions, setTestActions] = useState([]);
   const [showAddButtons, setShowAddButtons] = useState(false);
-  const {confirmation } = useContext(ServicesContext);
-  // useCommands(
-  //   testActions,
-  //   setTestActions,
-  //   confirmation.confirm,
-  //   confirmation.setConfirm
-  // );
+ 
 
   const actionChanged = (e, i) => {
     const newActions = [...actions];
