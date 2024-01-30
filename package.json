@@ -29,7 +29,7 @@
     "react-icons": "^4.1.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.0",
+    "react-scripts": "^4.0.0",
     "recharts": "^2.0.9",
     "reconnecting-websocket": "^4.4.0",
     "stripe": "^8.146.0",
@@ -60,6 +60,7 @@
     ]
   },
   "devDependencies": {
-    "cross-env-file": "^1.0.0"
+    "cross-env-file": "^1.0.0",
+    "react-error-overlay": "^6.0.9"
   }
 }

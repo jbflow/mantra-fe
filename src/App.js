@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
@@ -10,6 +10,8 @@ import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
 import StatusBar from "./components/StatusBar";
+import { MidiContext } from "./contexts/MidiContext";
+import useMIDIMessage from "./hooks/services/useMIDIMessage";
 
 
 Amplify.configure({
@@ -32,6 +34,15 @@ Amplify.configure({
 });
 
 function App({ signOut }) {
+  
+  const {inputs, outputs} = useContext(MidiContext)
+  console.log(inputs)
+  const message = useMIDIMessage(inputs[1])
+  useEffect(() => {
+      console.log(message)
+  }, [message])
+
+
   return (
     <>
       <div>
@@ -51,7 +62,7 @@ function App({ signOut }) {
             path="/commands"
             render={(props) => <CommandBuilder {...props} />}
           />
-           <Route
+          <Route
             path="/testing"
             render={(props) => <CommandTesting {...props} />}
           />

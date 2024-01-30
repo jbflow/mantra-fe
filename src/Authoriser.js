@@ -4,16 +4,8 @@ import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
-
-
-
 import ContextComposer from "./contexts/ContextComposer";
-
 require('dotenv').config()
-console.log(process.env)
-
-
-
 Auth.configure({
   region: process.env.REACT_APP_AMPLIFY_REGION,
   userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
