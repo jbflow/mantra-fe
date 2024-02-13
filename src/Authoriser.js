@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
 import ContextComposer from "./contexts/ContextComposer";
+
 require('dotenv').config()
 Auth.configure({
   region: process.env.REACT_APP_AMPLIFY_REGION,
@@ -29,16 +30,21 @@ Auth.configure({
 });
 
 const Authoriser = () => {
-  const [paymentCreated, setPaymentCreated] = useState(null);
-  const [checkingPayment, setCheckingPayment] = useState(false);
-  const { user, isAuthenticated, isLoading, signOut, SignInButton } =
-    useAuthentication();
+  const { user, isAuthenticated, isLoading, signOut, SignInButton } = useAuthentication();
+  const [width, setWidth] = useState(window.innerWidth);
 
+  function handleWindowSizeChange() {
+    setWidth(window.innerWidth);
+  }
   useEffect(() => {
-    if (isAuthenticated) {
-
+    window.addEventListener('resize', handleWindowSizeChange);
+    return () => {
+      window.removeEventListener('resize', handleWindowSizeChange);
     }
-  }, [isAuthenticated]);
+  }, []);
+
+  const isMobile = width <= 768;
+
 
   if (!isLoading && isAuthenticated) {
 
