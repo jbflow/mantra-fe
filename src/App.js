@@ -11,7 +11,7 @@ import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
 import StatusBar from "./components/StatusBar";
 import { MidiContext } from "./contexts/MidiContext";
-import useMIDIMessage from "./hooks/services/useMIDIMessage";
+import useMIDIMessage from "./hooks/useMIDIMessage";
 
 
 Amplify.configure({
