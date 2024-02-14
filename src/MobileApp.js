@@ -10,8 +10,6 @@ function MobileApp({ signOut }) {
   return (
     <>
       <TopBar/>
-      
-      <StatusBar/>
     </>
   );
 }
