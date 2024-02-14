@@ -122,6 +122,5 @@ const updateConfig = (midiArray, config) => {
           .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
       : convert_bytes(midiArray.slice(quantity * 3 + 2)) - 1; // convert the bytes to a single int
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map
-  console.log(config)
   return config;
 };

@@ -7,7 +7,7 @@ import { emptyConfig } from './utils/MidiConstants';
 import { MidiToJson } from './utils/MidiToJson';
 function MobileApp({ signOut }) {
   const [transcript, setTranscript] = useState("")
-  const [config, setConfig] = useState("")
+  const [config, setConfig] = useState(emptyConfig)
   const { sendMessage, lastMessage, readyState } = useWebSocket("ws://localhost:8080");
 
 
@@ -23,7 +23,6 @@ function MobileApp({ signOut }) {
   useEffect(() => {
     if (lastMessage !== null) {
       const msg = JSON.parse(lastMessage.data)
-      console.log("MSG", msg.data)
       const init = [240, 0, 0, 0, 0, 0, 127, 247];
       if (arraysEqual(init, Array.from(msg))) {
         // if message is init
@@ -36,7 +35,7 @@ function MobileApp({ signOut }) {
         setConfig(MidiToJson(msg.data, configStore)); // and update it
       }
     }
-  }, [lastMessage, config]);
+  }, [lastMessage]);
 
   return (
     <>
