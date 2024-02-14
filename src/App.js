@@ -34,12 +34,9 @@ Amplify.configure({
 });
 
 function App({ signOut }) {
-  
-  const {inputs, outputs} = useContext(MidiContext)
-  console.log(inputs)
+  const { inputs, outputs } = useContext(MidiContext)
   const message = useMIDIMessage(inputs[1])
   useEffect(() => {
-      console.log(message)
   }, [message])
 
 

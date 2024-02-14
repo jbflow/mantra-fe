@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 export const MidiContext = React.createContext(null);
 
-export default function CommandsProvider({ children, url }) {
+export default function MidiProvider({ children, url }) {
   const [inputs, setInputs] = useState([])
   const [outputs, setOutputs] = useState([])
   const onMIDISuccess = (midiAccess) => {

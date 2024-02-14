@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
 import ContextComposer from "./contexts/ContextComposer";
+import MobileApp from "./MobileApp";
 
 require('dotenv').config()
 Auth.configure({
@@ -44,21 +45,39 @@ const Authoriser = () => {
   }, []);
 
   const isMobile = width <= 768;
+  if (isLoading) {
+    return (
+      <>
+        loading...
+      </>
+    )
+  }
 
+  else if (isMobile && isAuthenticated) {
+    return (
+      <>
+        <BrowserRouter>
+          <ContextComposer user={user} isMobile={isMobile}>
+            <MobileApp signOut={signOut} isMobile={isMobile} />
+          </ContextComposer>
+        </BrowserRouter>
+      </>
+    )
+  }
 
-  if (!isLoading && isAuthenticated) {
+  if (isAuthenticated) {
 
     return (
       <>
         <BrowserRouter>
-          <ContextComposer user={user}>
-            <App signOut={signOut} />
+          <ContextComposer user={user} isMobile={isMobile}>
+            <App signOut={signOut} isMobile={isMobile} />
           </ContextComposer>
         </BrowserRouter>
       </>
     );
   }
-  else if (!isLoading) {
+  else {
     return (
       <>
         <div
@@ -85,8 +104,6 @@ const Authoriser = () => {
         </div>
       </>
     );
-  } else {
-    return null;
   }
 };
 export default Authoriser;
