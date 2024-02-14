@@ -17,7 +17,6 @@ const SpeechDetector = ({setTranscript}) => {
     }, [transcript])
 
     const backgroundColor = listening ? "#1477fc" : "#7A7E83"
-    console.log(listening)
     return (
         <>
             <div style={{
