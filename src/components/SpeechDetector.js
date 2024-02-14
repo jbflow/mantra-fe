@@ -3,7 +3,7 @@ import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 import TlkBckListening from "../images/tlkbck-listening.svg";
 import { useEffect } from 'react';
 
-const SpeechDetector = (setTranscript) => {
+const SpeechDetector = ({setTranscript}) => {
     const {
         transcript,
         listening
