@@ -96,7 +96,7 @@ const Authoriser = () => {
             <Card.Body>
               <Card.Title>Sign In</Card.Title>
               <Card.Text>
-                New user? <a>Create an account</a>
+                New user? <a href="/">Create an account</a>
               </Card.Text>
               <SignInButton style={{ float: "right" }} />
             </Card.Body>

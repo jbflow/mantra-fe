@@ -1,5 +1,4 @@
 import React, { useReducer, useEffect } from "react";
-import ReactGA from "react-ga";
 import { useGetFromApi } from "../hooks/useGetFromApi";
 import { usePostToApi } from "../hooks/usePostToApi";
 import * as uuid from "uuid";
@@ -7,8 +6,7 @@ import * as uuid from "uuid";
 export const CommandsContext = React.createContext(null);
 
 export default function CommandsProvider({ children, url }) {
-  const { data, error, loading } = useGetFromApi(url);
-  console.log("DATA", data)
+  const { data, loading } = useGetFromApi(url);
   const reducer = (state, action) => {
     if (loading) return state;
     switch (action.type) {
@@ -24,15 +22,17 @@ export default function CommandsProvider({ children, url }) {
       case "UPDATE_CMD":
         const command = action.payload.command;
         return state.map((cmd) =>
-          cmd.id == action.payload.id ? { ...cmd, command } : cmd
+          cmd.id === action.payload.id ? { ...cmd, command } : cmd
         );
       case "DELETE_CMD":
         return state.filter((cmd) => cmd.id !== action.payload.id);
       case "UPDATE_ACTIONS":
         const actions = action.payload.actions;
         return state.map((cmd) =>
-          cmd.id == action.payload.id ? { ...cmd, actions } : cmd
+          cmd.id === action.payload.id ? { ...cmd, actions } : cmd
         );
+      default:
+        return
     }
   };
 

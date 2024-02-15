@@ -48,7 +48,7 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img src="./images/menu-icons/trash2.svg" />
+            <img alt="" src="./images/menu-icons/trash2.svg" />
           </div>
           <div className="cmd-input">
             <input
@@ -69,7 +69,7 @@ export default function CommandItem({
               updateCmd(command.id);
             }}
           >
-            <img src="./images/menu-icons/check.svg" />
+            <img alt="" src="./images/menu-icons/check.svg" />
           </div>
           <div
             className="cmd-button cmd-button-close"
@@ -77,7 +77,7 @@ export default function CommandItem({
               setEditing(null);
             }}
           >
-            <img className="close-button" src="./images/menu-icons/close.svg" />
+            <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
           </div>
         </div>
         {showModal ? (
@@ -100,7 +100,7 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img src="./images/menu-icons/trash2.svg" />
+            <img alt="" src="./images/menu-icons/trash2.svg" />
           </div>
 
           <div
@@ -154,7 +154,7 @@ export default function CommandItem({
               addCmd();
             }}
           >
-            <img className="trash-button" src="./images/menu-icons/plus.svg" />
+            <img alt="" className="trash-button" src="./images/menu-icons/plus.svg" />
           </div>
         </div>
       </>
@@ -169,7 +169,7 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img src="./images/menu-icons/trash2.svg" />
+            <img alt="" src="./images/menu-icons/trash2.svg" />
           </div>
           <div
             style={{ width: "335px" }}

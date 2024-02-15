@@ -11,7 +11,7 @@ export default function Actions({
   postLoading,
 }) {
   const [actions, setActions] = useState(command.actions);
-  const [testActions, setTestActions] = useState([]);
+  // const [testActions, setTestActions] = useState([]);
   const [showAddButtons, setShowAddButtons] = useState(false);
  
 
@@ -62,7 +62,7 @@ export default function Actions({
               className="actions-button-close"
               onClick={() => setSelected(null)}
             >
-              <img src="./images/menu-icons/close.svg" />
+              <img src="./images/menu-icons/close.svg" alt="menu close" />
             </button>
           </div>
           <p>Actions</p>
@@ -120,7 +120,7 @@ export default function Actions({
                 setShowAddButtons(false);
               }}
             >
-              <img src="./images/menu-icons/plus.svg" />
+              <img src="./images/menu-icons/plus.svg" alt="menu plus icon"/>
             </button>
             {showAddButtons ? (
               <div className="add-action-list">
@@ -133,16 +133,12 @@ export default function Actions({
                     addAction();
                   }}
                 >
-                  <img src="./images/menu-icons/soundwave.svg" />
+                  <img src="./images/menu-icons/soundwave.svg" alt="menu sound icon"/>
                   Add voice action
                 </button>
                 <button disabled={true}>
-                  <img src="./images/menu-icons/midi.svg" />
+                  <img src="./images/menu-icons/midi.svg" alt="add midi action"/>
                   Add MIDI action
-                </button>
-                <button disabled={true}>
-                  <img src="./images/menu-icons/keyboard.svg" />
-                  Add keyboard action
                 </button>
               </div>
             ) : null}
@@ -160,14 +156,14 @@ export default function Actions({
             >
               <p>{postLoading ? "Saving..." : "Save"}</p>
             </button>
-            <button
+            {/* <button
               className="btn-lg"
               onClick={() => {
                 setTestActions(actions);
               }}
             >
               <p>Test</p>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

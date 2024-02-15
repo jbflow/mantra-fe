@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
@@ -10,8 +10,8 @@ import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
 import StatusBar from "./components/StatusBar";
-import { MidiContext } from "./contexts/MidiContext";
-import useMIDIMessage from "./hooks/useMIDIMessage";
+// import { MidiContext } from "./contexts/MidiContext";
+// import useMIDIMessage from "./hooks/useMIDIMessage";
 
 
 Amplify.configure({
@@ -34,10 +34,10 @@ Amplify.configure({
 });
 
 function App({ signOut }) {
-  const { inputs, outputs } = useContext(MidiContext)
-  const message = useMIDIMessage(inputs[1])
-  useEffect(() => {
-  }, [message])
+  // const { inputs, outputs } = useContext(MidiContext)
+  // const message = useMIDIMessage(inputs[1])
+  // useEffect(() => {
+  // }, [message])
 
 
   return (

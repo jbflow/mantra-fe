@@ -1,6 +1,6 @@
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
-import TlkBckListening from "../images/tlkbck-listening.svg";
+// import TlkBckListening from "../images/tlkbck-listening.svg";
 import { useEffect } from 'react';
 
 const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgroundColor }) => {
@@ -14,7 +14,7 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgrou
         if (transcript !== "" && !listening) {
             setTranscript(transcript)
         }
-    }, [transcript, listening])
+    }, [transcript, setTranscript, listening])
 
 
     useEffect(() => {
@@ -22,18 +22,15 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgrou
             setAlternatives(alternatives)
         }
 
-    }, [alternatives])
+    }, [alternatives, setAlternatives])
 
 
-    useEffect(() => {
-        {
-            setListening(listening)
-        }
-
-    }, [listening])
+    useEffect(() => {Í
+        setListening(listening)
+    }, [listening, setListening])
 
 
-    
+
     return (
         <>
             <div style={{
