@@ -1,19 +1,30 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+
 import TopBar from "./components/TopBar";
 import SpeechDetector from "./components/SpeechDetector";
 import { clearConfig, arraysEqual } from './utils/utils';
 import { emptyConfig } from './utils/MidiConstants';
 import { MidiToJson } from './utils/MidiToJson';
+
+
+import { IntentDetection } from "./intent_detection/IntentDetection";
+
+
+
+
+const detector = new IntentDetection()
+
+
+
 function MobileApp({ signOut }) {
   const [transcript, setTranscript] = useState("")
   const [config, setConfig] = useState(emptyConfig)
-  const { sendMessage, lastMessage, readyState } = useWebSocket("ws://localhost:8080");
-
-
-
-
+  const { sendMessage, lastMessage, readyState } = useWebSocket("wss://192.168.1.158:8080");
+  
   useEffect(() => {
+    console.log("READY STATE", readyState)
+    
     if (readyState === ReadyState.OPEN) {
       sendMessage(JSON.stringify({ type: "command", data: [240, 0, 0, 0, 0, 0, 1, 247] }));
     }
@@ -36,6 +47,14 @@ function MobileApp({ signOut }) {
       }
     }
   }, [lastMessage]);
+
+  useEffect(() => {
+    if (transcript !== "") {
+      const midiMessage = detector.runDetection(transcript, config)
+      sendMessage(JSON.stringify({ type: "command", data: midiMessage }))
+    }
+  }, [transcript])
+
 
   return (
     <>

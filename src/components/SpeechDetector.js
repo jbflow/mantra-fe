@@ -11,10 +11,12 @@ const SpeechDetector = ({setTranscript}) => {
 
 
     useEffect(() => {
-        if (transcript !== "") {
+        console.log(listening)
+        if (transcript !== "" && !listening) {
+            console.log("SETTING")
             setTranscript(transcript)
         }
-    }, [transcript])
+    }, [transcript, listening])
 
     const backgroundColor = listening ? "#1477fc" : "#7A7E83"
     return (
@@ -34,7 +36,7 @@ const SpeechDetector = ({setTranscript}) => {
                         alt=""
                         src={TlkBckNotListening}
                         style={{ height: "150px", width: "150px" }}
-                        onClick={!listening ? SpeechRecognition.startListening : SpeechRecognition.stopListening}
+                        onClick={!listening ? () => {SpeechRecognition.startListening()} : SpeechRecognition.stopListening}
                     />
 
                 </div>
