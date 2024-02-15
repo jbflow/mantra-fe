@@ -25,7 +25,7 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgrou
     }, [alternatives, setAlternatives])
 
 
-    useEffect(() => {Í
+    useEffect(() => {
         setListening(listening)
     }, [listening, setListening])
 
