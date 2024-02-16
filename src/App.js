@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route } from "react-router-dom";
+import Peer from "simple-peer"
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import AccountManagement from "./components/AccountManagement";
 import CommandTesting from "./components/CommandTesting";
@@ -11,6 +12,7 @@ import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
 import StatusBar from "./components/StatusBar";
 import DesktopRTC from "./components/DesktopRTC";
+
 // import { MidiContext } from "./contexts/MidiContext";
 // import useMIDIMessage from "./hooks/useMIDIMessage";
 
@@ -35,10 +37,38 @@ Amplify.configure({
 });
 
 function App({ signOut }) {
-  // const { inputs, outputs } = useContext(MidiContext)
-  // const message = useMIDIMessage(inputs[1])
-  // useEffect(() => {
-  // }, [message])
+
+  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  let peer = null
+  const [code, setCode] = useState("")
+  const startConnection = () => {
+    peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
+    peer.on('signal', data => {
+      if (data.type === "offer") {
+        console.log(data)
+        setCode(window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
+        )
+      }
+    })
+    peer.on("connect", () => {
+      console.log("CONNECTED")
+    })
+    peer.on("data", (data) => {
+      console.log(data)
+    })
+  }
+  const handleQrResult = (data) => {
+    if (data) {
+      console.log("DATA", data.text)
+      console.log(JSON.parse(atob(data.text)))
+      peer?.signal(JSON.parse(atob(data.text)))
+    }
+  }
+
+
+
+
+
 
 
   return (
@@ -53,7 +83,7 @@ function App({ signOut }) {
           }}
         >
 
-          <DesktopRTC/>
+
           <Route
             path="/account"
             render={(props) => <AccountManagement {...props} />}
@@ -65,6 +95,10 @@ function App({ signOut }) {
           <Route
             path="/testing"
             render={(props) => <CommandTesting {...props} />}
+          />
+          <Route
+            path="/connect-phone"
+            render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}
           />
         </div>
         <StatusBar />

@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 
+import { Link } from "react-router-dom";
+
+
+
+
 import MidiInGood from "../images/MIDI-in-good.svg";
 import MidiInBad from "../images/MIDI-in-bad.svg";
 import MidiOutGood from "../images/MIDI-out-good.svg";
@@ -13,7 +18,7 @@ import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 import SmartPhone from "../images/smartphone.svg";
 import "../styles/StatusBar.css"
 
-export default function StatusBar() {
+export default function StatusBar(startConnection) {
   const [micConnected, setMicConnected] = useState(false);
   const [showTranscript, setShowTranscript] = useState(true);
 
@@ -27,18 +32,15 @@ export default function StatusBar() {
   return (
     <div className="fixed-bottom w-100 " style={{ backgroundColor: "#7A7E83" }}>
       <div className="d-flex flex-row justify-content-between align-items-center">
-        <button className="connect-mobile-btn row">
-        <img
-          alt=""
-          className="statusItem"
-          src={SmartPhone}
-          style={{ marginRight: "unset", height: "3rem", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)" }}
-        />
-        </button>
-
-
+        <Link className="connect-mobile-btn row" to="/connect-phone">
+          <img
+            alt=""
+            className="statusItem"
+            src={SmartPhone}
+            style={{ marginRight: "unset", height: "3rem", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)" }}
+          />
+        </Link>
         <div className="d-flex flex-row justify-content-end align-items-center">
-
           <img
             alt=""
             className="statusItem"
