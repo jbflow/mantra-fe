@@ -1,33 +1,49 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import QRCode from "react-qr-code";
 import { QrReader } from 'react-qr-reader';
+import Peer from "simple-peer"
+
+
+
+
+
 
 
 export default function DesktopRTC() {
-    navigator.mediaDevices.getUserMedia({ video: true });
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    let peer = null
     const [code, setCode] = useState("")
-    let localConnection = null
-
     const startConnection = () => {
-        localConnection = new RTCPeerConnection()
-        const dataChannel = localConnection.createDataChannel("dataChannel")
-        dataChannel.addEventListener('open', () => {
-            console.log("DATA CHANNEL OPENED")
+        peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] }})
+        peer.on('signal', data => {
+            if (data.type === "offer") {
+                console.log(data)
+                setCode(window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
+                )
+            }
+
         })
-        localConnection.createOffer()
-            .then((offer) => {
-                setCode(window.location.origin + window.location.pathname + '?' + btoa(offer.sdp))
-                localConnection.setLocalDescription(offer)
-            })
+        peer.on("connect", () => {
+            console.log("CONNECTED")
+
+        })
+        peer.on("data", (data) => {
+            console.log(data)
+
+        })
+
+
+    }
+    const handleQrResult = (data) => {
+        
+        if (data) {
+            console.log("DATA", data.text)
+            console.log(JSON.parse(atob(data.text)))
+            peer?.signal(JSON.parse(atob(data.text)))
+        }
     }
 
-    const getCode = useCallback((data, error) => {
-        if (data) {
-            const sdp = atob(data.text)
-            console.log(sdp)
-            localConnection?.setRemoteDescription({ sdp, type: 'answer' })
-        }
-    })
+    
 
 
     return <>
@@ -38,7 +54,8 @@ export default function DesktopRTC() {
 
         }
         <div className="w-25">
-            <QrReader onResult={getCode} />
+            <QrReader onResult={handleQrResult} />
         </div>
+
     </>
 }
