@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+
+import Peer from "simple-peer"
 
 import TopBar from "./components/TopBar";
 import SpeechDetector from "./components/SpeechDetector";
@@ -12,20 +13,37 @@ import { TranscriptParser } from "./utils/TranscriptParser";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import MobileRTC from './components/MobileRTC';
 
-
-
 const transcriptParser = new TranscriptParser()
 const detector = new IntentDetection()
 
-
-
 function MobileApp({ signOut }) {
-  // const [transcript, setTranscript] = useState("")
-  // const [finalTranscript, setFinalTranscript] = useState("...")
-  // const [alternatives, setAlternatives] = useState([])
-  // const [listening, setListening] = useState(false)
-  // const [config, setConfig] = useState(emptyConfig)
-  // const { sendMessage, lastMessage, readyState } = useWebSocket("wss://192.168.1.158:8080");
+  const [transcript, setTranscript] = useState("")
+  const [finalTranscript, setFinalTranscript] = useState("...")
+  const [alternatives, setAlternatives] = useState([])
+  const [listening, setListening] = useState(false)
+  const [config, setConfig] = useState(emptyConfig)
+  const [code, setCode] = useState("")
+  const [connected, setConnected] = useState(false)
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    const peer = new Peer({ initiator: false, trickle: false, config: { iceServers: [] } })
+    const data = JSON.parse(atob(window.location.search.substring('?'.length)))
+    peer.signal(data)
+    peer.on('signal', data => {
+      console.log("SIGNAL DATA", data)
+      if (data.type === "answer") {
+        console.log("DATA", data)
+        setCode(btoa(JSON.stringify(data)))
+      }
+    })
+    peer.on("connect", () => {
+      setConnected(true)
+      peer.send("HELLO DESKTOP APP")
+    })
+  }, [])
+
+  
+
 
   // useEffect(() => {
   //   console.log("READY STATE", readyState)
@@ -61,23 +79,26 @@ function MobileApp({ signOut }) {
   //       sendMessage(JSON.stringify({ type: "command", data: midiMessage }))
   //       setTranscript(final);
   //     }
-      
+
   //   }
   // }, [alternatives])
 
 
-  // const backgroundColor = listening ? "#1477fc" : "#7A7E83"
+  const backgroundColor = listening ? "#1477fc" : "#7A7E83"
 
 
   return (
     <>
-      {/* <TopBar /> */}
-      {/* <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
-      </div> */}
-      <MobileRTC/>
-
+      {connected ?
+        <div>
+          <TopBar />
+          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
+          </div>
+        </div>
+        : <MobileRTC code={code} />
+      }
     </>
   );
 }

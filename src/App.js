@@ -45,7 +45,6 @@ function App({ signOut }) {
     peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
     peer.on('signal', data => {
       if (data.type === "offer") {
-        console.log(data)
         setCode(window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
         )
       }
@@ -64,12 +63,6 @@ function App({ signOut }) {
       peer?.signal(JSON.parse(atob(data.text)))
     }
   }
-
-
-
-
-
-
 
   return (
     <>
