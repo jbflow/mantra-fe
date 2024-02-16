@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import Amplify from "aws-amplify";
 import StatusBar from "./components/StatusBar";
+import DesktopRTC from "./components/DesktopRTC";
 // import { MidiContext } from "./contexts/MidiContext";
 // import useMIDIMessage from "./hooks/useMIDIMessage";
 
@@ -51,6 +52,8 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
+
+          <DesktopRTC/>
           <Route
             path="/account"
             render={(props) => <AccountManagement {...props} />}
