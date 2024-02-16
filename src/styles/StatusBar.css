@@ -1,0 +1,18 @@
+.connect-mobile-btn {
+	background:  none;
+	background-color: rgb(101, 106, 111);
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+	padding-left: 0.8rem;
+
+}
+
+.connect-mobile-btn:focus {
+	border: none;
+	outline: none;
+
+}
