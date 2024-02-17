@@ -8,7 +8,7 @@ export default function MidiProvider({ children, url }) {
   const reducer = (state, action) => {
     switch (action.type) {
       case "INIT":
-        navigator.requestMIDIAccess({ sysex: payload.sysex }).then(((midiAccess) => { payload.success(midiAccess, state) }), payload.failure);
+        navigator.requestMIDIAccess({ sysex: action.payload.sysex }).then(((midiAccess) => { action.payload.success(midiAccess, state) }), action.payload.failure);
         return state
       case "OPEN_MAIN_INPUT":
         state.mainInput = action.payload
