@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+
+
+import Peer from "simple-peer"
 
 import TopBar from "./components/TopBar";
 import SpeechDetector from "./components/SpeechDetector";
@@ -10,59 +12,101 @@ import { MidiToJson } from './utils/MidiToJson';
 
 import { TranscriptParser } from "./utils/TranscriptParser";
 import { IntentDetection } from "./intent_detection/IntentDetection";
-
-
+import MobileRTC from './components/MobileRTC';
+import { QrReader } from 'react-qr-reader';
 
 const transcriptParser = new TranscriptParser()
 const detector = new IntentDetection()
 
-
-
 function MobileApp({ signOut }) {
+  let peer
   const [transcript, setTranscript] = useState("")
   const [finalTranscript, setFinalTranscript] = useState("...")
   const [alternatives, setAlternatives] = useState([])
   const [listening, setListening] = useState(false)
   const [config, setConfig] = useState(emptyConfig)
-  const { sendMessage, lastMessage, readyState } = useWebSocket("wss://192.168.1.158:8080");
-
+  const [code, setCode] = useState("")
+  const [connected, setConnected] = useState(false)
+  const [showQr, setShowQr] = useState(false)
   useEffect(() => {
-    console.log("READY STATE", readyState)
-
-    if (readyState === ReadyState.OPEN) {
-      sendMessage(JSON.stringify({ type: "command", data: [240, 0, 0, 0, 0, 0, 1, 247] }));
-    }
-  }, [readyState])
-
-
-  useEffect(() => {
-    if (lastMessage !== null) {
-      const msg = JSON.parse(lastMessage.data)
-      const init = [240, 0, 0, 0, 0, 0, 127, 247];
-      if (arraysEqual(init, Array.from(msg))) {
-        // if message is init
-        clearConfig(); // clear config
-        setConfig(emptyConfig); // set it to empty
-        sendMessage(JSON.stringify({ type: "command", data: [240, 0, 0, 0, 0, 0, 1, 247] })); // return msg to initialize
-      } else if (!arraysEqual(Array.from(msg.data), init) && msg.data[6] === 0) {
-        // if message is not init and is a config update
-        let configStore = Object.assign({}, config); // make a copy of the config
-        setConfig(MidiToJson(msg.data, configStore)); // and update it
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: {
+          exact: "environment"
+        }
+      }, audio: true
+    })
+    peer = new Peer({ initiator: false, trickle: false, config: { iceServers: [] } })
+    peer.on('signal', data => {
+      if (data.type === "answer") {
+        setCode(btoa(JSON.stringify(data)))
       }
-    }
-  }, [lastMessage]);
-
-  useEffect(() => {
-    if (alternatives.length !== 0) {
-      const final = transcriptParser.cleanupTranscript(alternatives);
-      if (final) {
-        const midiMessage = detector.runDetection(final, config)
-        sendMessage(JSON.stringify({ type: "command", data: midiMessage }))
-        setTranscript(final);
-      }
+    })
+    peer.on("connect", () => {
+      setConnected(true)
+    })
+    peer.on("close", () => {
+      window.location.reload()
+    })
+    peer.on("error", () => {
+      window.location.reload()
       
+    })
+    let data = window.location.search.substring('?'.length)
+    if (data) {
+      data = JSON.parse(atob(data))
+      peer.signal(data)
+      setShowQr(true)
     }
-  }, [alternatives])
+  }, [])
+
+
+  const handleQrResult = (data) => {
+    if (data) {
+      let offer = data.text.split("?")[1]
+      offer = JSON.parse(atob(offer))
+      peer.signal(offer)
+      setShowQr(true)
+    }
+  }
+
+  // useEffect(() => {
+  //   console.log("READY STATE", readyState)
+
+  //   if (readyState === ReadyState.OPEN) {
+  //     sendMessage(JSON.stringify({ type: "command", data: [240, 0, 0, 0, 0, 0, 1, 247] }));
+  //   }
+  // }, [readyState])
+
+
+  // useEffect(() => {
+  //   if (lastMessage !== null) {
+  //     const msg = JSON.parse(lastMessage.data)
+  //     const init = [240, 0, 0, 0, 0, 0, 127, 247];
+  //     if (arraysEqual(init, Array.from(msg))) {
+  //       // if message is init
+  //       clearConfig(); // clear config
+  //       setConfig(emptyConfig); // set it to empty
+  //       sendMessage(JSON.stringify({ type: "command", data: [240, 0, 0, 0, 0, 0, 1, 247] })); // return msg to initialize
+  //     } else if (!arraysEqual(Array.from(msg.data), init) && msg.data[6] === 0) {
+  //       // if message is not init and is a config update
+  //       let configStore = Object.assign({}, config); // make a copy of the config
+  //       setConfig(MidiToJson(msg.data, configStore)); // and update it
+  //     }
+  //   }
+  // }, [lastMessage]);
+
+  // useEffect(() => {
+  //   if (alternatives.length !== 0) {
+  //     const final = transcriptParser.cleanupTranscript(alternatives);
+  //     if (final) {
+  //       const midiMessage = detector.runDetection(final, config)
+  //       sendMessage(JSON.stringify({ type: "command", data: midiMessage }))
+  //       setTranscript(final);
+  //     }
+
+  //   }
+  // }, [alternatives])
 
 
   const backgroundColor = listening ? "#1477fc" : "#7A7E83"
@@ -70,12 +114,25 @@ function MobileApp({ signOut }) {
 
   return (
     <>
-      <TopBar />
-      <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
-      </div>
+      {connected ?
+        <div>
+          <TopBar />
+          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
+          </div>
+        </div>
+        : showQr ?
+          <MobileRTC code={code} />
+          :
+          <>
+            <div className="d-flex justify-content-center">
+              <p className="h3 text-secondary text-center pt-5 px-5">Scan QR code in desktop to start connection</p>
+            </div>
 
+            <QrReader onResult={handleQrResult} constraints={{ facingMode: "environment" }} />
+          </>
+      }
     </>
   );
 }
