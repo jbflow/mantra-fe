@@ -4,6 +4,7 @@ import { QrReader } from 'react-qr-reader';
 
 
 export default function DesktopRTC({ code, handleQrResult, startConnection }) {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     useEffect(() => {
         startConnection()
     }, [])

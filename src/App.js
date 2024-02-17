@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
@@ -9,36 +9,43 @@ import AccountManagement from "./components/AccountManagement";
 import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
-import Amplify from "aws-amplify";
 import StatusBar from "./components/StatusBar";
 import DesktopRTC from "./components/DesktopRTC";
 
-// import { MidiContext } from "./contexts/MidiContext";
-// import useMIDIMessage from "./hooks/useMIDIMessage";
+import { MidiContext } from "./contexts/MidiContext";
+import useMIDIMessage from "./hooks/useMIDIMessage";
 
 
-Amplify.configure({
-  Auth: {
-    mandatorySignIn: true,
-    region: process.env.REACT_APP_AMPLIFY_REGION,
-    userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
-    identityPoolId: process.env.REACT_APP_AMPLIFY_IDENTITY_POOL_ID,
-    userPoolWebClientId: process.env.REACT_APP_AMPLIFY_APP_CLIENT_ID,
-  },
-  API: {
-    endpoints: [
-      {
-        name: "talkbackBE",
-        endpoint: process.env.REACT_APP_HTTP_API_URL,
-        region: process.env.REACT_APP_AMPLIFY_REGION,
-      },
-    ],
-  },
-});
 
 function App({ signOut }) {
+  const { midi, dispatch } = useContext(MidiContext)
+  const [mainOutput, setMainOutput] = useState(null)
+  const [mainInput, setMainInput] = useState(null)
+  const message = useMIDIMessage(mainInput)
 
-  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  const onMIDISuccess = (midiAccess) => {
+    const inputs = Array.from(midiAccess.inputs.values())
+    const outputs = Array.from(midiAccess.outputs.values())
+    setMainInput(inputs.find(input => input.id === midi.mainInput))
+    setMainOutput(outputs.find(output => output.id === midi.mainOutput))
+    mainInput?.open()
+    mainOutput?.open()
+  }
+  const onMIDIFailure = (e) => {
+    console.error(e)
+  }
+
+  useEffect(() => {
+    if (midi)
+      navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
+  }, [midi])
+
+  useEffect(() => {
+    console.log("MESSAGE", message)
+  }, [message])
+
+
+
   let peer = null
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
@@ -55,7 +62,7 @@ function App({ signOut }) {
       setConnectionStatus("Disconnected")
     })
     peer.on("data", (data) => {
-      // ENTRYPOINT TO Intent Detection
+      // ENTRYPOINT TO MIDI
     })
     peer.on('signal', data => {
       if (data.type === "offer") {
@@ -98,6 +105,7 @@ function App({ signOut }) {
             render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}
           />
         </div>
+
         <StatusBar connectionStatus={connectionStatus} />
       </div>
     </>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Auth } from "aws-amplify";
+import { Auth, Amplify } from "aws-amplify";
 import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
@@ -27,6 +27,26 @@ Auth.configure({
     redirectSignOut: `${document.location.origin}/signout`,
     userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
     responseType: "code",
+  },
+});
+
+
+Amplify.configure({
+  Auth: {
+    mandatorySignIn: true,
+    region: process.env.REACT_APP_AMPLIFY_REGION,
+    userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
+    identityPoolId: process.env.REACT_APP_AMPLIFY_IDENTITY_POOL_ID,
+    userPoolWebClientId: process.env.REACT_APP_AMPLIFY_APP_CLIENT_ID,
+  },
+  API: {
+    endpoints: [
+      {
+        name: "talkbackBE",
+        endpoint: process.env.REACT_APP_HTTP_API_URL,
+        region: process.env.REACT_APP_AMPLIFY_REGION,
+      },
+    ],
   },
 });
 
