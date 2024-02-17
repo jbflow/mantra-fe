@@ -1,5 +1,5 @@
 
-import { STATUS_BYTES, MANUFACTURER_ID } from './constants';
+import { STATUS_BYTES, MANUFACTURER_ID } from '../utils/MidiConstants';
 
 export const useMIDIOutput = (output) => {
     if (!output) return {};

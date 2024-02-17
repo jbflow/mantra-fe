@@ -14,6 +14,14 @@ import DesktopRTC from "./components/DesktopRTC";
 
 import { MidiContext } from "./contexts/MidiContext";
 import useMIDIMessage from "./hooks/useMIDIMessage";
+import { useMIDIOutput } from "./hooks/useMIDIOutput";
+
+import { STATUS_BYTES } from "./utils/MidiConstants";
+import { MANUFACTURER_ID } from "./intent_detection/constants";
+
+import { emptyConfig } from "./utils/MidiConstants";
+import { arraysEqual } from "./utils/utils";
+
 
 
 
@@ -22,6 +30,7 @@ function App({ signOut }) {
   const [mainOutput, setMainOutput] = useState(null)
   const [mainInput, setMainInput] = useState(null)
   const message = useMIDIMessage(mainInput)
+  const { sysex } = useMIDIOutput(mainOutput)
 
   const onMIDISuccess = (midiAccess) => {
     const inputs = Array.from(midiAccess.inputs.values())
@@ -41,7 +50,15 @@ function App({ signOut }) {
   }, [midi])
 
   useEffect(() => {
-    console.log("MESSAGE", message)
+    if (message) {
+      const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
+      if (arraysEqual(init, Array.from(message.data))) {
+        localStorage.setItem("config", JSON.stringify(emptyConfig))
+        sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+      }
+      console.log(message)
+    }
+
   }, [message])
 
 
