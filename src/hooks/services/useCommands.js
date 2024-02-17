@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 export default function useCommands(
   actions,
   setActions,
-  socketDispatch,
   confirm,
   setConfirm
 ) {
@@ -13,9 +12,9 @@ export default function useCommands(
   useEffect(() => {
     if (actions && current < actions.length) {
       if (actions[current].slice(-1) === "*") {
-        socketDispatch(actions[current].slice(0, -1), 0);
+        // socketDispatch(actions[current].slice(0, -1), 0);
       } else {
-        socketDispatch(actions[current], 0);
+        // socketDispatch(actions[current], 0);
         setCurrent(current + 1);
       }
       actionCount.current = actionCount.current + 1;

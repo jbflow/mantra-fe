@@ -1,29 +1,27 @@
 import { useEffect, useState } from "react";
-import { Auth, API } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
-import config from "./amplify-config";
 import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
-import Checkout from "./components/Checkout.js";
-import { isDev } from "./utils/Constants";
+
+
 
 import ContextComposer from "./contexts/ContextComposer";
 
-import ReactGA from "react-ga";
+require('dotenv').config()
+console.log(process.env)
 
-ReactGA.initialize("UA-203301966-1");
+
 
 Auth.configure({
-  region: config.cognito.REGION,
-  userPoolId: config.cognito.USER_POOL_ID,
-  userPoolWebClientId: config.cognito.APP_CLIENT_ID,
+  region: process.env.REACT_APP_AMPLIFY_REGION,
+  userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
+  userPoolWebClientId: process.env.REACT_APP_AMPLIFY_APP_CLIENT_ID,
 
   // Cognito Hosted UI configuration
   oauth: {
-    domain: isDev()
-      ? "devdbs-talkback.auth.eu-west-2.amazoncognito.com"
-      : "dbs-talkback.auth.eu-west-2.amazoncognito.com",
+    domain: process.env.REACT_APP_COGNITO_DOMAIN,
     scope: [
       "phone",
       "email",
@@ -33,7 +31,7 @@ Auth.configure({
     ],
     redirectSignIn: `${document.location.origin}/callback`,
     redirectSignOut: `${document.location.origin}/signout`,
-    userPoolId: config.cognito.USER_POOL_ID,
+    userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
     responseType: "code",
   },
 });
@@ -46,39 +44,23 @@ const Authoriser = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      setPaymentCreated(true);
-      setCheckingPayment(true);
-      API.get(
-        "talkbackBE",
-        "/check_payment_created?userId=" + user.attributes?.sub
-      ).then((res) => {
-        if (!res) {
-          setPaymentCreated(false);
-        } else {
-          setPaymentCreated(true);
-        }
-        setCheckingPayment(false);
-      });
+
     }
   }, [isAuthenticated]);
 
   if (!isLoading && isAuthenticated) {
-    if (checkingPayment) {
-      return <p>checking payment</p>;
-    } else if (paymentCreated) {
-      return (
-        <>
-          <BrowserRouter>
-            <ContextComposer user={user}>
-              <App signOut={signOut} />
-            </ContextComposer>
-          </BrowserRouter>
-        </>
-      );
-    } else {
-      return <Checkout paymentCreated={paymentCreated} user={user} />;
-    }
-  } else if (!isLoading) {
+
+    return (
+      <>
+        <BrowserRouter>
+          <ContextComposer user={user}>
+            <App signOut={signOut} />
+          </ContextComposer>
+        </BrowserRouter>
+      </>
+    );
+  }
+  else if (!isLoading) {
     return (
       <>
         <div

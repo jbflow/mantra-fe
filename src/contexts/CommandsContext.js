@@ -8,9 +8,9 @@ export const CommandsContext = React.createContext(null);
 
 export default function CommandsProvider({ children, url }) {
   const { data, error, loading } = useGetFromApi(url);
+  console.log("DATA", data)
   const reducer = (state, action) => {
     if (loading) return state;
-    ReactGA.event({ category: "COMMANDS", action: action.type });
     switch (action.type) {
       case "INIT":
         return action.payload;
