@@ -51,7 +51,7 @@ function App({ signOut }) {
       setConnectionStatus("Disconnected")
     })
 
-    peer.on("Error", () => {
+    peer.on("error", () => {
       setConnectionStatus("Disconnected")
     })
     peer.on("data", (data) => {
@@ -66,8 +66,6 @@ function App({ signOut }) {
   }
   const handleQrResult = (data) => {
     if (data) {
-      console.log("DATA", data.text)
-      console.log(JSON.parse(atob(data.text)))
       peer?.signal(JSON.parse(atob(data.text)))
     }
   }

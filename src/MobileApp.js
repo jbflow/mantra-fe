@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 import Peer from "simple-peer"
 
 import TopBar from "./components/TopBar";
@@ -12,11 +13,13 @@ import { MidiToJson } from './utils/MidiToJson';
 import { TranscriptParser } from "./utils/TranscriptParser";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import MobileRTC from './components/MobileRTC';
+import { QrReader } from 'react-qr-reader';
 
 const transcriptParser = new TranscriptParser()
 const detector = new IntentDetection()
 
 function MobileApp({ signOut }) {
+  let peer
   const [transcript, setTranscript] = useState("")
   const [finalTranscript, setFinalTranscript] = useState("...")
   const [alternatives, setAlternatives] = useState([])
@@ -24,26 +27,48 @@ function MobileApp({ signOut }) {
   const [config, setConfig] = useState(emptyConfig)
   const [code, setCode] = useState("")
   const [connected, setConnected] = useState(false)
+  const [showQr, setShowQr] = useState(false)
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    const peer = new Peer({ initiator: false, trickle: false, config: { iceServers: [] } })
-    const data = JSON.parse(atob(window.location.search.substring('?'.length)))
-    peer.signal(data)
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: {
+          exact: "environment"
+        }
+      }, audio: true
+    })
+    peer = new Peer({ initiator: false, trickle: false, config: { iceServers: [] } })
     peer.on('signal', data => {
-      console.log("SIGNAL DATA", data)
       if (data.type === "answer") {
-        console.log("DATA", data)
         setCode(btoa(JSON.stringify(data)))
       }
     })
     peer.on("connect", () => {
       setConnected(true)
-      peer.send("HELLO DESKTOP APP")
     })
+    peer.on("close", () => {
+      window.location.reload()
+    })
+    peer.on("error", () => {
+      window.location.reload()
+      
+    })
+    let data = window.location.search.substring('?'.length)
+    if (data) {
+      data = JSON.parse(atob(data))
+      peer.signal(data)
+      setShowQr(true)
+    }
   }, [])
 
-  
 
+  const handleQrResult = (data) => {
+    if (data) {
+      let offer = data.text.split("?")[1]
+      offer = JSON.parse(atob(offer))
+      peer.signal(offer)
+      setShowQr(true)
+    }
+  }
 
   // useEffect(() => {
   //   console.log("READY STATE", readyState)
@@ -97,7 +122,16 @@ function MobileApp({ signOut }) {
             <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
           </div>
         </div>
-        : <MobileRTC code={code} />
+        : showQr ?
+          <MobileRTC code={code} />
+          :
+          <>
+            <div className="d-flex justify-content-center">
+              <p className="h3 text-secondary text-center pt-5 px-5">Scan QR code in desktop to start connection</p>
+            </div>
+
+            <QrReader onResult={handleQrResult} constraints={{ facingMode: "environment" }} />
+          </>
       }
     </>
   );
