@@ -11,14 +11,11 @@ import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import StatusBar from "./components/StatusBar";
 import DesktopRTC from "./components/DesktopRTC";
-
 import { MidiContext } from "./contexts/MidiContext";
 import useMIDIMessage from "./hooks/useMIDIMessage";
 import { useMIDIOutput } from "./hooks/useMIDIOutput";
-
 import { STATUS_BYTES } from "./utils/MidiConstants";
 import { MANUFACTURER_ID } from "./intent_detection/constants";
-
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
@@ -56,14 +53,14 @@ function App({ signOut }) {
     if (message) {
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
       if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
-        localStorage.setItem("config", JSON.stringify(emptyConfig))
+        sessionStorage.setItem("config", JSON.stringify(emptyConfig))
         sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
       }
       else {
         if (message.data[6] === 0) { // If config update
-          let currentConfig = JSON.parse(localStorage.getItem("config"))
+          let currentConfig = JSON.parse(sessionStorage.getItem("config"))
           let updatedConfig = MidiToJson(message.data, currentConfig)
-          localStorage.setItem("config", JSON.stringify(updatedConfig))
+          sessionStorage.setItem("config", JSON.stringify(updatedConfig))
         }
         else if (message.data[6] === 1 && message.data[message.data.length - 2]){ // If confirmation
           // Confirmation Logic goes here
@@ -78,6 +75,7 @@ function App({ signOut }) {
     // Send Sysex Handshake
     if (sysex) {
       sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+      sessionStorage.setItem("config", JSON.stringify(emptyConfig))
     }
   }, [sysex])
 
@@ -100,7 +98,11 @@ function App({ signOut }) {
       setConnectionStatus("Disconnected")
     })
     peer.on("data", (data) => {
-      // ENTRYPOINT TO MIDI
+      
+
+
+
+
     })
     peer.on('signal', data => {
       if (data.type === "offer") {
