@@ -41,19 +41,27 @@ function App({ signOut }) {
   navigator.mediaDevices.getUserMedia({ video: true, audio: true })
   let peer = null
   const [code, setCode] = useState("")
+  const [connectionStatus, setConnectionStatus] = useState("Disconnected")
   const startConnection = () => {
     peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
+    peer.on("connect", () => {
+      setConnectionStatus("Connected")
+    })
+    peer.on("close", () => {
+      setConnectionStatus("Disconnected")
+    })
+
+    peer.on("Error", () => {
+      setConnectionStatus("Disconnected")
+    })
+    peer.on("data", (data) => {
+      // ENTRYPOINT TO Intent Detection
+    })
     peer.on('signal', data => {
       if (data.type === "offer") {
         setCode(window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
         )
       }
-    })
-    peer.on("connect", () => {
-      console.log("CONNECTED")
-    })
-    peer.on("data", (data) => {
-      console.log(data)
     })
   }
   const handleQrResult = (data) => {
@@ -75,8 +83,6 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
-
-
           <Route
             path="/account"
             render={(props) => <AccountManagement {...props} />}
@@ -94,7 +100,7 @@ function App({ signOut }) {
             render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}
           />
         </div>
-        <StatusBar />
+        <StatusBar connectionStatus={connectionStatus} />
       </div>
     </>
   );

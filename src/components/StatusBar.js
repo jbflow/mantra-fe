@@ -18,7 +18,7 @@ import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 import SmartPhone from "../images/smartphone.svg";
 import "../styles/StatusBar.css"
 
-export default function StatusBar(startConnection) {
+export default function StatusBar({connectionStatus}) {
   const [micConnected, setMicConnected] = useState(false);
   const [showTranscript, setShowTranscript] = useState(true);
 
@@ -32,6 +32,7 @@ export default function StatusBar(startConnection) {
   return (
     <div className="fixed-bottom w-100 " style={{ backgroundColor: "#7A7E83" }}>
       <div className="d-flex flex-row justify-content-between align-items-center">
+        <div className="d-flex flex-row">
         <Link className="connect-mobile-btn row" to="/connect-phone">
           <img
             alt=""
@@ -40,6 +41,8 @@ export default function StatusBar(startConnection) {
             style={{ marginRight: "unset", height: "3rem", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)" }}
           />
         </Link>
+        <p className="text-white px-4" style={{margin: "auto"}}>{connectionStatus}</p>
+        </div>
         <div className="d-flex flex-row justify-content-end align-items-center">
           <img
             alt=""
