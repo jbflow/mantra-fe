@@ -92,11 +92,7 @@ export default function StatusBar({connectionStatus}) {
             alt=""
             src={true ? TlkBckListening : TlkBckNotListening}
           />
-          <div
-            style={{
-              minWidth: 48,
-            }}
-          />
+          
         </div>
       </div>
     </div>

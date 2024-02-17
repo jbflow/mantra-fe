@@ -1,6 +1,5 @@
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
-// import TlkBckListening from "../images/tlkbck-listening.svg";
+import Mic from "../images/mic-fill.svg";
 import { useEffect } from 'react';
 
 const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgroundColor }) => {
@@ -42,15 +41,14 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgrou
             }}>
                 <p className="h1 pb-5">Press To Speak</p>
 
-                <div style={{ background: backgroundColor, borderRadius: "50%", border: `1px solid ${backgroundColor}`, height: "150px", width: "150px" }}>
+                <div className="d-flex justify-content-center" style={{ background: backgroundColor, borderRadius: "50%", border: `1px solid ${backgroundColor}`, height: "150px", width: "150px" }}>
 
                     <img
                         alt=""
-                        src={TlkBckNotListening}
-                        style={{ height: "150px", width: "150px" }}
+                        src={Mic}
+                        style={{ height: "auto", width: "3rem" }}
                         onClick={!listening ? () => { SpeechRecognition.startListening() } : SpeechRecognition.stopListening}
                     />
-
                 </div>
 
             </div>

@@ -15,7 +15,7 @@ export default function TopBar({ signOut }) {
           <img
             src={Logo}
             alt="logo"
-            style={{ display: "inline", width: 30, marginLeft: 25 }}
+            style={{ display: "inline", width: 30}}
           />
           <span
             style={{
@@ -32,20 +32,10 @@ export default function TopBar({ signOut }) {
           </span>
         </Navbar.Brand>
       </div>
-      {/* <Navbar.Toggle aria-controls="navigation" /> */}
+      
       <div>
-        {/* <IconContext.Provider
-          value={{
-            style: {
-              fontSize: "20px",
-              cursor: "pointer",
-            },
-          }}
-        >
-          <Link to="/prefs">
-            <FaCog className="mr-sm-3" color="#6C757D" />
-          </Link>
-        </IconContext.Provider> */}
+        
+       
         <Button
           variant="dark"
           block={false}
