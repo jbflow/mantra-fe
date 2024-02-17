@@ -1,37 +1,99 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route } from "react-router-dom";
+import Peer from "simple-peer"
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import AccountManagement from "./components/AccountManagement";
 import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
-import Amplify from "aws-amplify";
 import StatusBar from "./components/StatusBar";
+import DesktopRTC from "./components/DesktopRTC";
+
+import { MidiContext } from "./contexts/MidiContext";
+import useMIDIMessage from "./hooks/useMIDIMessage";
+import { useMIDIOutput } from "./hooks/useMIDIOutput";
+
+import { STATUS_BYTES } from "./utils/MidiConstants";
+import { MANUFACTURER_ID } from "./intent_detection/constants";
+
+import { emptyConfig } from "./utils/MidiConstants";
+import { arraysEqual } from "./utils/utils";
 
 
-Amplify.configure({
-  Auth: {
-    mandatorySignIn: true,
-    region: process.env.REACT_APP_AMPLIFY_REGION,
-    userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
-    identityPoolId: process.env.REACT_APP_AMPLIFY_IDENTITY_POOL_ID,
-    userPoolWebClientId: process.env.REACT_APP_AMPLIFY_APP_CLIENT_ID,
-  },
-  API: {
-    endpoints: [
-      {
-        name: "talkbackBE",
-        endpoint: process.env.REACT_APP_HTTP_API_URL,
-        region: process.env.REACT_APP_AMPLIFY_REGION,
-      },
-    ],
-  },
-});
+
 
 function App({ signOut }) {
+  const { midi, dispatch } = useContext(MidiContext)
+  const [mainOutput, setMainOutput] = useState(null)
+  const [mainInput, setMainInput] = useState(null)
+  const message = useMIDIMessage(mainInput)
+  const { sysex } = useMIDIOutput(mainOutput)
+
+  const onMIDISuccess = (midiAccess) => {
+    const inputs = Array.from(midiAccess.inputs.values())
+    const outputs = Array.from(midiAccess.outputs.values())
+    setMainInput(inputs.find(input => input.id === midi.mainInput))
+    setMainOutput(outputs.find(output => output.id === midi.mainOutput))
+    mainInput?.open()
+    mainOutput?.open()
+  }
+  const onMIDIFailure = (e) => {
+    console.error(e)
+  }
+
+  useEffect(() => {
+    if (midi)
+      navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
+  }, [midi])
+
+  useEffect(() => {
+    if (message) {
+      const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
+      if (arraysEqual(init, Array.from(message.data))) {
+        localStorage.setItem("config", JSON.stringify(emptyConfig))
+        sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+      }
+      console.log(message)
+    }
+
+  }, [message])
+
+
+
+  let peer = null
+  const [code, setCode] = useState("")
+  const [connectionStatus, setConnectionStatus] = useState("Disconnected")
+  const startConnection = () => {
+    peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
+    peer.on("connect", () => {
+      setConnectionStatus("Connected")
+    })
+    peer.on("close", () => {
+      setConnectionStatus("Disconnected")
+    })
+
+    peer.on("error", () => {
+      setConnectionStatus("Disconnected")
+    })
+    peer.on("data", (data) => {
+      // ENTRYPOINT TO MIDI
+    })
+    peer.on('signal', data => {
+      if (data.type === "offer") {
+        setCode(window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
+        )
+      }
+    })
+  }
+  const handleQrResult = (data) => {
+    if (data) {
+      peer?.signal(JSON.parse(atob(data.text)))
+    }
+  }
+
   return (
     <>
       <div>
@@ -51,12 +113,17 @@ function App({ signOut }) {
             path="/commands"
             render={(props) => <CommandBuilder {...props} />}
           />
-           <Route
+          <Route
             path="/testing"
             render={(props) => <CommandTesting {...props} />}
           />
+          <Route
+            path="/connect-phone"
+            render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}
+          />
         </div>
-        <StatusBar />
+
+        <StatusBar connectionStatus={connectionStatus} />
       </div>
     </>
   );

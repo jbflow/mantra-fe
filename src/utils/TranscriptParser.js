@@ -9,10 +9,8 @@ export class TranscriptParser {
     }
 
 
-    cleanupTranscript(event) {
-        this.results = event.results
-        this.resultIndex = event.resultIndex
-        this.currentResult = this.getCurrentResult()
+    cleanupTranscript(result) {
+        this.currentResult = result
         console.log("CURRENT RESULT: ", this.currentResult)
         const filteredResults = this.checkPhrases(this.currentResult)
         console.log("FILTERED RESULTS", filteredResults)
@@ -23,10 +21,6 @@ export class TranscriptParser {
         return transcript
     }
 
-    getCurrentResult() {
-        return this.results[this.resultIndex]
-
-    }
     checkPhrases(results) {
         // Loop through the alternatives to check if any of our hot phrases are contained in them.
         console.log("alt", results);

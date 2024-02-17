@@ -1,6 +1,6 @@
 import { IntentDetectionBase } from "./IntentDetectionBase";
 import { NounSearchEngine } from "./NounClasses"
-import { config } from "./test_data"
+// import { config } from "./test_data"
 export class IntentDetection extends IntentDetectionBase {
     constructor() {
         super();

@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import Commands from "./Commands";
 import Actions from "./Actions";
 import CommandItem from "./CommandItem";
-import { UserContext } from "../../contexts/UserContext";
+// import { UserContext } from "../../contexts/UserContext";
 import { CommandsContext } from "../../contexts/CommandsContext";
 import "./Commands.css";
 
@@ -29,6 +29,7 @@ export default function CommandBuilder() {
               commands
                 ? commands.filter((cmd) => {
                     if (cmd.id === selected) return cmd;
+                    return null
                   })[0]
                 : null
             }
@@ -41,7 +42,7 @@ export default function CommandBuilder() {
           <center>
             <div className="actions-placeholder">
               <p>Select a command to edit...</p>
-              <img src="./images/menu-icons/command-dark.svg" />
+              <img src="./images/menu-icons/command-dark.svg" alt="command" />
             </div>
           </center>
         )}
