@@ -5,26 +5,23 @@ import Peer from "simple-peer"
 
 import TopBar from "./components/TopBar";
 import SpeechDetector from "./components/SpeechDetector";
-import { clearConfig, arraysEqual } from './utils/utils';
 import { emptyConfig } from './utils/MidiConstants';
-import { MidiToJson } from './utils/MidiToJson';
+
 
 
 import { TranscriptParser } from "./utils/TranscriptParser";
-import { IntentDetection } from "./intent_detection/IntentDetection";
+
 import MobileRTC from './components/MobileRTC';
 import { QrReader } from 'react-qr-reader';
 
 const transcriptParser = new TranscriptParser()
-const detector = new IntentDetection()
+
 
 function MobileApp({ signOut }) {
   let peer
   const [transcript, setTranscript] = useState("")
-  const [finalTranscript, setFinalTranscript] = useState("...")
   const [alternatives, setAlternatives] = useState([])
   const [listening, setListening] = useState(false)
-  const [config, setConfig] = useState(emptyConfig)
   const [code, setCode] = useState("")
   const [connected, setConnected] = useState(false)
   const [showQr, setShowQr] = useState(false)
@@ -70,43 +67,16 @@ function MobileApp({ signOut }) {
     }
   }
 
-  // useEffect(() => {
-  //   console.log("READY STATE", readyState)
+  useEffect(() => {
+    if (alternatives.length !== 0) {
+      const final = transcriptParser.cleanupTranscript(alternatives);
+      if (final) {
+        peer.send(final)
+        setTranscript(final);
+      }
 
-  //   if (readyState === ReadyState.OPEN) {
-  //     sendMessage(JSON.stringify({ type: "command", data: [240, 0, 0, 0, 0, 0, 1, 247] }));
-  //   }
-  // }, [readyState])
-
-
-  // useEffect(() => {
-  //   if (lastMessage !== null) {
-  //     const msg = JSON.parse(lastMessage.data)
-  //     const init = [240, 0, 0, 0, 0, 0, 127, 247];
-  //     if (arraysEqual(init, Array.from(msg))) {
-  //       // if message is init
-  //       clearConfig(); // clear config
-  //       setConfig(emptyConfig); // set it to empty
-  //       sendMessage(JSON.stringify({ type: "command", data: [240, 0, 0, 0, 0, 0, 1, 247] })); // return msg to initialize
-  //     } else if (!arraysEqual(Array.from(msg.data), init) && msg.data[6] === 0) {
-  //       // if message is not init and is a config update
-  //       let configStore = Object.assign({}, config); // make a copy of the config
-  //       setConfig(MidiToJson(msg.data, configStore)); // and update it
-  //     }
-  //   }
-  // }, [lastMessage]);
-
-  // useEffect(() => {
-  //   if (alternatives.length !== 0) {
-  //     const final = transcriptParser.cleanupTranscript(alternatives);
-  //     if (final) {
-  //       const midiMessage = detector.runDetection(final, config)
-  //       sendMessage(JSON.stringify({ type: "command", data: midiMessage }))
-  //       setTranscript(final);
-  //     }
-
-  //   }
-  // }, [alternatives])
+    }
+  }, [alternatives])
 
 
   const backgroundColor = listening ? "#1477fc" : "#7A7E83"
@@ -117,7 +87,7 @@ function MobileApp({ signOut }) {
       {connected ?
         <div>
           <TopBar />
-          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
+          <SpeechDetector setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
           </div>
