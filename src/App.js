@@ -21,6 +21,7 @@ import { MANUFACTURER_ID } from "./intent_detection/constants";
 
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
+import { MidiToJson } from "./utils/MidiToJson";
 
 
 
@@ -39,6 +40,7 @@ function App({ signOut }) {
     setMainOutput(outputs.find(output => output.id === midi.mainOutput))
     mainInput?.open()
     mainOutput?.open()
+
   }
   const onMIDIFailure = (e) => {
     console.error(e)
@@ -49,17 +51,36 @@ function App({ signOut }) {
       navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
   }, [midi])
 
+
   useEffect(() => {
     if (message) {
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
-      if (arraysEqual(init, Array.from(message.data))) {
+      if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
         localStorage.setItem("config", JSON.stringify(emptyConfig))
         sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
       }
-      console.log(message)
+      else {
+        if (message.data[6] === 0) { // If config update
+          let currentConfig = JSON.parse(localStorage.getItem("config"))
+          let updatedConfig = MidiToJson(message.data, currentConfig)
+          localStorage.setItem("config", JSON.stringify(updatedConfig))
+        }
+        else if (message.data[6] === 1 && message.data[message.data.length - 2]){ // If confirmation
+          // Confirmation Logic goes here
+        }
+      }
     }
 
   }, [message])
+
+
+  useEffect(() => {
+    // Send Sysex Handshake
+    if (sysex) {
+      sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+    }
+  }, [sysex])
+
 
 
 

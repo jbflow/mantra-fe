@@ -1,25 +1,27 @@
 
+import { useCallback } from 'react';
 import { STATUS_BYTES, MANUFACTURER_ID } from '../utils/MidiConstants';
 
 export const useMIDIOutput = (output) => {
-    if (!output) return {};
     const noteOn = (note, velocity = 127, channel = 1) => {
         const noteOnAndChannel = STATUS_BYTES.noteOn | getChannel(channel);
-        output.send([noteOnAndChannel, note, velocity]);
+        output?.send([noteOnAndChannel, note, velocity]);
     };
     const noteOff = (note, velocity = 127, channel = 1) => {
         const noteOffAndChannel = STATUS_BYTES.noteOff | getChannel(channel);
-        output.send([noteOffAndChannel, note, velocity]);
+        output?.send([noteOffAndChannel, note, velocity]);
     };
     const cc = (value, control = 0x14, channel = 1) => {
         const ccAndChannel = STATUS_BYTES.cc | getChannel(channel);
-        output.send([ccAndChannel, control, value]);
+        output?.send([ccAndChannel, control, value]);
     };
-    const sysex = (bytes) => {
+
+
+    const sysex = useCallback((bytes) => {
         if (isValidSysEx(bytes)) {
-            output.send(bytes)
+            output?.send(bytes)
         }
-    }
+    }, [output])
     const isValidSysEx = (bytes) => {
         return Number(bytes[0]) !== Number(STATUS_BYTES.sysex_start) ||
             Array(bytes.slice(1, 6)) !== Array(MANUFACTURER_ID) ||
