@@ -1,8 +1,9 @@
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Mic from "../images/mic-fill.svg";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import "../styles/SpeechDetector.css"
 
-const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgroundColor }) => {
+const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
     const {
         listening
     } = useSpeechRecognition();
@@ -22,36 +23,30 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgrou
     //     }
     // }, [transcript, setTranscript, listening])
 
-
+    const backgroundColor = listening ? "#1477fc" : "#7A7E83"
     useEffect(() => {
         setListening(listening)
     }, [listening, setListening])
-
-
-
     return (
         <>
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-                paddingTop: "40%"
-            }}>
+            <div className="speech-detector-container">
                 <p className="h1 pb-5">Press To Speak</p>
-
-                <div className="d-flex justify-content-center" style={{ background: backgroundColor, borderRadius: "50%", border: `1px solid ${backgroundColor}`, height: "150px", width: "150px" }}>
-
-                    <img
-                        alt=""
-                        src={Mic}
-                        style={{ height: "auto", width: "3rem" }}
-                        onClick={!listening ? () => { SpeechRecognition.startListening() } : SpeechRecognition.stopListening}
-                    />
+                <div className="mic-container" onClick={!listening ? () => { SpeechRecognition.startListening() } : SpeechRecognition.stopListening}>
+                    <div className={listening ? "mic-outline" : null}>
+                    </div>
+                    <div className={listening ? "mic-outline" : null} id="delayed">
+                    </div>
+                    <div className={listening ? "mic-btn mic-btn-listening" : "mic-btn"}>
+                    </div>
+                    <div className={listening ? "mic-btn circlein circlein-listening" : "mic-btn circlein"}>
+                        <img
+                            alt="btn to start mic for speech recognition"
+                            src="./images/menu-icons/mic-fill.svg"
+                            className="w-75 m-auto"
+                        />
+                    </div>
                 </div>
-
             </div>
-
         </>
 
     );

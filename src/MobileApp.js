@@ -79,17 +79,16 @@ function MobileApp({ signOut }) {
   }, [alternatives])
 
 
-  const backgroundColor = listening ? "#1477fc" : "#7A7E83"
 
 
   return (
     <>
-      {connected ?
+      {true ?
         <div>
           <TopBar />
-          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
+          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening}/>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
+            <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript !== "" ? `"${transcript}"` : "..."}</p>
           </div>
         </div>
         : showQr ?

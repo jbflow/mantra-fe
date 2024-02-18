@@ -5,7 +5,6 @@ import "./styles/Transitions.css";
 import { Route } from "react-router-dom";
 import Peer from "simple-peer"
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
-import AccountManagement from "./components/AccountManagement";
 import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
@@ -19,6 +18,8 @@ import { MANUFACTURER_ID } from "./intent_detection/constants";
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
+import Preferences from "./components/Preferences";
+import VoiceControl from "./components/VoiceControl";
 
 
 
@@ -129,17 +130,22 @@ function App({ signOut }) {
           }}
         >
           <Route
-            path="/account"
-            render={(props) => <AccountManagement {...props} />}
+            path="/voice-control"
+            render={(props) => <VoiceControl {...props} />}
+          />
+          <Route
+            path="/preferences"
+            render={(props) => <Preferences {...props} />}
           />
           <Route
             path="/commands"
             render={(props) => <CommandBuilder {...props} />}
           />
           <Route
-            path="/testing"
+            path="/help-and-support"
             render={(props) => <CommandTesting {...props} />}
           />
+          
           <Route
             path="/connect-phone"
             render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}
