@@ -15,10 +15,9 @@ import MobileRTC from './components/MobileRTC';
 import { QrReader } from 'react-qr-reader';
 
 const transcriptParser = new TranscriptParser()
-
+const peer = new Peer({ initiator: false, trickle: false, config: { iceServers: [] } })
 
 function MobileApp({ signOut }) {
-  let peer
   const [transcript, setTranscript] = useState("")
   const [alternatives, setAlternatives] = useState([])
   const [listening, setListening] = useState(false)
@@ -33,7 +32,7 @@ function MobileApp({ signOut }) {
         }
       }, audio: true
     })
-    peer = new Peer({ initiator: false, trickle: false, config: { iceServers: [] } })
+    
     peer.on('signal', data => {
       if (data.type === "answer") {
         setCode(btoa(JSON.stringify(data)))
@@ -71,15 +70,13 @@ function MobileApp({ signOut }) {
     if (alternatives.length !== 0) {
       const final = transcriptParser.cleanupTranscript(alternatives);
       if (final) {
-        peer.send(final)
+        peer?.send(final)
         setTranscript(final);
       }
-
     }
   }, [alternatives])
 
 
-  const backgroundColor = listening ? "#1477fc" : "#7A7E83"
 
 
   return (
@@ -87,9 +84,9 @@ function MobileApp({ signOut }) {
       {connected ?
         <div>
           <TopBar />
-          <SpeechDetector setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
+          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening}/>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
+            <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript !== "" ? `"${transcript}"` : "..."}</p>
           </div>
         </div>
         : showQr ?

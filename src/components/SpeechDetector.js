@@ -1,58 +1,52 @@
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Mic from "../images/mic-fill.svg";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import "../styles/SpeechDetector.css"
 
-const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgroundColor }) => {
+const SpeechDetector = ({ setTranscript, setAlternatives }) => {
     const {
         transcript,
-        alternatives,
         listening
     } = useSpeechRecognition();
 
+    const speechRecognition = SpeechRecognition.getRecognition()
+    speechRecognition.maxAlternatives = 10
+    speechRecognition.interimResults = false
+    speechRecognition.continuous = false
+    speechRecognition.lang = "en-GB"
+    speechRecognition.onresult = (result) => {
+        setAlternatives(result)
+    }
+
+
     useEffect(() => {
-        if (transcript !== "" && !listening) {
+        console.log(transcript)
+        if (transcript) {
             setTranscript(transcript)
         }
-    }, [transcript, setTranscript, listening])
-
-
-    useEffect(() => {
-        if (alternatives.length !== 0) {
-            setAlternatives(alternatives)
-        }
-
-    }, [alternatives, setAlternatives])
-
-
-    useEffect(() => {
-        setListening(listening)
-    }, [listening, setListening])
-
+    }, [transcript])
 
 
     return (
         <>
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-                paddingTop: "40%"
-            }}>
-                <p className="h1 pb-5">Press To Speak</p>
-
-                <div className="d-flex justify-content-center" style={{ background: backgroundColor, borderRadius: "50%", border: `1px solid ${backgroundColor}`, height: "150px", width: "150px" }}>
-
-                    <img
-                        alt=""
-                        src={Mic}
-                        style={{ height: "auto", width: "3rem" }}
-                        onClick={!listening ? () => { SpeechRecognition.startListening() } : SpeechRecognition.stopListening}
-                    />
+            <div className="speech-detector-container">
+                <p className="h1 pb-5">{listening ? "tlkbck is listening!" : "Press to speak"}</p>
+                <div className="mic-container" onClick={!listening ? () => { SpeechRecognition.startListening() } : SpeechRecognition.stopListening}>
+                    <div className={listening ? "mic-outline" : null}>
+                    </div>
+                    <div className={listening ? "mic-outline" : null} id="delayed">
+                    </div>
+                    <div className={listening ? "mic-btn mic-btn-listening" : "mic-btn"}>
+                    </div>
+                    <div className={listening ? "mic-btn circlein circlein-listening" : "mic-btn circlein"}>
+                        <img
+                            alt="btn to start mic for speech recognition"
+                            src="./images/menu-icons/mic-fill.svg"
+                            className="w-75 m-auto"
+                        />
+                    </div>
                 </div>
-
             </div>
-
         </>
 
     );

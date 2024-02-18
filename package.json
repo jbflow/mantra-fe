@@ -35,7 +35,8 @@
     "simple-peer": "^9.11.1",
     "stripe": "^8.146.0",
     "uuid": "^8.3.2",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "words-to-numbers": "^1.5.1"
   },
   "scripts": {
     "start": "cross-env-file -p .env.json react-scripts start",
