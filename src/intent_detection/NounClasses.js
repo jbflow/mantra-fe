@@ -43,6 +43,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             for (let device of devices) {
                 const d = device.index
                 // then check the devices to see if its parameters are mentioned
+                console.log("CHECKING DEVICE FOR PARAMS")
                 parameters.push(...this.getNounAdj("parameter", config.parameter[t][d], tokenizedInput, [['track', t], ['device', d]]));
 
             }
@@ -50,23 +51,28 @@ export class NounSearchEngine extends IntentDetectionBase {
 
         if (parameters.length === 0) {
             // if haven't found anything yet, lets look for a parameter in our last subject
+            console.log("LAST SUBJECT", this.lastSubject)
+            console.log("CHECKING LAST SUBJECT FOR PARAMS")
             const t_pattern = /([track]+_\d+)/g;
             const d_pattern = /([device]+_\d+)/g;
             const track = this.lastSubject.match(t_pattern);
             const device = this.lastSubject.match(d_pattern);
             if (track) {
                 const t = parseInt(track[0].split("_")[1])
-                const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['send']), tokenizedInput, [['track', t]]);
+                const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['return track']), tokenizedInput, [['track', t]]);
                 parameters.push(...mixerParams)
                 if (device) {
                     const d = parseInt(device[0].split("_")[1])
+                    console.log("DEVICE", d)
+                    console.log("TRACK", t)
                     parameters.push(...this.getNounAdj("parameter", config.parameter[t][d], tokenizedInput, [['track', t], ['device', d]]));
                 }
             }
         }
         if (parameters.length === 0) {
+            console.log("CHECKING SEL TRACK AND SEL DEVICE FOR PARAMS")
             // If haven't found a parameter yet, try the selected track and device
-            parameters.push(...this.getNounAdj("parameter", config.parameter[config.sel_track][config.sel_device], tokenizedInput, [['track', config.selTrack], ['device', config.selDevice]]));
+            parameters.push(...this.getNounAdj("parameter", config.parameter[config.sel_track][config.sel_device], tokenizedInput, [['track', config.sel_track], ['device', config.sel_device]]));
         }
 
         return parameters
@@ -131,13 +137,13 @@ export class NounSearchEngine extends IntentDetectionBase {
     getNounAdj(noun, list, tokenizedInput, parents = []) {
         console.log("NOUN: ", noun)
         console.log("list: ", list)
-        console.log("tokenizedInput: ", tokenizedInput)
-        console.log("parents: ", parents)
+        // console.log("tokenizedInput: ", tokenizedInput)
+        // console.log("parents: ", parents)
         const nounAdj = [];
         for (const token of tokenizedInput) {
             const integer = this.integerSearch(token, noun);
             const levi = this.leviSearch(token, list);
-            console.log("LEVI", levi)
+            // console.log("LEVI", levi)
 
 
             if (integer) {
@@ -149,7 +155,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
                 });
             } else if (levi) {
-                console.log("LEVI: ", levi)
+                // console.log("LEVI: ", levi)
                 for (let l of levi) {
                     nounAdj.push({
                         token: token,
@@ -163,7 +169,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
             }
         }
-        console.log("nounAdj: ", nounAdj)
+        // console.log("nounAdj: ", nounAdj)
         return nounAdj;
     }
     removeDuplicateResults(nounAdjArray) {
@@ -180,7 +186,7 @@ export class NounSearchEngine extends IntentDetectionBase {
         return filteredNouns;
     }
     makeBytesFromFullPath() {
-        // console.log("I AM PATH: ", this.fullPath)
+        console.log("I AM PATH: ", this.fullPath)
         this.lastSubject = this.fullPath
         const pattern = /([a-zA-Z]+_\d+)/g;
         const matches = this.fullPath.match(pattern);
