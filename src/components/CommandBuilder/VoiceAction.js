@@ -14,10 +14,10 @@ export default function VoiceAction({
       <div className="action-container">
         <div className="action-input">
           <div className="action-icon">
-            <img src="./images/menu-icons/soundwave.svg" />
+            <img alt="" src="./images/menu-icons/soundwave.svg" />
           </div>
           <div className="action-grab" {...provided.dragHandleProps}>
-            <img src="./images/menu-icons/grip.svg" />
+            <img alt="" src="./images/menu-icons/grip.svg" />
           </div>
           <input
             type="text"
@@ -43,7 +43,7 @@ export default function VoiceAction({
               delAction(index);
             }}
           >
-            <img className="close-button" src="./images/menu-icons/close.svg" />
+            <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
           </div>
         </div>
       </div>
