@@ -20,16 +20,23 @@ import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
 import Preferences from "./components/Preferences";
 import VoiceControl from "./components/VoiceControl";
+import { IntentDetection } from "./intent_detection/IntentDetection";
+import { TranscriptParser } from "./utils/TranscriptParser";
 
+const intentDetection = new IntentDetection()
+const transcriptParser = new TranscriptParser()
 
 
 
 function App({ signOut }) {
+  const [alternatives, setAlternatives] = useState([])
+  const [transcript, setTranscript] = useState("")
   const { midi, dispatch } = useContext(MidiContext)
   const [mainOutput, setMainOutput] = useState(null)
   const [mainInput, setMainInput] = useState(null)
   const message = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
+  
 
   const onMIDISuccess = (midiAccess) => {
     const inputs = Array.from(midiAccess.inputs.values())
@@ -80,6 +87,16 @@ function App({ signOut }) {
     }
   }, [sysex])
 
+  
+
+  useEffect(() => {
+    if (alternatives.length !== 0) {
+      const finalTranscript = transcriptParser.cleanupTranscript(alternatives);
+      handleIntentDetection(finalTranscript)
+      setTranscript(finalTranscript)
+    }
+  }, [alternatives])
+
 
 
 
@@ -99,11 +116,7 @@ function App({ signOut }) {
       setConnectionStatus("Disconnected")
     })
     peer.on("data", (data) => {
-      
-
-
-
-
+      handleIntentDetection(data.text)
     })
     peer.on('signal', data => {
       if (data.type === "offer") {
@@ -116,6 +129,14 @@ function App({ signOut }) {
     if (data) {
       peer?.signal(JSON.parse(atob(data.text)))
     }
+  }
+
+  const handleIntentDetection = (finalTranscript) => {
+    const config = JSON.parse(sessionStorage.getItem("config"))
+    const midiBytes = intentDetection.runDetection(finalTranscript, config)
+    console.log(midiBytes)
+    sysex(midiBytes)
+
   }
 
   return (
@@ -131,7 +152,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript}/>}
           />
           <Route
             path="/preferences"

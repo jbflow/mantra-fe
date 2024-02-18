@@ -83,7 +83,7 @@ function MobileApp({ signOut }) {
 
   return (
     <>
-      {true ?
+      {connected ?
         <div>
           <TopBar />
           <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening}/>

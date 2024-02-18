@@ -3,34 +3,34 @@ import Mic from "../images/mic-fill.svg";
 import { useEffect, useState } from 'react';
 import "../styles/SpeechDetector.css"
 
-const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
+const SpeechDetector = ({ setTranscript, setAlternatives }) => {
     const {
+        transcript,
         listening
     } = useSpeechRecognition();
 
     const speechRecognition = SpeechRecognition.getRecognition()
     speechRecognition.maxAlternatives = 10
     speechRecognition.interimResults = false
+    speechRecognition.continuous = false
     speechRecognition.lang = "en-GB"
     speechRecognition.onresult = (result) => {
         setAlternatives(result)
     }
 
 
-    // useEffect(() => {
-    //     if (transcript !== "" && !listening) {
-    //         setTranscript(transcript)
-    //     }
-    // }, [transcript, setTranscript, listening])
-
-    const backgroundColor = listening ? "#1477fc" : "#7A7E83"
     useEffect(() => {
-        setListening(listening)
-    }, [listening, setListening])
+        console.log(transcript)
+        if (transcript) {
+            setTranscript(transcript)
+        }
+    }, [transcript])
+
+
     return (
         <>
             <div className="speech-detector-container">
-                <p className="h1 pb-5">Press To Speak</p>
+                <p className="h1 pb-5">{listening ? "tlkbck is listening!" : "Press to speak"}</p>
                 <div className="mic-container" onClick={!listening ? () => { SpeechRecognition.startListening() } : SpeechRecognition.stopListening}>
                     <div className={listening ? "mic-outline" : null}>
                     </div>

@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SpeechDetector from "./SpeechDetector";
 import React from 'react'
 
-export default function VoiceControl() {
-  const [transcript, setTranscript] = useState("")
-  const [alternatives, setAlternatives] = useState([])
-  const [listening, setListening] = useState(false)
+export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives }) {
+  
 
-  const backgroundColor = listening ? "#1477fc" : "#7A7E83"
+  useEffect(() => {
+    setTranscript(finalTranscript)
+  }, [finalTranscript])
+
   return <>
-    <div>
-      <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
+    <div className="mb-5">
+      <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives}/>
+    </div>
+
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p>
     </div>
   </>
 
