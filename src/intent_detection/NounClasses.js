@@ -49,29 +49,31 @@ export class NounSearchEngine extends IntentDetectionBase {
             }
         }
 
-        if (parameters.length === 0) {
-            // if haven't found anything yet, lets look for a parameter in our last subject
-            console.log("LAST SUBJECT", this.lastSubject)
-            console.log("CHECKING LAST SUBJECT FOR PARAMS")
-            const t_pattern = /([track]+_\d+)/g;
-            const d_pattern = /([device]+_\d+)/g;
-            const track = this.lastSubject.match(t_pattern);
-            const device = this.lastSubject.match(d_pattern);
-            if (track) {
-                const t = parseInt(track[0].split("_")[1])
-                const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['return track']), tokenizedInput, [['track', t]]);
-                parameters.push(...mixerParams)
-                if (device) {
-                    const d = parseInt(device[0].split("_")[1])
-                    console.log("DEVICE", d)
-                    console.log("TRACK", t)
-                    parameters.push(...this.getNounAdj("parameter", config.parameter[t][d], tokenizedInput, [['track', t], ['device', d]]));
-                }
-            }
-        }
+        // if (parameters.length === 0) {
+        //     // if haven't found anything yet, lets look for a parameter in our last subject
+        //     console.log("LAST SUBJECT", this.lastSubject)
+        //     console.log("CHECKING LAST SUBJECT FOR PARAMS")
+        //     const t_pattern = /([track]+_\d+)/g;
+        //     const d_pattern = /([device]+_\d+)/g;
+        //     const track = this.lastSubject.match(t_pattern);
+        //     const device = this.lastSubject.match(d_pattern);
+        //     if (track) {
+        //         const t = parseInt(track[0].split("_")[1])
+        //         const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['return track']), tokenizedInput, [['track', t]]);
+        //         parameters.push(...mixerParams)
+        //         if (device) {
+        //             const d = parseInt(device[0].split("_")[1])
+        //             console.log("DEVICE", d)
+        //             console.log("TRACK", t)
+        //             parameters.push(...this.getNounAdj("parameter", config.parameter[t][d], tokenizedInput, [['track', t], ['device', d]]));
+        //         }
+        //     }
+        // }
         if (parameters.length === 0) {
             console.log("CHECKING SEL TRACK AND SEL DEVICE FOR PARAMS")
             // If haven't found a parameter yet, try the selected track and device
+            const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['return track']), tokenizedInput, [['track', config.sel_track]]);
+            parameters.push(...mixerParams)
             parameters.push(...this.getNounAdj("parameter", config.parameter[config.sel_track][config.sel_device], tokenizedInput, [['track', config.sel_track], ['device', config.sel_device]]));
         }
 
@@ -185,6 +187,8 @@ export class NounSearchEngine extends IntentDetectionBase {
         }
         return filteredNouns;
     }
+
+    
     makeBytesFromFullPath() {
         console.log("I AM PATH: ", this.fullPath)
         this.lastSubject = this.fullPath
