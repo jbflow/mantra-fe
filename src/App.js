@@ -116,7 +116,9 @@ function App({ signOut }) {
       setConnectionStatus("Disconnected")
     })
     peer.on("data", (data) => {
-      handleIntentDetection(data.text)
+      console.log("DATA", data.reduce((acc, cur) => acc + String.fromCharCode(cur), ""))
+      const transcript = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
+      handleIntentDetection(transcript.toLowerCase())
     })
     peer.on('signal', data => {
       if (data.type === "offer") {
@@ -136,7 +138,6 @@ function App({ signOut }) {
     const midiBytes = intentDetection.runDetection(finalTranscript, config)
     console.log(midiBytes)
     sysex(midiBytes)
-
   }
 
   return (

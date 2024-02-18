@@ -15,7 +15,6 @@ export class IntentDetection extends IntentDetectionBase {
     runDetection(textInput = "", config = emptyConfig) {
         this.textInput = textInput;
         this.config = config
-
         // console.log("CONFIG", config)
         this.tokenizedInput = this.parseInput(textInput, 3)
         if (textInput.split(" ").length === 1 && Object.keys(this.SINGLE_WORD).includes(textInput)) {
