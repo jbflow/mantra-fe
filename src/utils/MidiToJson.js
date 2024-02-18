@@ -37,10 +37,10 @@ const get_all_paths = (noun_adj, noun, config) => {
 
 const select_item = (noun_adj, noun, value, config) => {
   if (noun_adj.length === 3) {
-    config["sel_track"] = convert_bytes(noun_adj.slice(1, 3));
+    config["sel_track"] = convert_bytes(noun_adj.slice(1, 3)) - 1;
   } else if (noun_adj.length === 6) {
-    config["sel_track"] = convert_bytes(noun_adj.slice(1, 3));
-    config["sel_device"] = convert_bytes(noun_adj.slice(4, 6));
+    config["sel_track"] = convert_bytes(noun_adj.slice(1, 3)) - 1;
+    config["sel_device"] = convert_bytes(noun_adj.slice(4, 6)) - 1;
   }
 };
 
