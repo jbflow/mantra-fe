@@ -33,8 +33,11 @@ export default function NavBar({ signOut }) {
         <Navbar.Toggle aria-controls="navigation" />
         <Navbar.Collapse id="navigation" style={styles.forceColumn}>
           <Nav className="mr-auto" style={styles.forceColumn}>
+          <Link className="nav-link nav-link-sidebar" to="/testing">
+              Voice Control
+            </Link>
             <Link className="nav-link nav-link-sidebar" to="/commands">
-              Command Builder
+              Build Macros
               <img
                 style={styles.icon}
                 alt="Command Builder nav logo"
@@ -42,7 +45,7 @@ export default function NavBar({ signOut }) {
               />
             </Link>
             <Link className="nav-link nav-link-sidebar" to="/account">
-              Manage Account
+              Preferences
               <img
                 style={styles.icon}
                 alt="Testing Area nav logo"
@@ -51,8 +54,9 @@ export default function NavBar({ signOut }) {
             </Link>
 
             <Link className="nav-link nav-link-sidebar" to="/testing">
-              Testing
+              Help & Support
             </Link>
+          
           </Nav>
         </Navbar.Collapse>
       </Navbar>
