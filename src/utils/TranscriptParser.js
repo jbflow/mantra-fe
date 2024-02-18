@@ -1,4 +1,5 @@
 import {phrases, replace} from "./speechConstants"
+import {wordsToNumbers } from "words-to-numbers"
 
 export class TranscriptParser {
     constructor() {
@@ -9,8 +10,8 @@ export class TranscriptParser {
     }
 
 
-    cleanupTranscript(result) {
-        this.currentResult = result
+    cleanupTranscript(event) {
+        this.currentResult = event.results[event.resultIndex]
         console.log("CURRENT RESULT: ", this.currentResult)
         const filteredResults = this.checkPhrases(this.currentResult)
         console.log("FILTERED RESULTS", filteredResults)
@@ -18,7 +19,7 @@ export class TranscriptParser {
         for (let item in replace) {
             transcript = this.directReplace(filteredResults, item, replace[item]);
           }
-        return transcript
+        return wordsToNumbers(transcript)
     }
 
     checkPhrases(results) {

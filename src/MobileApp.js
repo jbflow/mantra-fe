@@ -71,7 +71,7 @@ function MobileApp({ signOut }) {
     if (alternatives.length !== 0) {
       const final = transcriptParser.cleanupTranscript(alternatives);
       if (final) {
-        peer.send(final)
+        // peer.send(final)
         setTranscript(final);
       }
 
@@ -87,7 +87,7 @@ function MobileApp({ signOut }) {
       {connected ?
         <div>
           <TopBar />
-          <SpeechDetector setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
+          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} backgroundColor={backgroundColor} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             <p className="pt-5 px-3 h3 font-italic" style={{ color: backgroundColor }}>{transcript !== "" ? `"${transcript}"` : "..."}</p>
           </div>

@@ -41,34 +41,3 @@ const replace = {
   "un solo": "unsolo",
   "on arm": "unarm",
 };
-
-export function CleanupTranscript(results) {
-  let transcript = checkPhrases(results);
-  for (let item in replace) {
-    transcript = directReplace(transcript, item, replace[item]);
-  }
-  return transcript;
-}
-
-const checkPhrases = (results) => {
-  // Loop through the alternatives to check if any of our hot phrases are contained in them.
-  console.log("alt", results[0]);
-  for (let result in results[0]) {
-    if (new RegExp(phrases.join("|")).test(results[0][result].transcript)) {
-      return results[0][result].transcript; // Return them if they are
-    }
-  }
-  return results[0][0].transcript; // Otherwise return the highest confidence
-};
-
-const directReplace = (transcript, find, rep) => {
-  transcript = transcript.replace(find, rep);
-  return transcript;
-};
-
-const RemoveLeadingSpace = (transcript) => {
-  if (transcript[0] === " ") {
-    transcript = transcript.substring(1);
-  }
-  return transcript;
-};

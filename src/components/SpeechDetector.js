@@ -4,24 +4,23 @@ import { useEffect } from 'react';
 
 const SpeechDetector = ({ setTranscript, setAlternatives, setListening, backgroundColor }) => {
     const {
-        transcript,
-        alternatives,
         listening
     } = useSpeechRecognition();
 
-    useEffect(() => {
-        if (transcript !== "" && !listening) {
-            setTranscript(transcript)
-        }
-    }, [transcript, setTranscript, listening])
+    const speechRecognition = SpeechRecognition.getRecognition()
+    speechRecognition.maxAlternatives = 10
+    speechRecognition.interimResults = false
+    speechRecognition.lang = "en-GB"
+    speechRecognition.onresult = (result) => {
+        setAlternatives(result)
+    }
 
 
-    useEffect(() => {
-        if (alternatives.length !== 0) {
-            setAlternatives(alternatives)
-        }
-
-    }, [alternatives, setAlternatives])
+    // useEffect(() => {
+    //     if (transcript !== "" && !listening) {
+    //         setTranscript(transcript)
+    //     }
+    // }, [transcript, setTranscript, listening])
 
 
     useEffect(() => {
