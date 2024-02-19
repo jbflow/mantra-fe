@@ -1,178 +1,158 @@
-import React, { useState } from "react";
-import { openInPort, openOutPort } from "../services/midiService";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { API } from "aws-amplify";
+import React, { useState, useContext } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Modal,
+  Form,
+  Alert,
+} from "react-bootstrap";
+import { Auth } from "aws-amplify";
+import { UserContext } from "../contexts/UserContext";
 
-export default function Preferences({
-  userId,
-  midiInputs,
-  midiOutputs,
-  midiIn,
-  midiOut,
-  setMidiIn,
-  setMidiOut,
-}) {
-  const [theme, setTheme] = useState("None");
-  const [mag, setMag] = useState("None");
+export default function Preferences() {
+  const userId = useContext(UserContext).userId;
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newPassword2, setNewPassword2] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
-  const [isSaving, setIsSaving] = useState(false);
-
-  const patchPrefs = () => {
-    setIsSaving(true);
-    const prefs = {
-      theme: theme,
-      mag: mag,
-      midi_in: midiIn,
-      midi_out: midiOut,
-    };
-    API.patch("talkbackBE", "/prefs?userId=" + userId, { body: prefs }).then(
-      (res) => {
-        setIsSaving(false);
-        openInPort(midiIn);
-        openOutPort(midiOut);
+  async function changePassword() {
+    if (newPassword === newPassword2) {
+      setChangingPassword(true);
+      const currentUser = await Auth.currentAuthenticatedUser();
+      try {
+        await Auth.changePassword(currentUser, oldPassword, newPassword);
+        setShowPassword(false);
+        setShowAlert(true);
+        window.setTimeout(() => {
+          setShowAlert(false);
+        }, 5000);
+      } catch (error) {
+        setErrorMessage(error.message);
+        setShowError(true);
       }
-    );
+      setChangingPassword(false);
+    } else {
+      setErrorMessage("Passwords don't match");
+      setShowError(true);
+    }
+  }
+
+  const getPortal = () => {
+    API.post("talkbackBE", "/customer_portal?userId=" + userId).then((res) => {
+      window.location.href = res;
+    });
   };
-
   return (
-    <Container className="p-2">
-      <h1>Page Still Under Construction!!!</h1>
-      <Row className="p-3">
-        <h3>Look/Feel</h3>
-      </Row>
-      <Row className="p-3">
-        <Col>Dark/Light</Col>
-        <Col>
-          <Button className="btn-sm w-25" disabled>
-            Dark
-          </Button>
-        </Col>
-        <Col>Magnifaction</Col>
-        <Col>
-          <Button className="btn-sm w-25" disabled>
-            On
-          </Button>
-        </Col>
-      </Row>
-
-      <Row className="p-3">
-        <h3>Ins/Outs</h3>
-      </Row>
-      <Row className="p-3">
-        <Col>MIDI</Col>
-        <Col>
-          <Form>
-            <Form.Label className="p-1">Input</Form.Label>
-            <Form.Control
-              as="select"
-              onChange={(e) => {
-                setMidiIn(e.target.value);
+    <>
+      {showAlert ? (
+        <Alert variant="success" dismissable={true}>
+          Password successfully changed.
+        </Alert>
+      ) : null}
+      <Container className="p-2">
+        <Row className="p-3">
+          <Col>Email:</Col>
+          <Col>Blah</Col>
+        </Row>
+        <Row className="p-3">
+          <Col>Password:</Col>
+          <Col>
+            <Button
+              onClick={() => {
+                setShowPassword(true);
+                setShowError(false);
               }}
-              value={midiIn}
             >
-              <option>Choose...</option>
-              {midiInputs.map((input) => (
-                <option as="button" key={input.id}>
-                  {input.name}
-                </option>
-              ))}
-            </Form.Control>
-          </Form>
-        </Col>
+              Change
+            </Button>
+          </Col>
+        </Row>
+        <Row className="p-3">
+          <Col>Payment Details:</Col>
+          <Col>
+            <Button onClick={getPortal}>Update</Button>
+          </Col>
+        </Row>
+        <Row className="p-3">
+          <Col>Next Bill:</Col>
+          <Col>Blah blah</Col>
+        </Row>
+      </Container>
 
-        <Col>
-          <Form>
-            <Form.Label className="p-1">Output</Form.Label>
-            <Form.Control
-              as="select"
-              onChange={(e) => {
-                setMidiOut(e.target.value);
+      {showPassword ? (
+        <Modal
+          show={showPassword}
+          onHide={() => {
+            setShowPassword(false);
+          }}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Change Password</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="oldPassword">
+                <Form.Label>Old Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  onChange={(e) => {
+                    setOldPassword(e.target.value);
+                  }}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="newPassowrd">
+                <Form.Label>New Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                  }}
+                />
+              </Form.Group>
+              <Form.Group controlId="confirmNewPassowrd">
+                <Form.Label>Confirm New Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  onChange={(e) => {
+                    setNewPassword2(e.target.value);
+                  }}
+                />
+              </Form.Group>
+              {showError ? (
+                <Form.Text className="text-danger">{errorMessage}</Form.Text>
+              ) : null}
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowPassword(false);
               }}
-              value={midiOut}
             >
-              <option>Choose...</option>
-              {midiOutputs.map((output) => (
-                <option as="button" key={output.id}>
-                  {output.name}
-                </option>
-              ))}
-            </Form.Control>
-          </Form>
-        </Col>
-      </Row>
-
-      {/* <Row className="p-3">
-        <Col>Audio</Col>
-
-        <Col>
-          <DropdownButton id="audioIn" title="Audio In">
-            {audioInputs.map((input) => (
-              <Dropdown.Item key="audioIn">{input}</Dropdown.Item>
-            ))}
-          </DropdownButton>
-        </Col>
-
-        <Col>
-          <DropdownButton id="audioOut" title="Audio Out">
-            {audioOutputs.map((output) => (
-              <Dropdown.Item key="audioOut">{output}</Dropdown.Item>
-            ))}
-          </DropdownButton>
-        </Col>
-      </Row> */}
-      <Row className="p-3">
-        <h3>Intent Engine</h3>
-      </Row>
-      <Row className="p-3">
-        <Col>Increment Default</Col>
-        <Col></Col>
-        <Col>Decrement Default</Col>
-        <Col></Col>
-      </Row>
-
-      <Row className="p-3">
-        <Col>Track Default</Col>
-        <Col></Col>
-        <Col>Device Default</Col>
-        <Col></Col>
-      </Row>
-      <Row className="p-3">
-        <Col>Priority Hierachy</Col>
-        <Col></Col>
-        <Col></Col>
-        <Col></Col>
-      </Row>
-      <Row className="p-3">
-        <h3>Speech</h3>
-      </Row>
-
-      <Row className="p-3">
-        <Col>Speech Rate</Col>
-
-        <Col>
-          <Form>
-            <Form.Group controlId="speechRate">
-              <Form.Control type="range" disabled />
-            </Form.Group>
-          </Form>
-        </Col>
-        <Col>Feedback Level</Col>
-
-        <Col>
-          <Form>
-            <Form.Group controlId="feedBackLevel">
-              <Form.Control type="range" disabled />
-            </Form.Group>
-          </Form>
-        </Col>
-      </Row>
-      <Row className="p-3">
-        <Col sm={2}>
-          <Button onClick={!isSaving ? patchPrefs : null} disabled={isSaving} className="rounded-more">
-            {isSaving ? "Saving..." : "Save"}
-          </Button>
-        </Col>
-      </Row>
-    </Container>
+              Close
+            </Button>
+            <Button
+              disabled={changingPassword}
+              variant="primary"
+              onClick={() => {
+                changePassword();
+              }}
+            >
+              {changingPassword ? "Changing" : "Change"}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      ) : null}
+    </>
   );
 }

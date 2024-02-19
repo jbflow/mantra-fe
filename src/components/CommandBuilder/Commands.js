@@ -16,7 +16,7 @@ export default function Commands({
               key={command.id}
               command={command}
               selected={selected === command.id}
-              editing={editing == command.id}
+              editing={editing === command.id}
               setSelected={setSelected}
               setEditing={setEditing}
               dispatch={dispatch}

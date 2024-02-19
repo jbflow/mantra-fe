@@ -14,7 +14,7 @@ export class IntentDetectionBase {
         this.SINGLE_WORD = constants.SINGLE_WORD;
         this.CUES = constants.CUES;
         this.EXCLUDED = constants.EXCLUDED;
-        this.threshold = null;
+        this.threshold = 80;
     }
 
     parseInput(textIn = "", max_n = 3) {

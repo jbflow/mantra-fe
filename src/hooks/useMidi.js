@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { arraysEqual, clearConfig } from "../../utils/utils";
-import { MidiToJson } from "../../utils/MidiToJson";
-import { emptyConfig } from "../../utils/MidiConstants";
+import { arraysEqual, clearConfig } from "../utils/utils";
+import { MidiToJson } from "../utils/MidiToJson";
+import { emptyConfig } from "../utils/MidiConstants";
 
 let midiInputs;
 let midiOutputs;

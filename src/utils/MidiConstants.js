@@ -3,7 +3,7 @@ export const THRESH_WEIGHT = 0.1;
 
 export const SYSEX_START = 240;
 export const MANUFACTURER_ID = [0, 0, 0, 0, 0];
-export const SYSEX_END = 247;
+
 
 export const emptyConfig = {
   track: [],
@@ -92,3 +92,13 @@ export const MIXER_PARAMS = {
   pan: 126,
   send: 127,
 };
+
+export const STATUS_BYTES = {
+  noteOn: 0x90,
+  noteOff: 0x80,
+  cc: 0xb0,
+  sysex_start: 0xf0,
+  sysex_end: 0xf7
+
+};
+

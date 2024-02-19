@@ -24,7 +24,7 @@ export function usePostToApi(state, url) {
       console.log("post", state);
       postData();
     }
-  }, [state]);
+  }, [state, url]);
 
   return { postLoading, postError };
 }
