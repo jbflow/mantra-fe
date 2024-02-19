@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useHistory } from 'react-router';
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
@@ -22,13 +23,11 @@ import Preferences from "./components/Preferences";
 import VoiceControl from "./components/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./utils/TranscriptParser";
-
 import * as spdCompact from "sdp-compact";
-const options = { compress: true };
 
+const options = { compress: true };
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
-
 
 
 function App({ signOut }) {
@@ -39,6 +38,12 @@ function App({ signOut }) {
   const [mainInput, setMainInput] = useState(null)
   const message = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
+  const [code, setCode] = useState("")
+  const [connectionStatus, setConnectionStatus] = useState("Disconnected")
+  const routerHistory = useHistory();
+  let peer;
+  
+  
 
 
   const onMIDISuccess = (midiAccess) => {
@@ -103,13 +108,15 @@ function App({ signOut }) {
 
 
 
-  let peer = null
-  const [code, setCode] = useState("")
-  const [connectionStatus, setConnectionStatus] = useState("Disconnected")
+  
+  
   const startConnection = () => {
     peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
+    
     peer.on("connect", () => {
       setConnectionStatus("Connected")
+      routerHistory.push('/voice-control');
+
     })
     peer.on("close", () => {
       setConnectionStatus("Disconnected")
