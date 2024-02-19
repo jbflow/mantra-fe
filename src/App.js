@@ -20,7 +20,7 @@ import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
 import Preferences from "./components/Preferences";
-import VoiceControl from "./components/VoiceControl";
+import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./utils/TranscriptParser";
 import * as spdCompact from "sdp-compact";
