@@ -119,7 +119,6 @@ function App({ signOut }) {
       setConnectionStatus("Disconnected")
     })
     peer.on("data", (data) => {
-      console.log("DATA", data.reduce((acc, cur) => acc + String.fromCharCode(cur), ""))
       const transcript = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
       handleIntentDetection(transcript.toLowerCase())
     })
@@ -127,7 +126,6 @@ function App({ signOut }) {
       if (data.type === "offer") {
         data.sdp = spdCompact.compactSDP(data.sdp, { compress: true });
         const url = window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
-        console.log(url)
         setCode(url)
 
       }
@@ -143,7 +141,7 @@ function App({ signOut }) {
 
   const handleIntentDetection = (finalTranscript) => {
     const config = JSON.parse(sessionStorage.getItem("config"))
-    const midiBytes = intentDetection.runDetection(finalTranscript, config)
+    const midiBytes = intentDetection.runDetection(String(finalTranscript), config)
     sysex(midiBytes)
   }
 
