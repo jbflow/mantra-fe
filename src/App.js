@@ -23,6 +23,9 @@ import VoiceControl from "./components/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./utils/TranscriptParser";
 
+import * as spdCompact from "sdp-compact";
+const options = { compress: true };
+
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
 
@@ -36,7 +39,7 @@ function App({ signOut }) {
   const [mainInput, setMainInput] = useState(null)
   const message = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
-  
+
 
   const onMIDISuccess = (midiAccess) => {
     const inputs = Array.from(midiAccess.inputs.values())
@@ -70,7 +73,7 @@ function App({ signOut }) {
           let updatedConfig = MidiToJson(message.data, currentConfig)
           sessionStorage.setItem("config", JSON.stringify(updatedConfig))
         }
-        else if (message.data[6] === 1 && message.data[message.data.length - 2]){ // If confirmation
+        else if (message.data[6] === 1 && message.data[message.data.length - 2]) { // If confirmation
           // Confirmation Logic goes here
         }
       }
@@ -87,7 +90,7 @@ function App({ signOut }) {
     }
   }, [sysex])
 
-  
+
 
   useEffect(() => {
     if (alternatives.length !== 0) {
@@ -122,21 +125,25 @@ function App({ signOut }) {
     })
     peer.on('signal', data => {
       if (data.type === "offer") {
-        setCode(window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
-        )
+        data.sdp = spdCompact.compactSDP(data.sdp, { compress: true });
+        const url = window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
+        console.log(url)
+        setCode(url)
+
       }
     })
   }
   const handleQrResult = (data) => {
     if (data) {
-      peer?.signal(JSON.parse(atob(data.text)))
+      let answer = JSON.parse(atob(data.text))
+      answer.sdp = spdCompact.decompactSDP(answer.sdp, false, { compress: true });
+      peer?.signal(answer)
     }
   }
 
   const handleIntentDetection = (finalTranscript) => {
     const config = JSON.parse(sessionStorage.getItem("config"))
     const midiBytes = intentDetection.runDetection(finalTranscript, config)
-    console.log(midiBytes)
     sysex(midiBytes)
   }
 
@@ -153,7 +160,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript}/>}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} />}
           />
           <Route
             path="/preferences"
@@ -167,7 +174,7 @@ function App({ signOut }) {
             path="/help-and-support"
             render={(props) => <CommandTesting {...props} />}
           />
-          
+
           <Route
             path="/connect-phone"
             render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}

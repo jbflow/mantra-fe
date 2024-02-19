@@ -14,6 +14,8 @@ import { TranscriptParser } from "./utils/TranscriptParser";
 import MobileRTC from './components/MobileRTC';
 import { QrReader } from 'react-qr-reader';
 
+import * as spdCompact from "sdp-compact";
+
 const transcriptParser = new TranscriptParser()
 const peer = new Peer({ initiator: false, trickle: false, config: { iceServers: [] } })
 
@@ -35,6 +37,7 @@ function MobileApp({ signOut }) {
     
     peer.on('signal', data => {
       if (data.type === "answer") {
+        data.sdp = spdCompact.compactSDP(data.sdp, {compress: true });
         setCode(btoa(JSON.stringify(data)))
       }
     })
@@ -61,6 +64,7 @@ function MobileApp({ signOut }) {
     if (data) {
       let offer = data.text.split("?")[1]
       offer = JSON.parse(atob(offer))
+      offer.sdp = spdCompact.decompactSDP(offer.sdp, true, {compress: true});
       peer.signal(offer)
       setShowQr(true)
     }
@@ -73,8 +77,13 @@ function MobileApp({ signOut }) {
         peer?.send(final)
         setTranscript(final);
       }
+
     }
   }, [alternatives])
+
+  useEffect(() => {
+    console.log(showQr)
+  }, [showQr])
 
 
 
