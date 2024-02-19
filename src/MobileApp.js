@@ -34,10 +34,10 @@ function MobileApp({ signOut }) {
         }
       }, audio: true
     })
-    
+
     peer.on('signal', data => {
       if (data.type === "answer") {
-        data.sdp = spdCompact.compactSDP(data.sdp, {compress: true });
+        data.sdp = spdCompact.compactSDP(data.sdp, { compress: true });
         setCode(btoa(JSON.stringify(data)))
       }
     })
@@ -49,7 +49,7 @@ function MobileApp({ signOut }) {
     })
     peer.on("error", () => {
       window.location.reload()
-      
+
     })
     let data = window.location.search.substring('?'.length)
     if (data) {
@@ -64,7 +64,7 @@ function MobileApp({ signOut }) {
     if (data) {
       let offer = data.text.split("?")[1]
       offer = JSON.parse(atob(offer))
-      offer.sdp = spdCompact.decompactSDP(offer.sdp, true, {compress: true});
+      offer.sdp = spdCompact.decompactSDP(offer.sdp, true, { compress: true });
       peer.signal(offer)
       setShowQr(true)
     }
@@ -81,19 +81,12 @@ function MobileApp({ signOut }) {
     }
   }, [alternatives])
 
-  useEffect(() => {
-    console.log(showQr)
-  }, [showQr])
-
-
-
-
   return (
     <>
       {connected ?
         <div>
           <TopBar />
-          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening}/>
+          <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} />
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript !== "" ? `"${transcript}"` : "..."}</p>
           </div>
