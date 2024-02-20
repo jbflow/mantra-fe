@@ -12,7 +12,7 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
     const speechRecognition = SpeechRecognition.getRecognition()
     speechRecognition.maxAlternatives = 10
     speechRecognition.interimResults = false
-    speechRecognition.continuous = false
+    speechRecognition.continuous = JSON.parse(localStorage.getItem("preferences")).voice.continuous
     speechRecognition.lang = "en-GB"
     speechRecognition.onresult = (result) => {
         setAlternatives(result)
@@ -20,7 +20,6 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
 
 
     useEffect(() => {
-        console.log(transcript)
         if (transcript) {
             setTranscript(transcript)
         }

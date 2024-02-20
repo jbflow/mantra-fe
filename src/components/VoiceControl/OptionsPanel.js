@@ -1,7 +1,24 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import "../../styles/VoiceControl.css"
 
 export default function OptionsPanel() {
+  const prefs = JSON.parse(localStorage.getItem("preferences"))
+  const [wakeWord, setWakeWord] = useState(prefs.voice.wakeWord)
+  const [continuous, setContinous] = useState(prefs.voice.continuous)
+  const handleWakeWordPressed = () => {
+    setWakeWord(!wakeWord)
+    prefs.voice.wakeWord = !wakeWord
+    localStorage.setItem("preferences", JSON.stringify(prefs))
+  }
+  const handleContinuousPressed = () => {
+    setContinous(!continuous)
+    prefs.voice.continuous = !continuous
+    localStorage.setItem("preferences", JSON.stringify(prefs))
+  }
+
+
+
+
   return (
     <>
       <div className="options-panel d-flex flex-column">
@@ -14,13 +31,14 @@ export default function OptionsPanel() {
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">Wake word</p>
-          <button className="btn-primary h-50">On</button>
+          <button onClick={handleWakeWordPressed} className={`btn ${wakeWord ? "btn-primary" : "btn-secondary"} m-0 w-25 text-center`}>   {wakeWord ? "On" : "Off"}</button>
         </div>
 
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">Continuous</p>
-          <button className="btn-primary h-50">On</button>
+          <button onClick={handleContinuousPressed} className={`btn ${continuous ? "btn-primary" : "btn-secondary"} m-0 w-25 text-center`}>
+            {continuous ? "On" : "Off"}</button>
         </div>
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">

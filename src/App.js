@@ -42,10 +42,9 @@ function App({ signOut }) {
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
   const routerHistory = useHistory();
   let peer;
-  
-  
-
-
+  if (!localStorage.getItem("preferences")) {
+    localStorage.setItem("preferences", JSON.stringify({ voice: {}, midi: {} }))
+  }
   const onMIDISuccess = (midiAccess) => {
     const inputs = Array.from(midiAccess.inputs.values())
     const outputs = Array.from(midiAccess.outputs.values())
@@ -108,11 +107,11 @@ function App({ signOut }) {
 
 
 
-  
-  
+
+
   const startConnection = () => {
     peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
-    
+
     peer.on("connect", () => {
       setConnectionStatus("Connected")
       routerHistory.push('/voice-control');
@@ -147,6 +146,9 @@ function App({ signOut }) {
   }
 
   const handleIntentDetection = (finalTranscript) => {
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && finalTranscript.split(" ")[0] !== "TalkBack"){
+      return
+    }
     const config = JSON.parse(sessionStorage.getItem("config"))
     const midiBytes = intentDetection.runDetection(String(finalTranscript), config)
     sysex(midiBytes)
