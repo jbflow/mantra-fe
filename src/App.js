@@ -19,7 +19,7 @@ import { MANUFACTURER_ID } from "./intent_detection/constants";
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
-import Preferences from "./components/Preferences";
+import Preferences from "./components/Preferences/Preferences";
 import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./utils/TranscriptParser";
