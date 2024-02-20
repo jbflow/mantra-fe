@@ -38,6 +38,7 @@ export default function CommandBuilder() {
             dispatch={dispatch}
             postLoading={postLoading}
           />
+      
         ) : (
           <center>
             <div className="actions-placeholder">
