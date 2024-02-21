@@ -67,7 +67,7 @@ export default function Actions({
           </div>
           <p>Actions</p>
         </div>
-        <hr />
+        <hr style={{width: "100%"}}/>
         <DragDropContext onDragEnd={handleOneDragEnd}>
           <Droppable droppableId="actions">
             {(provided) => (
@@ -108,13 +108,13 @@ export default function Actions({
             )}
           </Droppable>
         </DragDropContext>
-
+        
         <div className="actions-card-footer">
-          <div>
+          
             <button
-              className="add-action-button"
+              className={showAddButtons ? "add-action-button add-action-button-clicked": "add-action-button"}
               onClick={() => {
-                setShowAddButtons(true);
+                setShowAddButtons(!showAddButtons);
               }}
               onBlur={() => {
                 setShowAddButtons(false);
@@ -129,7 +129,6 @@ export default function Actions({
                     e.preventDefault();
                   }}
                   onClick={(e) => {
-                    console.log(e);
                     addAction();
                   }}
                 >
@@ -142,10 +141,13 @@ export default function Actions({
                 </button>
               </div>
             ) : null}
-          </div>
-          <div>
+          
+
+
+
+          
             <button
-              className="btn-lg"
+              className="save-action-button"
               onClick={() => {
                 dispatch({
                   type: "UPDATE_ACTIONS",
@@ -154,18 +156,11 @@ export default function Actions({
               }}
               disabled={postLoading}
             >
-              <p>{postLoading ? "Saving..." : "Save"}</p>
+              {postLoading ? "Saving..." : "Save"}
             </button>
-            {/* <button
-              className="btn-lg"
-              onClick={() => {
-                setTestActions(actions);
-              }}
-            >
-              <p>Test</p>
-            </button> */}
+            
           </div>
-        </div>
+       
       </div>
     </>
   );

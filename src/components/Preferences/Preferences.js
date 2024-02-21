@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-bootstrap";
 import { Auth } from "aws-amplify";
-import { UserContext } from "../contexts/UserContext";
+import { UserContext } from "../../contexts/UserContext";
 
 export default function Preferences() {
   const userId = useContext(UserContext).userId;
