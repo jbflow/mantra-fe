@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { useHistory } from 'react-router';
 import "./styles/App.css";
 import "./styles/AppNext.css";
@@ -25,6 +25,7 @@ import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./utils/TranscriptParser";
 import * as spdCompact from "sdp-compact";
 import { CommandsContext } from "./contexts/CommandsContext";
+import useTransferingConfig from "./hooks/useTransferingConfig";
 
 const options = { compress: true };
 const intentDetection = new IntentDetection()
@@ -34,9 +35,13 @@ const transcriptParser = new TranscriptParser()
 function App({ signOut }) {
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
+
+
   const [actions, setActions] = useState(false)
-  const [awaitConfirmation, setAwaitConfirmation] = useState(null)
-  const [confirmation, setConfirmation] = useState(false)
+  const [awaitConfirmation, setAwaitConfirmation] = useState(false)
+  const [confirmation, setConfirmation] = useState()
+  const [configState, startTimer, setConfigTimer] = useTransferingConfig()
+
   const { midi } = useContext(MidiContext)
   const { commands } = useContext(CommandsContext)
   const [mainOutput, setMainOutput] = useState(null)
@@ -47,6 +52,10 @@ function App({ signOut }) {
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
   const routerHistory = useHistory();
   let peer;
+
+
+
+
   if (!localStorage.getItem("preferences")) {
     localStorage.setItem("preferences", JSON.stringify({ voice: {}, midi: {} }))
   }
@@ -63,85 +72,6 @@ function App({ signOut }) {
     console.error(e)
   }
 
-  useEffect(() => {
-    if (midi)
-      navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
-  }, [midi])
-
-
-  useEffect(() => {
-    if (message) {
-      const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
-      if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
-        sessionStorage.setItem("config", JSON.stringify(emptyConfig))
-        sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
-      }
-      else {
-        if (message.data[6] === 0) { // If config update
-          let currentConfig = JSON.parse(sessionStorage.getItem("config"))
-          let updatedConfig = MidiToJson(message.data, currentConfig)
-          sessionStorage.setItem("config", JSON.stringify(updatedConfig))
-        }
-        else if (message.data[6] === 96) { // If confirmation
-          setConfirmation(message.data)
-        }
-      }
-    }
-
-  }, [message])
-
-
-  useEffect(() => {
-    // Send Sysex Handshake
-    if (sysex) {
-      sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
-      sessionStorage.setItem("config", JSON.stringify(emptyConfig))
-    }
-  }, [sysex])
-
-
-
-  useEffect(() => {
-    if (alternatives.length !== 0) {
-      const finalTranscript = transcriptParser.cleanupTranscript(alternatives);
-      handleIntentDetection(finalTranscript)
-      setTranscript(finalTranscript)
-    }
-  }, [alternatives])
-
-
-
-
-
-
-  const startConnection = () => {
-    peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
-
-    peer.on("connect", () => {
-      setConnectionStatus("Connected")
-      routerHistory.push('/voice-control');
-
-    })
-    peer.on("close", () => {
-      setConnectionStatus("Disconnected")
-    })
-
-    peer.on("error", () => {
-      setConnectionStatus("Disconnected")
-    })
-    peer.on("data", (data) => {
-      const transcript = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
-      handleIntentDetection(transcript.toLowerCase())
-    })
-    peer.on('signal', data => {
-      if (data.type === "offer") {
-        data.sdp = spdCompact.compactSDP(data.sdp, { compress: true });
-        const url = window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
-        setCode(url)
-
-      }
-    })
-  }
   const handleQrResult = (data) => {
     if (data) {
       let answer = JSON.parse(atob(data.text))
@@ -178,10 +108,10 @@ function App({ signOut }) {
     if (actions) {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(actions[0]), config)
-      let confirmation = Array.from(midiBytes)
-      confirmation[confirmation.length - 2] = 1
-      confirmation[6] = 96
-      setAwaitConfirmation(confirmation)
+      let confirmationMsg = Array.from(midiBytes)
+      confirmationMsg[confirmationMsg.length - 2] = 1
+      confirmationMsg[6] = 96
+      setAwaitConfirmation(confirmationMsg)
       console.log(midiBytes)
       sysex(midiBytes)
     }
@@ -189,14 +119,103 @@ function App({ signOut }) {
   }, [actions])
 
   useEffect(() => {
-    if (awaitConfirmation && confirmation && actions) {
-      if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) { setActions(actions.slice(1)) }
+    console.log(configState)
+    if (awaitConfirmation && confirmation && actions && !configState) {
+      if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
+        setActions(actions.slice(1))
+      }
       else if (actions.length === 0) {
         console.log("FINISHED EXECUTING MACRO")
         setActions(false)
       }
     }
-  }, [confirmation])
+  }, [configState])
+
+
+  useEffect(() => {
+    if (midi)
+      navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
+  }, [midi])
+
+
+  useEffect(() => {
+    /*/
+    MIDI Entry Point
+   /*/
+    if (message) {
+      const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
+      if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
+        sessionStorage.setItem("config", JSON.stringify(emptyConfig))
+        sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+      }
+      else {
+        if (message.data[6] === 0) { // If config update
+          setConfigTimer(0)
+          let currentConfig = JSON.parse(sessionStorage.getItem("config"))
+          let updatedConfig = MidiToJson(message.data, currentConfig)
+          sessionStorage.setItem("config", JSON.stringify(updatedConfig))
+        }
+        else if (message.data[6] === 96) { // If confirmation
+          setConfirmation(message.data)
+          startTimer()
+
+        }
+      }
+    }
+
+  }, [message])
+
+
+  useEffect(() => {
+    // Send Sysex Handshake
+    if (sysex) {
+      sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+      sessionStorage.setItem("config", JSON.stringify(emptyConfig))
+    }
+  }, [sysex])
+
+
+
+  useEffect(() => {
+    if (alternatives.length !== 0) {
+      const finalTranscript = transcriptParser.cleanupTranscript(alternatives);
+      handleIntentDetection(finalTranscript)
+      setTranscript(finalTranscript)
+    }
+  }, [alternatives])
+
+
+
+
+
+  const startConnection = () => {
+    peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
+
+    peer.on("connect", () => {
+      setConnectionStatus("Connected")
+      routerHistory.push('/voice-control');
+
+    })
+    peer.on("close", () => {
+      setConnectionStatus("Disconnected")
+    })
+
+    peer.on("error", () => {
+      setConnectionStatus("Disconnected")
+    })
+    peer.on("data", (data) => {
+      const transcript = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
+      handleIntentDetection(transcript.toLowerCase())
+    })
+    peer.on('signal', data => {
+      if (data.type === "offer") {
+        data.sdp = spdCompact.compactSDP(data.sdp, { compress: true });
+        const url = window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
+        setCode(url)
+
+      }
+    })
+  }
 
 
 
