@@ -34,7 +34,8 @@ const transcriptParser = new TranscriptParser()
 function App({ signOut }) {
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
-  const [actions, setActions] = useState([])
+  const [actions, setActions] = useState(false)
+  const [awaitConfirmation, setAwaitConfirmation] = useState(null)
   const [confirmation, setConfirmation] = useState(false)
   const { midi } = useContext(MidiContext)
   const { commands } = useContext(CommandsContext)
@@ -81,8 +82,8 @@ function App({ signOut }) {
           let updatedConfig = MidiToJson(message.data, currentConfig)
           sessionStorage.setItem("config", JSON.stringify(updatedConfig))
         }
-        else if (message.data[6] === 1 && message.data[message.data.length - 2]) { // If confirmation
-          // Confirmation Logic goes here
+        else if (message.data[6] === 96) { // If confirmation
+          setConfirmation(message.data)
         }
       }
     }
@@ -175,13 +176,27 @@ function App({ signOut }) {
 
   useEffect(() => {
     if (actions) {
-      for (let action of actions) {
-        const config = JSON.parse(sessionStorage.getItem("config"))
-        const midiBytes = intentDetection.runDetection(String(action), config)
-        sysex(midiBytes)
+      const config = JSON.parse(sessionStorage.getItem("config"))
+      const midiBytes = intentDetection.runDetection(String(actions[0]), config)
+      let confirmation = Array.from(midiBytes)
+      confirmation[confirmation.length - 2] = 1
+      confirmation[6] = 96
+      setAwaitConfirmation(confirmation)
+      console.log(midiBytes)
+      sysex(midiBytes)
+    }
+
+  }, [actions])
+
+  useEffect(() => {
+    if (awaitConfirmation && confirmation && actions) {
+      if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) { setActions(actions.slice(1)) }
+      else if (actions.length === 0) {
+        console.log("FINISHED EXECUTING MACRO")
+        setActions(false)
       }
     }
-  }, [actions])
+  }, [confirmation])
 
 
 
