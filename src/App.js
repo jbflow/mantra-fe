@@ -24,6 +24,7 @@ import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./utils/TranscriptParser";
 import * as spdCompact from "sdp-compact";
+import { CommandsContext } from "./contexts/CommandsContext";
 
 const options = { compress: true };
 const intentDetection = new IntentDetection()
@@ -33,7 +34,10 @@ const transcriptParser = new TranscriptParser()
 function App({ signOut }) {
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
-  const { midi, dispatch } = useContext(MidiContext)
+  const [actions, setActions] = useState([])
+  const [confirmation, setConfirmation] = useState(false)
+  const { midi } = useContext(MidiContext)
+  const { commands } = useContext(CommandsContext)
   const [mainOutput, setMainOutput] = useState(null)
   const [mainInput, setMainInput] = useState(null)
   const message = useMIDIMessage(mainInput)
@@ -146,13 +150,40 @@ function App({ signOut }) {
   }
 
   const handleIntentDetection = (finalTranscript) => {
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && finalTranscript.split(" ")[0] !== "TalkBack"){
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && finalTranscript.split(" ")[0] !== "TalkBack") {
       return
     }
-    const config = JSON.parse(sessionStorage.getItem("config"))
-    const midiBytes = intentDetection.runDetection(String(finalTranscript), config)
-    sysex(midiBytes)
+    const macroActions = checkCommands(finalTranscript)
+    if (macroActions) {
+      setActions(macroActions)
+    }
+    else {
+      const config = JSON.parse(sessionStorage.getItem("config"))
+      const midiBytes = intentDetection.runDetection(String(finalTranscript), config)
+      sysex(midiBytes)
+    }
   }
+
+  const checkCommands = (transcript) => {
+    for (let i = 0; i < commands.length; i++) {
+      if (commands[i].command === transcript) {
+        return commands[i].actions;
+      }
+    }
+    return false;
+  }
+
+  useEffect(() => {
+    if (actions) {
+      for (let action of actions) {
+        const config = JSON.parse(sessionStorage.getItem("config"))
+        const midiBytes = intentDetection.runDetection(String(action), config)
+        sysex(midiBytes)
+      }
+    }
+  }, [actions])
+
+
 
   return (
     <>
