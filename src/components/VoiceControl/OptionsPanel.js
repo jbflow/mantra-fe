@@ -43,8 +43,8 @@ export default function OptionsPanel() {
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">Language</p>
-          <select class="form-select" aria-label="Select Language">
-            <option selected>English (GB)</option>
+          <select className="form-select" aria-label="Select Language">
+            <option>English (GB)</option>
             <option value="1">English (US)</option>
             <option value="2">English (DE)</option>
             <option value="3">English (In)</option>
@@ -54,8 +54,7 @@ export default function OptionsPanel() {
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">MIDI Port</p>
-          <select class="form-select" aria-label="Default select example">
-            <option selected>Select MIDI port</option>
+          <select className="form-select" aria-label="Default select example">
             <option value="1">One</option>
             <option value="2">Two</option>
             <option value="3">Three</option>
@@ -65,8 +64,7 @@ export default function OptionsPanel() {
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">MIDI Type</p>
-          <select class="form-select" aria-label="Default select example">
-            <option selected>Select MIDI port</option>
+          <select className="form-select" aria-label="Default select example">
             <option value="1">One</option>
             <option value="2">Two</option>
             <option value="3">Three</option>
@@ -76,8 +74,7 @@ export default function OptionsPanel() {
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">MIDI CC/Note</p>
-          <select class="form-select" aria-label="Default select example">
-            <option selected>Select MIDI port</option>
+          <select className="form-select" aria-label="Default select example">
             <option value="1">One</option>
             <option value="2">Two</option>
             <option value="3">Three</option>
