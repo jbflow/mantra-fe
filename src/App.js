@@ -178,9 +178,11 @@ function App({ signOut }) {
 
   useEffect(() => {
     if (alternatives.length !== 0) {
-      const finalTranscript = transcriptParser.cleanupTranscript(alternatives);
+      const macroCommands = commands.map(cmd => cmd.command)
+      const finalTranscript = transcriptParser.cleanupTranscript(alternatives, macroCommands);
       handleIntentDetection(finalTranscript)
       setTranscript(finalTranscript)
+      console.log("ALTERNATIVES", alternatives)
     }
   }, [alternatives])
 

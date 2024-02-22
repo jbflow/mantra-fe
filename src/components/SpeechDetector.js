@@ -9,8 +9,10 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
         listening
     } = useSpeechRecognition();
 
+
     const speechRecognition = SpeechRecognition.getRecognition()
-    speechRecognition.maxAlternatives = 10
+    
+    speechRecognition.maxAlternatives = 100
     speechRecognition.interimResults = false
     speechRecognition.continuous = JSON.parse(localStorage.getItem("preferences")).voice.continuous
     speechRecognition.lang = "en-GB"

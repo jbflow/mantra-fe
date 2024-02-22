@@ -54,10 +54,10 @@ export class TranscriptParser {
     }
 
 
-    cleanupTranscript(event) {
+    cleanupTranscript(event, macroCommands) {
         this.currentResult = event.results[event.resultIndex]
         // console.log("CURRENT RESULT: ", this.currentResult)
-        const filteredResults = this.checkPhrases(this.currentResult)
+        const filteredResults = this.checkPhrases(this.currentResult, macroCommands)
         // console.log("FILTERED RESULTS", filteredResults)
         let transcript = ""
         for (let item in replace) {
@@ -66,9 +66,10 @@ export class TranscriptParser {
         return wordsToNumbers(transcript)
     }
 
-    checkPhrases(results) {
+    checkPhrases(results, macroCommands) {
         // Loop through the alternatives to check if any of our hot phrases are contained in them.
         // console.log("alt", results);
+        phrases.concat(macroCommands)
         for (let result in results) {
             if (new RegExp(phrases.join("|")).test(results[result].transcript)) {
                 return results[result].transcript; // Return them if they are
