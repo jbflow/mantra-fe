@@ -109,7 +109,7 @@ function App({ signOut }) {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(actions[0]), config)
       let confirmationMsg = Array.from(midiBytes)
-      confirmationMsg[confirmationMsg.length - 2] = 1
+      confirmationMsg.splice(confirmationMsg.length - 2, 1)
       confirmationMsg[6] = 96
       setAwaitConfirmation(confirmationMsg)
       console.log(midiBytes)
@@ -156,7 +156,9 @@ function App({ signOut }) {
           sessionStorage.setItem("config", JSON.stringify(updatedConfig))
         }
         else if (message.data[6] === 96) { // If confirmation
-          setConfirmation(message.data)
+          let data = Array.from(message.data)
+          data.splice(message.data.length - 2, 1)
+          setConfirmation(data)
           startTimer()
 
         }
