@@ -1,4 +1,5 @@
 import { IntentDetectionBase } from "./IntentDetectionBase";
+import { arraysEqual } from "../utils/utils";
 export class NounSearchEngine extends IntentDetectionBase {
     constructor() {
         super()
@@ -109,7 +110,6 @@ export class NounSearchEngine extends IntentDetectionBase {
                 const t = parseInt(track[0].split("_")[1])
                 clips.push(...this.getNounAdj("clip", config.clip[t], tokenizedInput, [['track', t]]));
             }
-
         }
 
 
@@ -123,34 +123,36 @@ export class NounSearchEngine extends IntentDetectionBase {
         return [...tracks, ...scenes, ...cuePoints, ...devices, ...clips]
     }
     getLoadable(config, tokenizedInput) {
-        const devices = []
-        const tracks = this.getNounAdj("track", config.track.concat, tokenizedInput);
-        for (let track of tracks) {
-            const t = track.index
-            devices.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', t]]))
-            devices.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', t]]))
-            devices.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', t]]))
+        const loadable = []
+        loadable.push(...this.getNounAdj("track", ["audio track", "midi track", "return track"], tokenizedInput))
+
+        if (loadable.length === 0) {
+            const tracks = this.getNounAdj("track", config.track, tokenizedInput);
+            for (let track of tracks) {
+                const t = track.index
+                loadable.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', t]]))
+                loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', t]]))
+                loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', t]]))
+            }
         }
-        if (devices.length === 0 ){
-            devices.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', config.sel_track]]))
-            devices.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', config.sel_track]]))
-            devices.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', config.sel_track]]))
+        if (loadable.length === 0) {
+            loadable.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', config.sel_track]]))
+            loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', config.sel_track]]))
+            loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', config.sel_track]]))
         }
-        return devices
+
+        return loadable
     }
 
     getNounAdj(noun, list, tokenizedInput, parents = []) {
-        console.log("NOUN: ", noun)
-        console.log("list: ", list)
+        // console.log("NOUN: ", noun)
+        // console.log("list: ", list)
         // console.log("tokenizedInput: ", tokenizedInput)
         // console.log("parents: ", parents)
         const nounAdj = [];
         for (const token of tokenizedInput) {
             const integer = this.integerSearch(token, noun);
             const levi = this.leviSearch(token, list);
-            // console.log("LEVI", levi)
-
-
             if (integer) {
                 nounAdj.push({
                     token: token,
@@ -162,6 +164,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             } else if (levi) {
                 // console.log("LEVI: ", levi)
                 for (let l of levi) {
+                    if (arraysEqual(list, ["audio track", "midi track", "return track"])) { l = [16126, 16382, 16254][l] }
                     nounAdj.push({
                         token: token,
                         index: l,
