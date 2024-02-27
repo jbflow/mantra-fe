@@ -35,13 +35,14 @@ const transcriptParser = new TranscriptParser()
 function App({ signOut }) {
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
-
-
+  const [listening, setListening] = useState(false)
+  const [dawLink, setDawLink] = useState(false)
+  const [midiIn, setMidiIn] = useState(false)
+  const [midiOut, setMidiOut] = useState(false)
   const [actions, setActions] = useState(false)
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
-
   const { midi } = useContext(MidiContext)
   const { commands } = useContext(CommandsContext)
   const [mainOutput, setMainOutput] = useState(null)
@@ -105,6 +106,26 @@ function App({ signOut }) {
   }
 
   useEffect(() => {
+    if (mainInput) {
+      mainInput.onstatechange = (event) => {
+        if (event.currentTarget.connection === "open") {
+          setMidiIn(true)
+        }
+
+      }
+    }
+    if (mainOutput) {
+      mainOutput.onstatechange = (event) => {
+        if (event.currentTarget.connection === "open") {
+          setMidiOut(true)
+        }
+
+      }
+    }
+
+  }, [mainInput, mainOutput])
+
+  useEffect(() => {
     if (actions) {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(actions[0]), config)
@@ -112,20 +133,20 @@ function App({ signOut }) {
       confirmationMsg.splice(confirmationMsg.length - 2, 1)
       confirmationMsg[6] = 96
       setAwaitConfirmation(confirmationMsg)
-      console.log(midiBytes)
+      // console.log(midiBytes)
       sysex(midiBytes)
     }
 
   }, [actions])
 
   useEffect(() => {
-    console.log(configState)
+    // console.log(configState)
     if (awaitConfirmation && confirmation && actions && !configState) {
       if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
         setActions(actions.slice(1))
       }
       else if (actions.length === 0) {
-        console.log("FINISHED EXECUTING MACRO")
+        // console.log("FINISHED EXECUTING MACRO")
         setActions(false)
       }
     }
@@ -154,6 +175,9 @@ function App({ signOut }) {
           let currentConfig = JSON.parse(sessionStorage.getItem("config"))
           let updatedConfig = MidiToJson(message.data, currentConfig)
           sessionStorage.setItem("config", JSON.stringify(updatedConfig))
+          if (!dawLink) {
+            setDawLink(true)
+          }
         }
         else if (message.data[6] === 96) { // If confirmation
           let data = Array.from(message.data)
@@ -184,7 +208,6 @@ function App({ signOut }) {
       const finalTranscript = transcriptParser.cleanupTranscript(alternatives, macroCommands);
       handleIntentDetection(finalTranscript)
       setTranscript(finalTranscript)
-      console.log("ALTERNATIVES", alternatives)
     }
   }, [alternatives])
 
@@ -236,7 +259,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} />}
           />
           <Route
             path="/preferences"
@@ -257,7 +280,7 @@ function App({ signOut }) {
           />
         </div>
 
-        <StatusBar connectionStatus={connectionStatus} />
+        <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} listening={listening} />
       </div>
     </>
   );

@@ -18,7 +18,7 @@ import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 import SmartPhone from "../images/smartphone.svg";
 import "../styles/StatusBar.css"
 
-export default function StatusBar({connectionStatus}) {
+export default function StatusBar({connectionStatus, dawLink, midiIn, midiOut, transcript, listening}) {
   const [micConnected, setMicConnected] = useState(false);
   const [showTranscript, setShowTranscript] = useState(true);
 
@@ -47,18 +47,18 @@ export default function StatusBar({connectionStatus}) {
           <img
             alt=""
             className="statusItem"
-            src={true ? MidiInGood : MidiInBad} // Update me
+            src={midiIn ? MidiInGood : MidiInBad} // Update me
           />
           <img
             alt=""
             className="statusItem"
-            src={true ? MidiOutGood : MidiOutBad} // Update me
+            src={midiOut ? MidiOutGood : MidiOutBad} // Update me
           />
           <img alt="" className="statusItem" src={micConnected ? Mic : MicMute} />
           <img
             alt=""
             className="statusItem"
-            src={true ? DawLinkGood : DawLinkBad} // Update me
+            src={dawLink ? DawLinkGood : DawLinkBad} // Update me
           />
           <div
             style={{
@@ -86,11 +86,11 @@ export default function StatusBar({connectionStatus}) {
               color: "white",
             }}
           >
-            {"transcript goes here"}
+            {transcript}
           </div>
           <img
             alt=""
-            src={true ? TlkBckListening : TlkBckNotListening}
+            src={listening ? TlkBckListening : TlkBckNotListening}
           />
           
         </div>

@@ -3,8 +3,7 @@ import SpeechDetector from "../SpeechDetector";
 import React from 'react'
 import OptionsPanel from "./OptionsPanel";
 
-export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives }) {
-  const [listening, setListening] = useState(false)
+export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening }) {
   useEffect(() => {
     setTranscript(finalTranscript)
   }, [finalTranscript])
