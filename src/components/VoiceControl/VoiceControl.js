@@ -3,7 +3,7 @@ import SpeechDetector from "../SpeechDetector";
 import React from 'react'
 import OptionsPanel from "./OptionsPanel";
 
-export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening }) {
+export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, midiInputs }) {
   useEffect(() => {
     setTranscript(finalTranscript)
   }, [finalTranscript])
@@ -11,7 +11,7 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
   return <>
     <div className="voice-control-container">
       <div>
-        <OptionsPanel />
+        <OptionsPanel midiInputs={midiInputs} />
       </div>
       <div className="voice-btn-container">
         <p className="h1">{listening ? "tlkbck is listening!" : "Press to speak"}</p>

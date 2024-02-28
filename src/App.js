@@ -52,6 +52,8 @@ function App({ signOut }) {
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
   const routerHistory = useHistory();
+  const [midiInputs, setMidiInputs] = useState([])
+  const [midiOutputs, setMidiOutputs] = useState([])
   let peer;
 
 
@@ -61,10 +63,10 @@ function App({ signOut }) {
     localStorage.setItem("preferences", JSON.stringify({ voice: {}, midi: {} }))
   }
   const onMIDISuccess = (midiAccess) => {
-    const inputs = Array.from(midiAccess.inputs.values())
-    const outputs = Array.from(midiAccess.outputs.values())
-    setMainInput(inputs.find(input => input.id === midi.mainInput))
-    setMainOutput(outputs.find(output => output.id === midi.mainOutput))
+    setMidiInputs(Array.from(midiAccess.inputs.values()))
+    setMidiOutputs(Array.from(midiAccess.outputs.values()))
+    setMainInput(midiInputs.find(input => input.id === midi.mainInput))
+    setMainOutput(midiOutputs.find(output => output.id === midi.mainOutput))
     mainInput?.open()
     mainOutput?.open()
 
@@ -259,7 +261,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} midiInputs={midiInputs} />}
           />
           <Route
             path="/preferences"
