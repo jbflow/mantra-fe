@@ -5,10 +5,9 @@ export const MidiContext = React.createContext(null);
 
 export default function MidiProvider({ children, url }) {
 
+
   const reducer = (state, action) => {
     switch (action.type) {
-      case "INIT":
-        return action.payload
       case "SAVE_MAIN_INPUT":
         return { ...state, mainInput: action.payload }
       case "SAVE_MAIN_OUTPUT":
@@ -25,21 +24,19 @@ export default function MidiProvider({ children, url }) {
     }
   }
 
-
-
-  const [midi, dispatch] = useReducer(reducer, null)
+  const [midi, dispatch] = useReducer(reducer, localStorage.hasOwnProperty("midiSettings") ? JSON.parse(localStorage.getItem("midiSettings"))
+    : {
+      mainInput: "",
+      mainOutput: "",
+      micInput: "",
+      micMapping: "",
+      cmdOutput: ""
+    })
 
   useEffect(() => {
-    dispatch({
-      type: "INIT", payload: {
-        mainInput: "1176834884",
-        mainOutput: "-317426978",
-        micInput: "",
-        micMapping: "",
-        cmdOutput: ""
-      }
-    })
-  }, [])
+    localStorage.setItem("midiSettings", JSON.stringify(midi))
+  }, [midi])
+
 
   return (
     <MidiContext.Provider value={{ midi, dispatch }}>
