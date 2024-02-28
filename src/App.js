@@ -221,7 +221,8 @@ function App({ signOut }) {
     peer.on("connect", () => {
       setConnectionStatus("Connected")
       routerHistory.push('/voice-control');
-
+      const preferences = localStorage.getItem("preferences")
+      peer.send(preferences)
     })
     peer.on("close", () => {
       setConnectionStatus("Disconnected")
@@ -259,7 +260,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus}/>}
           />
           <Route
             path="/preferences"
