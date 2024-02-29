@@ -7,13 +7,16 @@ export default function MidiProvider({ children, url }) {
   const [midiAccess, setMidiAccess] = useState()
   const [midiInputs, setMidiInputs] = useState()
   const [midiOutputs, setMidiOutputs] = useState()
+  const [mainInput, setMainInput] = useState()
+  const [mainOutput, setMainOutput] = useState()
+  const [micInput, setMicInput] = useState()
 
 
   useEffect(() => {
     requestMIDI()
   }, [])
   const requestMIDI = useCallback(async () => {
-    const midiAccess = await navigator.requestMIDIAccess()
+    const midiAccess = await navigator.requestMIDIAccess({ sysex: true })
     setMidiAccess(() => midiAccess)
     setMidiInputs(() => ([...midiAccess.inputs].map((input) => (input[1]))));
     setMidiOutputs(() => ([...midiAccess.outputs].map((output) => (output[1]))));
@@ -25,10 +28,14 @@ export default function MidiProvider({ children, url }) {
   const reducer = (state, action) => {
     switch (action.type) {
       case "SAVE_MAIN_INPUT":
+        setMainInput(midiInputs.map(input => input.id === action.payload))
         return { ...state, mainInput: action.payload }
       case "SAVE_MAIN_OUTPUT":
+        setMainOutput(midiOutputs.map(output => output.id === action.payload))
         return { ...state, mainOutput: action.payload }
       case "SAVE_MIC_INPUT":
+        console.log("PAYLOAD", action.payload)
+        setMicInput(midiInputs.map(input => input.id === action.payload))
         state.micInput = action.payload
         return { ...state, micInput: action.payload }
       case "SAVE_MIC_MAPPING":
@@ -50,7 +57,7 @@ export default function MidiProvider({ children, url }) {
     })
 
   useEffect(() => {
-    console.log(midiInputs)
+    console.log("MIDI SETTINGS", midiSettings)
     midiInputs?.map((input) => {
       if (input.id === midiSettings.mainInput || input.id === midiSettings.micInput) {
         input.open()
@@ -69,7 +76,7 @@ export default function MidiProvider({ children, url }) {
 
 
   return (
-    <MidiContext.Provider value={{ dispatch, midiSettings, midiAccess, midiInputs, midiOutputs }}>
+    <MidiContext.Provider value={{ dispatch, midiSettings, midiAccess, midiInputs, midiOutputs, mainOutput, mainInput, micInput }}>
       {children}
     </MidiContext.Provider>
   );
