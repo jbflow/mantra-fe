@@ -1,9 +1,9 @@
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Mic from "../images/mic-fill.svg";
-import { useEffect, useState } from 'react';
+import { useEffect, forwardRef, useImperativeHandle } from 'react';
 import "../styles/SpeechDetector.css"
 
-const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
+const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListening }, ref) => {
     const {
         transcript,
         listening
@@ -11,7 +11,7 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
 
 
     const speechRecognition = SpeechRecognition.getRecognition()
-    
+
     speechRecognition.maxAlternatives = 100
     speechRecognition.interimResults = false
     speechRecognition.continuous = JSON.parse(localStorage.getItem("preferences")).voice.continuous
@@ -30,6 +30,12 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
     useEffect(() => {
         setListening(listening)
     }, [listening])
+
+    useImperativeHandle(ref, () => ({
+        startListening() {
+            SpeechRecognition.startListening()
+        }
+    }))
 
 
     return (
@@ -54,5 +60,5 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening }) => {
         </>
 
     );
-};
+})
 export default SpeechDetector;

@@ -26,8 +26,8 @@ export default function MidiProvider({ children, url }) {
 
   const [midi, dispatch] = useReducer(reducer, localStorage.hasOwnProperty("midiSettings") ? JSON.parse(localStorage.getItem("midiSettings"))
     : {
-      mainInput: "",
-      mainOutput: "",
+      mainInput: "-317426978",
+      mainOutput: "1176834884",
       micInput: "",
       micMapping: "",
       cmdOutput: ""
