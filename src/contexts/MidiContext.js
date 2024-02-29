@@ -1,6 +1,4 @@
 import React, { useEffect, useReducer, useState, useCallback } from "react";
-
-
 export const MidiContext = React.createContext(null);
 
 export default function MidiProvider({ children, url }) {
@@ -10,12 +8,6 @@ export default function MidiProvider({ children, url }) {
   const [mainInput, setMainInput] = useState()
   const [mainOutput, setMainOutput] = useState()
   const [micInput, setMicInput] = useState()
-
-
-
-
-
-
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -76,8 +68,6 @@ export default function MidiProvider({ children, url }) {
     })
     localStorage.setItem("midiSettings", JSON.stringify(midiSettings))
   }, [midiSettings, midiInputs, midiOutputs])
-
-
 
   return (
     <MidiContext.Provider value={{ dispatch, midiSettings, midiAccess, midiInputs, midiOutputs, mainOutput, mainInput, micInput }}>

@@ -16,7 +16,6 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
   const [message, clearMessage] = useMIDIMessage(micInput) // listen for midi message
   const speechRef = useRef()
 
-
   const convertToNoteOff = (noteArray) => {
     let newNoteArray = Array.from(noteArray)
     newNoteArray[0] -= 16
@@ -31,17 +30,14 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
 
 
   useEffect(() => {
-    console.log(midiSettings.micMapping)
     if (mapping && message && isMappable(message.data[0])) {
       clearMessage()
       dispatch({ type: "SAVE_MIC_MAPPING", payload: Array.from(message.data.slice(0, 2)) })
     }
     else if (!mapping && message && arraysEqual(Array.from(message.data.slice(0, 2)), midiSettings.micMapping)) {
-      console.log("START")
       speechRef.current.startListening()
     }
     else if (!mapping && message && arraysEqual(Array.from(message.data.slice(0, 2)), convertToNoteOff(midiSettings.micMapping))) {
-      console.log("STOP")
       speechRef.current.stopListening()
     }
 
@@ -53,22 +49,11 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
   }
 
   useEffect(() => {
-    console.log(midiSettings)
     if (midiSettings.micMapping) {
       setMapping(false)
     }
 
   }, [midiSettings])
-
-
-  useEffect(() => {
-    console.log(midiSettings)
-
-  }, [])
-
-
-
-
 
   return <>
     <div className="voice-control-container">
