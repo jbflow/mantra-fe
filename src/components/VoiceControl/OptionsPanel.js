@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { MidiContext } from '../../contexts/MidiContext'
 import "../../styles/VoiceControl.css"
+import useMIDIMessage from '../../hooks/useMIDIMessage'
 
 export default function OptionsPanel({ midiInputs }) {
   const prefs = JSON.parse(localStorage.getItem("preferences"))
   const [wakeWord, setWakeWord] = useState(prefs.voice.wakeWord)
   const [continuous, setContinous] = useState(prefs.voice.continuous)
   const { midi, dispatch } = useContext(MidiContext)
+  
+  const [mapping, setMapping] = useState(false) // button state
+  const [mappingPort, setMappingPort] = useState(midiInputs.map(input => input.id === midi.micInput)) // port to accept mappings
+  const message = useMIDIMessage(mappingPort) // listen for midi message
+  const [mappingMessage, setMappingMessage] = useState([]) // mapped message
   const handleWakeWordPressed = () => {
     setWakeWord(!wakeWord)
     prefs.voice.wakeWord = !wakeWord
@@ -18,14 +24,49 @@ export default function OptionsPanel({ midiInputs }) {
     localStorage.setItem("preferences", JSON.stringify(prefs))
   }
 
+  useEffect(() => {
+    console.log(mappingMessage)
+
+  }, [mappingMessage])
+
   const handleMidiPortChanged = (event) => {
+    midiInputs.map((input) => {
+      if (input.id === event.target.value) {
+        input.open()
+        setMappingPort(input)
+      }
+      else {
+        // Handle Logic for closing unused ports
+      }
+    })
     dispatch({ type: "SAVE_MIC_INPUT", payload: event.target.value })
   }
 
-  useEffect(() => {
-    console.log(midi)
+  const handleMapMic = () => {
+    setMapping(true)
+  }
 
-  }, [midi])
+  useEffect(() => {
+    if (mapping && message) {
+      setMappingMessage(message.data)
+      setMapping(false)
+      dispatch({ type: "SAVE_MIC_MAPPING", payload: message.data[1] })
+    }
+  }, [mapping, message])
+
+  useEffect(()=> {
+    midiInputs.map((input) => {
+      if (input.id === midi.micInput) {
+        input.open()
+        setMappingPort(input)
+      }
+      else {
+        // Handle Logic for closing unused ports
+      }
+    })
+  }, [midiInputs])
+
+
 
 
   return (
@@ -58,37 +99,22 @@ export default function OptionsPanel({ midiInputs }) {
             <option value="2">English (DE)</option>
             <option value="3">English (In)</option>
           </select>
-
         </div>
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">MIDI Port</p>
-          <select className="form-select" aria-label="wake word midi port" onChange={handleMidiPortChanged}>
+          <select className="form-select" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midi?.micInput}>
             {midiInputs.map((input) => (
-             
-              <option value={input.id} key={input.id} selected={input.id === midi?.micInput}>{input.name}</option>
+              <option value={input.id} key={input.id}>{input.name}</option>
             ))}
           </select>
-
         </div>
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-          <p className="p-3 text-secondary m-0">MIDI Type</p>
-          <select className="form-select" aria-label="Default select example">
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-
-        </div>
-
-        <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-          <p className="p-3 text-secondary m-0">MIDI CC/Note</p>
-          <select className="form-select" aria-label="Default select example">
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
+          <p className="p-3">
+            <button disabled={mapping} style={{ width: "7rem" }} className="btn btn-primary text-center" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
+          </p>
+          <p>{JSON.stringify(mappingMessage)}</p>
 
         </div>
       </div>
