@@ -1,9 +1,25 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState, useCallback } from "react";
 
 
 export const MidiContext = React.createContext(null);
 
 export default function MidiProvider({ children, url }) {
+  const [midiAccess, setMidiAccess] = useState()
+  const [midiInputs, setMidiInputs] = useState()
+  const [midiOutputs, setMidiOutputs] = useState()
+
+
+  useEffect(() => {
+    requestMIDI()
+  }, [])
+  const requestMIDI = useCallback(async () => {
+    const midiAccess = await navigator.requestMIDIAccess()
+    setMidiAccess(() => midiAccess)
+    setMidiInputs(() => ([...midiAccess.inputs].map((input) => (input[1]))));
+    setMidiOutputs(() => ([...midiAccess.outputs].map((output) => (output[1]))));
+  }, [])
+
+
 
 
   const reducer = (state, action) => {
@@ -24,22 +40,36 @@ export default function MidiProvider({ children, url }) {
     }
   }
 
-  const [midi, dispatch] = useReducer(reducer, localStorage.hasOwnProperty("midiSettings") ? JSON.parse(localStorage.getItem("midiSettings"))
+  const [midiSettings, dispatch] = useReducer(reducer, localStorage.hasOwnProperty("midiSettings") ? JSON.parse(localStorage.getItem("midiSettings"))
     : {
-      mainInput: "-317426978",
-      mainOutput: "1176834884",
+      mainInput: "1176834884",
+      mainOutput: "-317426978",
       micInput: "",
       micMapping: "",
       cmdOutput: ""
     })
 
   useEffect(() => {
-    localStorage.setItem("midiSettings", JSON.stringify(midi))
-  }, [midi])
+    console.log(midiInputs)
+    midiInputs?.map((input) => {
+      if (input.id === midiSettings.mainInput || input.id === midiSettings.micInput) {
+        input.open()
+      }
+      else {
+        input.close()
+      }
+    })
+    midiOutputs?.map((output) => {
+      if (output.id === midiSettings.mainOutput) {
+        output.open()
+      }
+    })
+    localStorage.setItem("midiSettings", JSON.stringify(midiSettings))
+  }, [midiSettings, midiInputs, midiOutputs])
 
 
   return (
-    <MidiContext.Provider value={{ midi, dispatch }}>
+    <MidiContext.Provider value={{ dispatch, midiSettings, midiAccess, midiInputs, midiOutputs }}>
       {children}
     </MidiContext.Provider>
   );

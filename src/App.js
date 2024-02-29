@@ -62,18 +62,18 @@ function App({ signOut }) {
   if (!localStorage.getItem("preferences")) {
     localStorage.setItem("preferences", JSON.stringify({ voice: {}, midi: {} }))
   }
-  const onMIDISuccess = (midiAccess) => {
-    setMidiInputs(Array.from(midiAccess.inputs.values()))
-    setMidiOutputs(Array.from(midiAccess.outputs.values()))
-    setMainInput(midiInputs.find(input => input.id === midi.mainInput))
-    setMainOutput(midiOutputs.find(output => output.id === midi.mainOutput))
-    mainInput?.open()
-    mainOutput?.open()
+  // const onMIDISuccess = (midiAccess) => {
+  //   setMidiInputs(Array.from(midiAccess.inputs.values()))
+  //   setMidiOutputs(Array.from(midiAccess.outputs.values()))
+  //   setMainInput(midiInputs.find(input => input.id === midi.mainInput))
+  //   setMainOutput(midiOutputs.find(output => output.id === midi.mainOutput))
+  //   mainInput?.open()
+  //   mainOutput?.open()
 
-  }
-  const onMIDIFailure = (e) => {
-    console.error(e)
-  }
+  // }
+  // const onMIDIFailure = (e) => {
+  //   console.error(e)
+  // }
 
   const handleQrResult = (data) => {
     if (data) {
@@ -155,10 +155,10 @@ function App({ signOut }) {
   }, [configState])
 
 
-  useEffect(() => {
-    if (midi)
-      navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
-  }, [midi])
+  // useEffect(() => {
+  //   if (midi)
+  //     navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
+  // }, [midi])
 
 
   useEffect(() => {
