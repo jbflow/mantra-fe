@@ -44,9 +44,11 @@ function App({ signOut }) {
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
   const { commands } = useContext(CommandsContext)
-  const {midiInputs, mainOutput, mainInput} = useContext(MidiContext)
-  const message = useMIDIMessage(mainInput)
+  const { midiInputs, mainOutput, mainInput } = useContext(MidiContext)
+
+  const [message] = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
+
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
   const routerHistory = useHistory();
@@ -92,6 +94,7 @@ function App({ signOut }) {
   }
 
   useEffect(() => {
+
     if (mainInput) {
       mainInput.onstatechange = (event) => {
         if (event.currentTarget.connection === "open") {
@@ -105,7 +108,6 @@ function App({ signOut }) {
         if (event.currentTarget.connection === "open") {
           setMidiOut(true)
         }
-
       }
     }
 

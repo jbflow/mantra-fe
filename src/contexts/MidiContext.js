@@ -12,15 +12,7 @@ export default function MidiProvider({ children, url }) {
   const [micInput, setMicInput] = useState()
 
 
-  useEffect(() => {
-    requestMIDI()
-  }, [])
-  const requestMIDI = useCallback(async () => {
-    const midiAccess = await navigator.requestMIDIAccess({ sysex: true })
-    setMidiAccess(() => midiAccess)
-    setMidiInputs(() => ([...midiAccess.inputs].map((input) => (input[1]))));
-    setMidiOutputs(() => ([...midiAccess.outputs].map((output) => (output[1]))));
-  }, [])
+
 
 
 
@@ -28,14 +20,13 @@ export default function MidiProvider({ children, url }) {
   const reducer = (state, action) => {
     switch (action.type) {
       case "SAVE_MAIN_INPUT":
-        setMainInput(midiInputs.map(input => input.id === action.payload))
+        setMainInput(midiInputs.find(input => input.id === action.payload))
         return { ...state, mainInput: action.payload }
       case "SAVE_MAIN_OUTPUT":
-        setMainOutput(midiOutputs.map(output => output.id === action.payload))
+        setMainOutput(midiOutputs.find(output => output.id === action.payload))
         return { ...state, mainOutput: action.payload }
       case "SAVE_MIC_INPUT":
-        console.log("PAYLOAD", action.payload)
-        setMicInput(midiInputs.map(input => input.id === action.payload))
+        setMicInput(midiInputs.find(input => input.id === action.payload))
         state.micInput = action.payload
         return { ...state, micInput: action.payload }
       case "SAVE_MIC_MAPPING":
@@ -57,22 +48,35 @@ export default function MidiProvider({ children, url }) {
     })
 
   useEffect(() => {
-    console.log("MIDI SETTINGS", midiSettings)
+    requestMIDI()
+  }, [])
+  const requestMIDI = useCallback(async () => {
+    const midiAccess = await navigator.requestMIDIAccess({ sysex: true })
+    setMidiAccess(() => midiAccess)
+    setMidiInputs(() => ([...midiAccess.inputs].map((input) => (input[1]))));
+    setMidiOutputs(() => ([...midiAccess.outputs].map((output) => (output[1]))));
+  }, [])
+
+  useEffect(() => {
     midiInputs?.map((input) => {
-      if (input.id === midiSettings.mainInput || input.id === midiSettings.micInput) {
+      if (input.id === midiSettings.mainInput){
         input.open()
+        setMainInput(input)
       }
-      else {
-        input.close()
+      if (input.id === midiSettings.micInput) {
+        input.open()
+        setMicInput(input)
       }
     })
     midiOutputs?.map((output) => {
       if (output.id === midiSettings.mainOutput) {
         output.open()
+        setMainOutput(output)
       }
     })
     localStorage.setItem("midiSettings", JSON.stringify(midiSettings))
   }, [midiSettings, midiInputs, midiOutputs])
+
 
 
   return (
