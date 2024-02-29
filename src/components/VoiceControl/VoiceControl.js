@@ -4,33 +4,69 @@ import React from 'react'
 import OptionsPanel from "./OptionsPanel";
 import useMIDIMessage from "../../hooks/useMIDIMessage";
 import { MidiContext } from "../../contexts/MidiContext";
+import { arraysEqual } from "../../utils/utils";
 
 
 export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening }) {
   useEffect(() => {
     setTranscript(finalTranscript)
   }, [finalTranscript])
-  const { midiSettings, midiInputs, dispatch, micInput } = useContext(MidiContext)
+  const { dispatch, midiSettings, micInput } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
-  const message = useMIDIMessage(micInput) // listen for midi message
+  const [message, clearMessage] = useMIDIMessage(micInput) // listen for midi message
   const speechRef = useRef()
 
 
+  const convertToNoteOff = (noteArray) => {
+    let newNoteArray = Array.from(noteArray)
+    newNoteArray[0] -= 16
+    return newNoteArray
+  }
+
+  const isMappable = (statusByte) =>{
+    return (statusByte >= 128 && statusByte <= 143) || // Note Off (128-143)
+           (statusByte >= 144 && statusByte <= 159) || // Note On (144-159)
+           (statusByte >= 176 && statusByte <= 191);   // Control Change (176-191)
+}
+
+
   useEffect(() => {
-    if (mapping && message) {
-      setMapping(false)
-      dispatch({ type: "SAVE_MIC_MAPPING", payload: message.data[1] })
+    console.log(midiSettings.micMapping)
+    if (mapping && message && isMappable(message.data[0])) {
+      clearMessage()
+      dispatch({ type: "SAVE_MIC_MAPPING", payload: Array.from(message.data.slice(0, 2)) })
     }
-    else if(!mapping && message && message.data[1] === midiSettings.micMapping){
-      console.log("HELLO")
+    else if (!mapping && message && arraysEqual(Array.from(message.data.slice(0, 2)), midiSettings.micMapping)) {
+      console.log("START")
       speechRef.current.startListening()
-     
     }
+    else if (!mapping && message && arraysEqual(Array.from(message.data.slice(0, 2)), convertToNoteOff(midiSettings.micMapping))) {
+      console.log("STOP")
+      speechRef.current.stopListening()
+    }
+
   }, [mapping, message])
 
   const handleMapMic = () => {
+    dispatch({ type: "SAVE_MIC_MAPPING", payload: null })
     setMapping(true)
   }
+
+  useEffect(() => {
+    console.log(midiSettings)
+    if (midiSettings.micMapping) {
+      setMapping(false)
+    }
+
+  }, [midiSettings])
+
+
+  useEffect(() => {
+    console.log(midiSettings)
+
+  }, [])
+
+
 
 
 

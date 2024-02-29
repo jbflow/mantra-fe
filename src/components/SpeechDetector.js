@@ -34,8 +34,12 @@ const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListenin
     useImperativeHandle(ref, () => ({
         startListening() {
             SpeechRecognition.startListening()
+        },
+        stopListening() {
+            SpeechRecognition.stopListening()
         }
     }))
+    
 
 
     return (

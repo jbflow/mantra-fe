@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { MidiContext } from '../../contexts/MidiContext'
 import "../../styles/VoiceControl.css"
 
@@ -23,6 +23,7 @@ export default function OptionsPanel({mapping, handleMapMic }) {
   const handleMidiPortChanged = (event) => {
     dispatch({type: "SAVE_MIC_INPUT", payload: event.target.value})
   }
+  
 
   return (
     <>
