@@ -3,16 +3,12 @@ import { MidiContext } from '../../contexts/MidiContext'
 import "../../styles/VoiceControl.css"
 import useMIDIMessage from '../../hooks/useMIDIMessage'
 
-export default function OptionsPanel({ midiInputs }) {
+export default function OptionsPanel({ midiInputs, setMappingPort, mapping, setMapping, mappedMessage }) {
   const prefs = JSON.parse(localStorage.getItem("preferences"))
   const [wakeWord, setWakeWord] = useState(prefs.voice.wakeWord)
   const [continuous, setContinous] = useState(prefs.voice.continuous)
   const { midi, dispatch } = useContext(MidiContext)
-  
-  const [mapping, setMapping] = useState(false) // button state
-  const [mappingPort, setMappingPort] = useState(midiInputs.map(input => input.id === midi.micInput)) // port to accept mappings
-  const message = useMIDIMessage(mappingPort) // listen for midi message
-  const [mappingMessage, setMappingMessage] = useState([]) // mapped message
+
   const handleWakeWordPressed = () => {
     setWakeWord(!wakeWord)
     prefs.voice.wakeWord = !wakeWord
@@ -25,9 +21,9 @@ export default function OptionsPanel({ midiInputs }) {
   }
 
   useEffect(() => {
-    console.log(mappingMessage)
+    console.log(mappedMessage)
 
-  }, [mappingMessage])
+  }, [mappedMessage])
 
   const handleMidiPortChanged = (event) => {
     midiInputs.map((input) => {
@@ -46,25 +42,7 @@ export default function OptionsPanel({ midiInputs }) {
     setMapping(true)
   }
 
-  useEffect(() => {
-    if (mapping && message) {
-      setMappingMessage(message.data)
-      setMapping(false)
-      dispatch({ type: "SAVE_MIC_MAPPING", payload: message.data[1] })
-    }
-  }, [mapping, message])
 
-  useEffect(()=> {
-    midiInputs.map((input) => {
-      if (input.id === midi.micInput) {
-        input.open()
-        setMappingPort(input)
-      }
-      else {
-        // Handle Logic for closing unused ports
-      }
-    })
-  }, [midiInputs])
 
 
 
@@ -114,8 +92,7 @@ export default function OptionsPanel({ midiInputs }) {
           <p className="p-3">
             <button disabled={mapping} style={{ width: "7rem" }} className="btn btn-primary text-center" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
           </p>
-          <p>{JSON.stringify(mappingMessage)}</p>
-
+          <p>{JSON.stringify(mappedMessage)}</p>
         </div>
       </div>
     </>
