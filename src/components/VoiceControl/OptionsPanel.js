@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { MidiContext } from '../../contexts/MidiContext'
 import "../../styles/VoiceControl.css"
-import useMIDIMessage from '../../hooks/useMIDIMessage'
 
-export default function OptionsPanel({ midiInputs, setMappingPort, mapping, setMapping, mappedMessage }) {
+
+export default function OptionsPanel({mapping, handleMapMic }) {
   const prefs = JSON.parse(localStorage.getItem("preferences"))
   const [wakeWord, setWakeWord] = useState(prefs.voice.wakeWord)
   const [continuous, setContinous] = useState(prefs.voice.continuous)
-  const { midi, dispatch } = useContext(MidiContext)
+  const { midiSettings, midiInputs, dispatch } = useContext(MidiContext)
 
   const handleWakeWordPressed = () => {
     setWakeWord(!wakeWord)
@@ -20,32 +20,9 @@ export default function OptionsPanel({ midiInputs, setMappingPort, mapping, setM
     localStorage.setItem("preferences", JSON.stringify(prefs))
   }
 
-  useEffect(() => {
-    console.log(mappedMessage)
-
-  }, [mappedMessage])
-
   const handleMidiPortChanged = (event) => {
-    midiInputs.map((input) => {
-      if (input.id === event.target.value) {
-        input.open()
-        setMappingPort(input)
-      }
-      else {
-        // Handle Logic for closing unused ports
-      }
-    })
-    dispatch({ type: "SAVE_MIC_INPUT", payload: event.target.value })
+    dispatch({type: "SAVE_MIC_INPUT", payload: event.target.value})
   }
-
-  const handleMapMic = () => {
-    setMapping(true)
-  }
-
-
-
-
-
 
   return (
     <>
@@ -81,8 +58,8 @@ export default function OptionsPanel({ midiInputs, setMappingPort, mapping, setM
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">MIDI Port</p>
-          <select className="form-select" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midi?.micInput}>
-            {midiInputs.map((input) => (
+          <select className="form-select" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midiSettings?.micInput}>
+            {midiInputs?.map((input) => (
               <option value={input.id} key={input.id}>{input.name}</option>
             ))}
           </select>
@@ -92,7 +69,7 @@ export default function OptionsPanel({ midiInputs, setMappingPort, mapping, setM
           <p className="p-3">
             <button disabled={mapping} style={{ width: "7rem" }} className="btn btn-primary text-center" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
           </p>
-          <p>{JSON.stringify(mappedMessage)}</p>
+          <p>ssfidj</p>
         </div>
       </div>
     </>

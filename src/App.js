@@ -43,17 +43,13 @@ function App({ signOut }) {
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
-  const { midi } = useContext(MidiContext)
   const { commands } = useContext(CommandsContext)
-  const [mainOutput, setMainOutput] = useState(null)
-  const [mainInput, setMainInput] = useState(null)
+  const {midiInputs, mainOutput, mainInput} = useContext(MidiContext)
   const message = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
   const routerHistory = useHistory();
-  const [midiInputs, setMidiInputs] = useState([])
-  const [midiOutputs, setMidiOutputs] = useState([])
   let peer;
 
 
@@ -62,18 +58,6 @@ function App({ signOut }) {
   if (!localStorage.getItem("preferences")) {
     localStorage.setItem("preferences", JSON.stringify({ voice: {}, midi: {} }))
   }
-  // const onMIDISuccess = (midiAccess) => {
-  //   setMidiInputs(Array.from(midiAccess.inputs.values()))
-  //   setMidiOutputs(Array.from(midiAccess.outputs.values()))
-  //   setMainInput(midiInputs.find(input => input.id === midi.mainInput))
-  //   setMainOutput(midiOutputs.find(output => output.id === midi.mainOutput))
-  //   mainInput?.open()
-  //   mainOutput?.open()
-
-  // }
-  // const onMIDIFailure = (e) => {
-  //   console.error(e)
-  // }
 
   const handleQrResult = (data) => {
     if (data) {
@@ -155,10 +139,6 @@ function App({ signOut }) {
   }, [configState])
 
 
-  // useEffect(() => {
-  //   if (midi)
-  //     navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
-  // }, [midi])
 
 
   useEffect(() => {
