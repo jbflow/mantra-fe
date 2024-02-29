@@ -12,7 +12,7 @@ import {
 import { Auth } from "aws-amplify";
 import { UserContext } from "../../contexts/UserContext";
 
-export default function Preferences() {
+export default function AccountPreferences() {
   const userId = useContext(UserContext).userId;
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

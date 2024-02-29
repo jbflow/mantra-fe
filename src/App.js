@@ -19,7 +19,7 @@ import { MANUFACTURER_ID } from "./intent_detection/constants";
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
-import Preferences from "./components/Preferences/Preferences";
+import PreferencesPage from "./components/Preferences/PreferencesPage";
 import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./utils/TranscriptParser";
@@ -261,9 +261,13 @@ function App({ signOut }) {
             path="/voice-control"
             render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} />}
           />
-          <Route
+          {/* <Route
             path="/preferences"
             render={(props) => <Preferences {...props} />}
+          /> */}
+          <Route
+          path="/account"
+            render={(props) => <PreferencesPage {...props} />}
           />
           <Route
             path="/commands"
