@@ -28,11 +28,7 @@ export default function OptionsPanel({mapping, handleMapMic }) {
   return (
     <>
       <div className="options-panel d-flex flex-column">
-        <div className="d-flex flex-direction-row" style={{ borderBottom: "0.2px solid grey" }}>
-          <p className="h4 p-3" >
-            Options
-          </p>
-        </div>
+        
 
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
