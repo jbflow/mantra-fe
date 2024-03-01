@@ -3,24 +3,21 @@ import MidiPreferences from "./MidiPreferences"
 import AccountPreferences from "./AccountPreferences"
 
 export default function Preferences() {
-    const [page, setPage] = useState("account")
-    return (
+  const [page, setPage] = useState("account")
+  return (
     <>
-    <div className="voice-control-container">
-     <div className="options-panel d-flex flex-column">
-        <div className="d-flex flex-direction-row" style={{ borderBottom: "0.2px solid grey" }}>
-          <p className="h4 p-3" >
-            Preferences
-          </p>
+      <div className="voice-control-container">
+        <div>
+          <div className="options-panel d-flex flex-column">
+            <p className="p-3" onClick={() => setPage("midi")}>MIDI</p>
+            <p className="p-3" onClick={() => setPage("account")}>Account</p>
+          </div>
         </div>
-        <p className="h5 p-3" onClick={() => setPage("midi")}>MIDI</p>
-        <p className="h5 p-3" onClick={() => setPage("account")}>Account</p>
-    </div>
-    
-    {page === "midi" && <MidiPreferences />}
-    {page === "account" && <AccountPreferences />}
-    </div>
+
+        {page === "midi" && <MidiPreferences />}
+        {page === "account" && <AccountPreferences />}
+      </div>
     </>
-    )
+  )
 }
 
