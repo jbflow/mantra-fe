@@ -18,7 +18,6 @@ export function usePostToApi(state, url) {
       }
     };
     if (initRender.current && state) {
-      console.log("init render", state);
       initRender.current = false;
     } else if (state) {
       console.log("post", state);

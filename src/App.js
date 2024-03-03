@@ -43,12 +43,12 @@ function App({ signOut }) {
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
-  const { midi } = useContext(MidiContext)
   const { commands } = useContext(CommandsContext)
-  const [mainOutput, setMainOutput] = useState(null)
-  const [mainInput, setMainInput] = useState(null)
-  const message = useMIDIMessage(mainInput)
+  const { midiInputs, mainOutput, mainInput } = useContext(MidiContext)
+
+  const [message] = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
+
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
   const routerHistory = useHistory();
@@ -59,18 +59,6 @@ function App({ signOut }) {
 
   if (!localStorage.getItem("preferences")) {
     localStorage.setItem("preferences", JSON.stringify({ voice: {}, midi: {} }))
-  }
-  const onMIDISuccess = (midiAccess) => {
-    const inputs = Array.from(midiAccess.inputs.values())
-    const outputs = Array.from(midiAccess.outputs.values())
-    setMainInput(inputs.find(input => input.id === midi.mainInput))
-    setMainOutput(outputs.find(output => output.id === midi.mainOutput))
-    mainInput?.open()
-    mainOutput?.open()
-
-  }
-  const onMIDIFailure = (e) => {
-    console.error(e)
   }
 
   const handleQrResult = (data) => {
@@ -106,6 +94,7 @@ function App({ signOut }) {
   }
 
   useEffect(() => {
+
     if (mainInput) {
       mainInput.onstatechange = (event) => {
         if (event.currentTarget.connection === "open") {
@@ -119,7 +108,6 @@ function App({ signOut }) {
         if (event.currentTarget.connection === "open") {
           setMidiOut(true)
         }
-
       }
     }
 
@@ -153,10 +141,6 @@ function App({ signOut }) {
   }, [configState])
 
 
-  useEffect(() => {
-    if (midi)
-      navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
-  }, [midi])
 
 
   useEffect(() => {
@@ -259,7 +243,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} midiInputs={midiInputs} />}
           />
           {/* <Route
             path="/preferences"
