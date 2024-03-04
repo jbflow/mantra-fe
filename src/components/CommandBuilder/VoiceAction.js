@@ -3,7 +3,7 @@ import { IoMdCopy } from "react-icons/io";
 
 export default function VoiceAction({
   index,
-  action,
+  data,
   actionChanged,
   delAction,
   duplAction,
@@ -21,7 +21,7 @@ export default function VoiceAction({
           </div>
           <input
             type="text"
-            value={action}
+            value={data}
             onChange={(e) => {
               actionChanged(e, index);
             }}

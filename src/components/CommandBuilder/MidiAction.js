@@ -3,7 +3,7 @@ import { IoMdCopy } from "react-icons/io";
 
 export default function MidiAction({
   index,
-  action,
+  data,
   actionChanged,
   delAction,
   duplAction,
@@ -19,14 +19,7 @@ export default function MidiAction({
           <div className="action-grab" {...provided.dragHandleProps}>
             <img alt="" src="./images/menu-icons/grip.svg" />
           </div>
-          <input
-            type="text"
-            value={action}
-            onChange={(e) => {
-              actionChanged(e, index);
-            }}
-            autoFocus
-          />
+          {data}
         </div>
         <div>
           <div

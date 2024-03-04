@@ -92,7 +92,7 @@ export default function Actions({
                             <VoiceAction
                               key={`${key}`}
                               index={key}
-                              action={action.data}
+                              data={action.data}
                               actionChanged={actionChanged}
                               delAction={delAction}
                               duplAction={duplAction}
@@ -109,7 +109,7 @@ export default function Actions({
                             <MidiAction
                               key={`${key}`}
                               index={key}
-                              action={action.data}
+                              data={JSON.stringify(action.data)}
                               actionChanged={actionChanged}
                               delAction={delAction}
                               duplAction={duplAction}
