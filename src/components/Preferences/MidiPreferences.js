@@ -38,6 +38,12 @@ export default function MidiPreferences() {
     dispatch({type: "SAVE_MAIN_OUTPUT", payload: event.target.value})
   }
 
+  const handleCommandPortsChanged = (ports) => {
+    setSelectedCommandPorts(ports)
+    dispatch({type: "SAVE_CMD_PORTS", payload: ports})
+
+  }
+
 
 
   const updateCommandPort = () => {
@@ -99,7 +105,7 @@ export default function MidiPreferences() {
               const options = [...e.target.selectedOptions]
               const values = options.map(i => i.value) // .map(option => ({id: option.value, name: option.name}))
               console.log({ values })
-              setSelectedCommandPorts([...selectedCommandPorts, ...values])
+              handleCommandPortsChanged([...selectedCommandPorts, ...values])
               setAvailableCommandPorts(availableCommandPorts.filter(i => i !== values[0]))
             }}>
               {availableCommandPorts.map((i) => {
@@ -110,12 +116,12 @@ export default function MidiPreferences() {
             </select>
           </div>
           <div className="flex-col">
-            <p>Selected</p>
+            <p>Open for Commands</p>
             <select multiple={true} className="form-select" aria-label="Default select example" onChange={e => {
               const options = [...e.target.selectedOptions]
               const values = options.map(option => option.value)
               setAvailableCommandPorts([...availableCommandPorts, ...values])
-              setSelectedCommandPorts(selectedCommandPorts.filter(i => i !== values[0]))
+              handleCommandPortsChanged(selectedCommandPorts.filter(i => i !== values[0]))
             }}>
               {selectedCommandPorts.map((i) => {
                 return (
