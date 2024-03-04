@@ -289,6 +289,13 @@
   outline: None;
 }
 
+.midi-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .add-action-button {
   background: #ffffff;
   border: 1px solid #eeeeee;

@@ -1,6 +1,6 @@
 import React from "react";
 import { IoMdCopy } from "react-icons/io";
-
+import "./Commands.css"
 export default function MidiAction({
   index,
   data,
@@ -19,7 +19,49 @@ export default function MidiAction({
           <div className="action-grab" {...provided.dragHandleProps}>
             <img alt="" src="./images/menu-icons/grip.svg" />
           </div>
-          {data}
+
+          <div className="midi-action">
+            <div>
+              <label className="px-3">port</label>
+              <select className="form-select px-3" aria-label="Default select example">
+                <option>-</option>
+              </select>
+            </div>
+            <div>
+              <label className="px-3">ch</label>
+              <select className="form-select px-3" aria-label="Default select example">
+                <option>-</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="px-3">type</label>
+              <select className="form-select px-3" aria-label="Default select example">
+                <option>-</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="px-3">data</label>
+              <select className="form-select px-3" aria-label="Default select example">
+                <option>-</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="px-3">value</label>
+              <select className="form-select px-3" aria-label="Default select example">
+                <option>-</option>
+              </select>
+            </div>
+          </div>
+
+
+
+
+
+
+
         </div>
         <div>
           <div
