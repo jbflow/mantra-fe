@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IoMdCopy } from "react-icons/io";
 import "./Commands.css"
+import { MidiContext } from "../../contexts/MidiContext";
 export default function MidiAction({
   index,
   data,
@@ -9,6 +10,20 @@ export default function MidiAction({
   duplAction,
   provided,
 }) {
+  const {midiOutputs, midiSettings} = useContext(MidiContext)
+  const [availableOutputs, setAvailableOutputs] = useState([])
+
+
+  const getAvailableOutputNames = () => {
+    return midiSettings.cmdPorts.map(id => midiOutputs.find(obj => obj.id === id)?.name).filter(Boolean);
+  }
+
+
+  useEffect(() => {
+    if(midiSettings && midiOutputs){
+      setAvailableOutputs(getAvailableOutputNames())
+    }
+  }, [midiSettings, midiOutputs])
   return (
     <>
       <div className="action-container">
@@ -24,7 +39,9 @@ export default function MidiAction({
             <div>
               <label className="px-3">port</label>
               <select className="form-select px-3" aria-label="Default select example">
-                <option>-</option>
+                {availableOutputs.map((output) => (
+                  <option key={output}>{output}</option>
+                ))}
               </select>
             </div>
             <div>

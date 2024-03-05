@@ -52,7 +52,7 @@ export default function MidiProvider({ children, url }) {
 
   useEffect(() => {
     midiInputs?.map((input) => {
-      if (input.id === midiSettings.mainInput){
+      if (input.id === midiSettings.mainInput) {
         input.open()
         setMainInput(input)
       }
@@ -65,6 +65,9 @@ export default function MidiProvider({ children, url }) {
       if (output.id === midiSettings.mainOutput) {
         output.open()
         setMainOutput(output)
+      }
+      if (midiSettings.cmdPorts.includes(output.id)) {
+        output.open()
       }
     })
     localStorage.setItem("midiSettings", JSON.stringify(midiSettings))

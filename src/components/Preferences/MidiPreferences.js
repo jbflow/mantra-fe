@@ -44,12 +44,6 @@ export default function MidiPreferences() {
 
   }
 
-
-
-  const updateCommandPort = () => {
-
-  }
-
   return (
     <>
       <div className="voice-btn-container">
