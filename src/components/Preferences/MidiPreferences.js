@@ -4,13 +4,7 @@ import { Button, Row, Col } from 'react-bootstrap'
 import { MidiContext } from "../../contexts/MidiContext";
 
 export default function MidiPreferences() {
-  const midiType = {
-    cc: "CC",
-    note: "NOTE"
-  }
   const { dispatch, midiSettings, midiInputs, midiOutputs } = useContext(MidiContext)
-  const [wakeWordType, setWakeWordType] = useState(midiType.cc)
-  const [wakeWordCC, setWakeWordCC] = useState(0);
   const [selectedCommandPorts, setSelectedCommandPorts] = useState([])
   const [availableCommandPorts, setAvailableCommandPorts] = useState([])
 
@@ -25,7 +19,7 @@ export default function MidiPreferences() {
 
   const getMidiName = (id) => (midiOutputs.find(i => i.id === id)?.name)
 
-  const allAvailableMidiCC = [...Array(128).keys()]
+
 
 
   const handleMainInputChanged = (event) => {
@@ -70,25 +64,6 @@ export default function MidiPreferences() {
 
         </div>
 
-        <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-          <p className="p-3 text-secondary m-0">Wake Word MIDI Type</p>
-          <select className="form-select" aria-label="Default select example" onChange={(e) => setWakeWordType(e.target.value)}>
-            <option value={midiType.cc}>CC</option>
-            <option value={midiType.note}>Note</option>
-          </select>
-        </div>
-
-        <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-          <p className="p-3 text-secondary m-0">Wake Word MIDI CC/Note</p>
-          <select className="form-select" aria-label="Default select example" onChange={(e) => setWakeWordCC(Number(e.target.value))}>
-            {allAvailableMidiCC.map((i) => {
-              return (
-                <option key={i} value={i}>{i}</option>
-              )
-            })}
-          </select>
-
-        </div>
 
         {/* COMBO PICKLIST FOR COMMAND MIDI PORTS */}
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">

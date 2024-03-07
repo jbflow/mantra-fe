@@ -16,11 +16,20 @@ export default function Actions({
   const [showAddButtons, setShowAddButtons] = useState(false);
 
 
-  const actionChanged = (e, i) => {
+  const voiceActionChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = e.target.value;
+    newActions[i] = { type: "voice", data: e.target.value }
     setActions(newActions);
   };
+
+  const midiActionChanged = (port, channel, type, data, value, i) => {
+    console.log(port)
+    const newActions = [...actions]
+    const midiData = { port: port, channel: channel, type: type, data: data, value: value }
+    newActions[i] = { type: "midi", data: midiData }
+    setActions(newActions)
+
+  }
 
   const addVoiceAction = () => {
     setActions([...actions, { type: "voice", data: "" }]);
@@ -56,6 +65,10 @@ export default function Actions({
   useEffect(() => {
     setActions(command.actions);
   }, [selected, command]);
+
+  useEffect(() => {
+    console.log(actions)
+  }, [actions])
 
   return (
     <>
@@ -93,7 +106,7 @@ export default function Actions({
                               key={`${key}`}
                               index={key}
                               data={action.data}
-                              actionChanged={actionChanged}
+                              voiceActionChanged={voiceActionChanged}
                               delAction={delAction}
                               duplAction={duplAction}
                               provided={provided}
@@ -110,7 +123,7 @@ export default function Actions({
                               key={`${key}`}
                               index={key}
                               data={JSON.stringify(action.data)}
-                              actionChanged={actionChanged}
+                              midiActionChanged={midiActionChanged}
                               delAction={delAction}
                               duplAction={duplAction}
                               provided={provided}

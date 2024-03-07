@@ -4,7 +4,7 @@ import { IoMdCopy } from "react-icons/io";
 export default function VoiceAction({
   index,
   data,
-  actionChanged,
+  voiceActionChanged,
   delAction,
   duplAction,
   provided,
@@ -23,7 +23,7 @@ export default function VoiceAction({
             type="text"
             value={data}
             onChange={(e) => {
-              actionChanged(e, index);
+              voiceActionChanged(e, index);
             }}
             autoFocus
           />
