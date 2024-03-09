@@ -56,12 +56,16 @@ export default function Actions({
     setActions(newActions);
   }
 
-  const addVoiceAction = () => {
-    setActions([...actions, { type: "voice", data: "", id: uuid.v4() }]);
+  const addAction = (type, data) => {
+    setActions(prevActions => [...prevActions, { type, data, id: uuid.v4() }]);
   };
-
+  
+  const addVoiceAction = () => {
+    addAction("voice", "");
+  };
+  
   const addMidiAction = () => {
-    setActions([...actions, { type: "midi", data: { port: "", channel: "0", type: "0", data: "0", value: "0" }, id: uuid.v4() }]);
+    addAction("midi", { port: "", channel: "0", type: "0", data: "0", value: "0" });
   };
 
   const duplicateAction = (i) => {
