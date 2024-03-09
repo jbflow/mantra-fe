@@ -153,7 +153,7 @@ export default function Actions({
                               handleDataChanged={handleDataChanged}
                               handleValueChanged={handleValueChanged}
                               delAction={delAction}
-                              duplAction={duplicateAction}
+                              duplicateAction={duplicateAction}
                               provided={provided}
                             />
                           </div>
