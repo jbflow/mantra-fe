@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import VoiceAction from "./VoiceAction";
 import MidiAction from "./MidiAction";
+import * as uuid from "uuid";
 
 
 export default function Actions({
@@ -19,61 +20,65 @@ export default function Actions({
 
   const handleVoiceActionChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = { type: "voice", data: e.target.value }
+    newActions[i] = { type: "voice", data: e.target.value, id: newActions[i].id }
     setActions(newActions);
   };
 
   const handlePortChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = {type: "midi", data: {...newActions[i].data, port: e.target.value}}
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, port: e.target.value }, id: newActions[i].id }
     setActions(newActions);
   }
 
-  
+
 
   const handleTypeChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = {type: "midi", data: {...newActions[i].data, type: e.target.value}}
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, type: e.target.value }, id: newActions[i].id }
     setActions(newActions)
   }
 
   const handleChannelChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = {type: "midi", data: {...newActions[i].data, channel: e.target.value}}
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, channel: e.target.value }, id: newActions[i].id }
     setActions(newActions);
   }
 
   const handleDataChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = {type: "midi", data: {...newActions[i].data, data: e.target.value}}
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, data: e.target.value }, id: newActions[i].id }
     setActions(newActions);
   }
 
   const handleValueChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = {type: "midi", data: {...newActions[i].data, value: e.target.value}}
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, value: e.target.value }, id: newActions[i].id }
     setActions(newActions);
   }
 
   const addVoiceAction = () => {
-    setActions([...actions, { type: "voice", data: "" }]);
+    setActions([...actions, { type: "voice", data: "", id: uuid.v4() }]);
   };
 
   const addMidiAction = () => {
-    setActions([...actions, { type: "midi", data: { port: "", channel: "0", type: "0", data: "0", value: "0" } }]);
-  };
-
-  const delAction = (i) => {
-    const newActions = [...actions];
-    newActions.splice(i, 1);
-    setActions(newActions);
+    setActions([...actions, { type: "midi", data: { port: "", channel: "0", type: "0", data: "0", value: "0" }, id: uuid.v4() }]);
   };
 
   const duplicateAction = (i) => {
-    const newActions = [...actions];
-    const action = {...newActions[i]};
-    newActions.splice(i, 0, action);
-    setActions(newActions);
+    setActions(prevActions => {
+      const newActions = [...prevActions];
+      const action = { ...newActions[i], id: uuid.v4()};
+      newActions.splice(i, 0, action);
+      return newActions;
+    });
+  };
+  
+  const delAction = (i) => {
+    setActions(prevActions => {
+      const newActions = [...prevActions];
+      newActions.splice(i, 1);
+      return newActions;
+    });
   };
 
   const handleOneDragEnd = (result) => {
@@ -115,16 +120,16 @@ export default function Actions({
                 className="actions-card-body"
               >
                 {actions
-                  ? actions.map((action, key) => (
+                  ? actions.map((action, i) => (
 
                     action.type === "voice" ?
-                      <Draggable key={key} draggableId={key.toString()} index={key}>
+                      <Draggable key={`${action.id}_draggable`} draggableId={action.id.toString()} index={i}>
                         {(provided) => (
                           <div{...provided.draggableProps} ref={provided.innerRef}>
 
                             <VoiceAction
-                              key={`${key}`}
-                              index={key}
+                              key={`${action.id}`}
+                              index={i}
                               data={action.data}
                               handleVoiceActionChanged={handleVoiceActionChanged}
                               delAction={delAction}
@@ -135,13 +140,13 @@ export default function Actions({
                         )}
                       </Draggable>
                       :
-                      <Draggable key={key} draggableId={key.toString()} index={key}>
+                      <Draggable key={`${action.id}_draggable`} draggableId={action.id.toString()} index={i}>
                         {(provided) => (
                           <div{...provided.draggableProps} ref={provided.innerRef}>
 
                             <MidiAction
-                              key={`${key}`}
-                              index={key}
+                              key={`${action.id}`}
+                              index={i}
                               port={action.data.port}
                               channel={action.data.channel}
                               type={action.data.type}

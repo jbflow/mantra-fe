@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { IoMdCopy } from "react-icons/io";
 import "./Commands.css"
 import { MidiContext } from "../../contexts/MidiContext";
+
 export default function MidiAction({
   index,
   port,
