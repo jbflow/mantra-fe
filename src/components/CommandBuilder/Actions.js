@@ -16,19 +16,43 @@ export default function Actions({
   const [showAddButtons, setShowAddButtons] = useState(false);
 
 
-  const voiceActionChanged = (e, i) => {
+
+  const handleVoiceActionChanged = (e, i) => {
     const newActions = [...actions];
     newActions[i] = { type: "voice", data: e.target.value }
     setActions(newActions);
   };
 
-  const midiActionChanged = (port, channel, type, data, value, i) => {
-    console.log(port)
-    const newActions = [...actions]
-    const midiData = { port: port, channel: channel, type: type, data: data, value: value }
-    newActions[i] = { type: "midi", data: midiData }
-    setActions(newActions)
+  const handlePortChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = {type: "midi", data: {...newActions[i].data, port: e.target.value}}
+    setActions(newActions);
+  }
 
+  
+
+  const handleTypeChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = {type: "midi", data: {...newActions[i].data, type: e.target.value}}
+    setActions(newActions)
+  }
+
+  const handleChannelChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = {type: "midi", data: {...newActions[i].data, channel: e.target.value}}
+    setActions(newActions);
+  }
+
+  const handleDataChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = {type: "midi", data: {...newActions[i].data, data: e.target.value}}
+    setActions(newActions);
+  }
+
+  const handleValueChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = {type: "midi", data: {...newActions[i].data, value: e.target.value}}
+    setActions(newActions);
   }
 
   const addVoiceAction = () => {
@@ -36,7 +60,7 @@ export default function Actions({
   };
 
   const addMidiAction = () => {
-    setActions([...actions, { type: "midi", data: { port: "", msg: [] } }]);
+    setActions([...actions, { type: "midi", data: { port: "", channel: "0", type: "0", data: "0", value: "0" } }]);
   };
 
   const delAction = (i) => {
@@ -45,9 +69,9 @@ export default function Actions({
     setActions(newActions);
   };
 
-  const duplAction = (i) => {
+  const duplicateAction = (i) => {
     const newActions = [...actions];
-    const action = newActions[i];
+    const action = {...newActions[i]};
     newActions.splice(i, 0, action);
     setActions(newActions);
   };
@@ -65,10 +89,6 @@ export default function Actions({
   useEffect(() => {
     setActions(command.actions);
   }, [selected, command]);
-
-  useEffect(() => {
-    console.log(actions)
-  }, [actions])
 
   return (
     <>
@@ -97,7 +117,7 @@ export default function Actions({
                 {actions
                   ? actions.map((action, key) => (
 
-                    action.type !== "midi" ?
+                    action.type === "voice" ?
                       <Draggable key={key} draggableId={key.toString()} index={key}>
                         {(provided) => (
                           <div{...provided.draggableProps} ref={provided.innerRef}>
@@ -106,9 +126,9 @@ export default function Actions({
                               key={`${key}`}
                               index={key}
                               data={action.data}
-                              voiceActionChanged={voiceActionChanged}
+                              handleVoiceActionChanged={handleVoiceActionChanged}
                               delAction={delAction}
-                              duplAction={duplAction}
+                              duplicateAction={duplicateAction}
                               provided={provided}
                             />
                           </div>
@@ -122,10 +142,18 @@ export default function Actions({
                             <MidiAction
                               key={`${key}`}
                               index={key}
-                              data={JSON.stringify(action.data)}
-                              midiActionChanged={midiActionChanged}
+                              port={action.data.port}
+                              channel={action.data.channel}
+                              type={action.data.type}
+                              data={action.data.data}
+                              value={action.data.value}
+                              handlePortChanged={handlePortChanged}
+                              handleTypeChanged={handleTypeChanged}
+                              handleChannelChanged={handleChannelChanged}
+                              handleDataChanged={handleDataChanged}
+                              handleValueChanged={handleValueChanged}
                               delAction={delAction}
-                              duplAction={duplAction}
+                              duplAction={duplicateAction}
                               provided={provided}
                             />
                           </div>
