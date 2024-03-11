@@ -114,9 +114,9 @@ function App({ signOut }) {
   }, [mainInput, mainOutput])
 
   useEffect(() => {
-    if (actions) {
+    if (actions && actions[0].type === "voice") {
       const config = JSON.parse(sessionStorage.getItem("config"))
-      const midiBytes = intentDetection.runDetection(String(actions[0]), config)
+      const midiBytes = intentDetection.runDetection(String(actions[0].data), config)
       let confirmationMsg = Array.from(midiBytes)
       confirmationMsg.splice(confirmationMsg.length - 2, 1)
       confirmationMsg[6] = 96
@@ -250,7 +250,7 @@ function App({ signOut }) {
             render={(props) => <Preferences {...props} />}
           /> */}
           <Route
-          path="/account"
+            path="/account"
             render={(props) => <PreferencesPage {...props} />}
           />
           <Route
