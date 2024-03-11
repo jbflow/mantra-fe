@@ -41,7 +41,9 @@ function MobileApp({ signOut }) {
         setCode(btoa(JSON.stringify(data)))
       }
     })
-    peer.on("connect", () => {
+    peer.on("data", (data) => {
+      const preferences = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
+      localStorage.setItem("preferences", JSON.parse(preferences))
       setConnected(true)
     })
     peer.on("close", () => {
@@ -49,7 +51,6 @@ function MobileApp({ signOut }) {
     })
     peer.on("error", () => {
       window.location.reload()
-
     })
     let data = window.location.search.substring('?'.length)
     if (data) {

@@ -205,6 +205,7 @@ function App({ signOut }) {
     peer.on("connect", () => {
       setConnectionStatus("Connected")
       routerHistory.push('/voice-control');
+      peer.send(JSON.stringify(localStorage.getItem("preferences")))
 
     })
     peer.on("close", () => {
