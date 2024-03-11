@@ -49,6 +49,11 @@ function MobileApp({ signOut }) {
     peer.on("close", () => {
       window.location.reload()
     })
+
+    peer.on("data", (data) => {
+      localStorage.setItem("preferences", data)
+
+    })
     peer.on("error", () => {
       window.location.reload()
     })
@@ -78,7 +83,6 @@ function MobileApp({ signOut }) {
         peer?.send(final)
         setTranscript(final);
       }
-
     }
   }, [alternatives])
 
