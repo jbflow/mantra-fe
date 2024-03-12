@@ -7,7 +7,7 @@ import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
 
 
-export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening }) {
+export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, connectionStatus }) {
   useEffect(() => {
     setTranscript(finalTranscript)
   }, [finalTranscript])
@@ -61,8 +61,8 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
         <OptionsPanel mapping={mapping} handleMapMic={handleMapMic} />
       </div>
       <div className="voice-btn-container">
-        <p className="h1">{listening ? "tlkbck is listening!" : "Press to speak"}</p>
-        <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} ref={speechRef} />
+        <p className="h1">{connectionStatus === "Disconnected" ? listening ? "tlkbck is listening!" : "Press to speak" : "Tethered"}</p>
+        <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} />
         <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p>
       </div>
     </div>

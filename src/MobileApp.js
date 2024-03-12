@@ -9,7 +9,7 @@ import { emptyConfig } from './utils/MidiConstants';
 
 
 
-import { TranscriptParser } from "./utils/TranscriptParser";
+import { TranscriptParser } from "./intent_detection/TranscriptParser";
 
 import MobileRTC from './components/MobileRTC';
 import { QrReader } from 'react-qr-reader';
@@ -41,15 +41,21 @@ function MobileApp({ signOut }) {
         setCode(btoa(JSON.stringify(data)))
       }
     })
-    peer.on("connect", () => {
+    peer.on("data", (data) => {
+      const preferences = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
+      localStorage.setItem("preferences", JSON.parse(preferences))
       setConnected(true)
     })
     peer.on("close", () => {
       window.location.reload()
     })
+
+    peer.on("data", (data) => {
+      localStorage.setItem("preferences", data)
+
+    })
     peer.on("error", () => {
       window.location.reload()
-
     })
     let data = window.location.search.substring('?'.length)
     if (data) {
@@ -77,7 +83,6 @@ function MobileApp({ signOut }) {
         peer?.send(final)
         setTranscript(final);
       }
-
     }
   }, [alternatives])
 

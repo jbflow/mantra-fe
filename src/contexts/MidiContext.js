@@ -23,8 +23,8 @@ export default function MidiProvider({ children, url }) {
         return { ...state, micInput: action.payload }
       case "SAVE_MIC_MAPPING":
         return { ...state, micMapping: action.payload }
-      case "SAVE_CMD_OUTPUT":
-        return { ...state, cmdOutput: action.payload }
+      case "SAVE_CMD_PORTS":
+        return { ...state, cmdPorts: action.payload }
       default:
         return
     }
@@ -32,16 +32,17 @@ export default function MidiProvider({ children, url }) {
 
   const [midiSettings, dispatch] = useReducer(reducer, localStorage.hasOwnProperty("midiSettings") ? JSON.parse(localStorage.getItem("midiSettings"))
     : {
-      mainInput: "1176834884",
-      mainOutput: "-317426978",
+      mainInput: "",
+      mainOutput: "",
       micInput: "",
       micMapping: "",
-      cmdOutput: ""
+      cmdPorts: ""
     })
 
   useEffect(() => {
     requestMIDI()
   }, [])
+
   const requestMIDI = useCallback(async () => {
     const midiAccess = await navigator.requestMIDIAccess({ sysex: true })
     setMidiAccess(() => midiAccess)
@@ -51,7 +52,7 @@ export default function MidiProvider({ children, url }) {
 
   useEffect(() => {
     midiInputs?.map((input) => {
-      if (input.id === midiSettings.mainInput){
+      if (input.id === midiSettings.mainInput) {
         input.open()
         setMainInput(input)
       }
@@ -64,6 +65,9 @@ export default function MidiProvider({ children, url }) {
       if (output.id === midiSettings.mainOutput) {
         output.open()
         setMainOutput(output)
+      }
+      if (midiSettings.cmdPorts.includes(output.id)) {
+        output.open()
       }
     })
     localStorage.setItem("midiSettings", JSON.stringify(midiSettings))

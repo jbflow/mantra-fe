@@ -15,7 +15,7 @@ export default function CommandsProvider({ children, url }) {
       case "ADD_CMD":
         const newCommand = {
           command: action.payload,
-          actions: [""],
+          actions: [],
           id: uuid.v4(),
         };
         return [...state, newCommand];

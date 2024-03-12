@@ -3,10 +3,10 @@ import { IoMdCopy } from "react-icons/io";
 
 export default function VoiceAction({
   index,
-  action,
-  actionChanged,
+  data,
+  handleVoiceActionChanged,
   delAction,
-  duplAction,
+  duplicateAction,
   provided,
 }) {
   return (
@@ -21,9 +21,9 @@ export default function VoiceAction({
           </div>
           <input
             type="text"
-            value={action}
+            value={data}
             onChange={(e) => {
-              actionChanged(e, index);
+              handleVoiceActionChanged(e, index);
             }}
             autoFocus
           />
@@ -32,7 +32,7 @@ export default function VoiceAction({
           <div
             className="cmd-button cmd-button-dupl"
             onClick={() => {
-              duplAction(index);
+              duplicateAction(index);
             }}
           >
             <IoMdCopy />

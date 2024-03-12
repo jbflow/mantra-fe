@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import VoiceAction from "./VoiceAction";
+import MidiAction from "./MidiAction";
+import * as uuid from "uuid";
 
 
 export default function Actions({
@@ -13,29 +15,74 @@ export default function Actions({
   const [actions, setActions] = useState(command.actions);
   // const [testActions, setTestActions] = useState([]);
   const [showAddButtons, setShowAddButtons] = useState(false);
- 
 
-  const actionChanged = (e, i) => {
+
+
+  const handleVoiceActionChanged = (e, i) => {
     const newActions = [...actions];
-    newActions[i] = e.target.value;
+    newActions[i] = { type: "voice", data: e.target.value, id: newActions[i].id }
     setActions(newActions);
   };
 
-  const addAction = () => {
-    setActions([...actions, ""]);
+  const handlePortChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, port: e.target.value }, id: newActions[i].id }
+    setActions(newActions);
+  }
+
+
+
+  const handleTypeChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, type: e.target.value }, id: newActions[i].id }
+    setActions(newActions)
+  }
+
+  const handleChannelChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, channel: e.target.value }, id: newActions[i].id }
+    setActions(newActions);
+  }
+
+  const handleDataChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, data: e.target.value }, id: newActions[i].id }
+    setActions(newActions);
+  }
+
+  const handleValueChanged = (e, i) => {
+    const newActions = [...actions];
+    newActions[i] = { type: "midi", data: { ...newActions[i].data, value: e.target.value }, id: newActions[i].id }
+    setActions(newActions);
+  }
+
+  const addAction = (type, data) => {
+    setActions(prevActions => [...prevActions, { type, data, id: uuid.v4() }]);
+  };
+  
+  const addVoiceAction = () => {
+    addAction("voice", "");
+  };
+  
+  const addMidiAction = () => {
+    addAction("midi", { port: "", channel: "0", type: "0", data: "0", value: "0" });
   };
 
+  const duplicateAction = (i) => {
+    setActions(prevActions => {
+      const newActions = [...prevActions];
+      const action = { ...newActions[i], id: uuid.v4()};
+      newActions.splice(i, 0, action);
+      return newActions;
+    });
+  };
+  
   const delAction = (i) => {
-    const newActions = [...actions];
-    newActions.splice(i, 1);
-    setActions(newActions);
-  };
-
-  const duplAction = (i) => {
-    const newActions = [...actions];
-    const action = newActions[i];
-    newActions.splice(i, 0, action);
-    setActions(newActions);
+    setActions(prevActions => {
+      const newActions = [...prevActions];
+      newActions.splice(i, 1);
+      return newActions;
+    });
   };
 
   const handleOneDragEnd = (result) => {
@@ -67,7 +114,7 @@ export default function Actions({
           </div>
           <p>Actions</p>
         </div>
-        <hr style={{width: "100%"}}/>
+        <hr style={{ width: "100%" }} />
         <DragDropContext onDragEnd={handleOneDragEnd}>
           <Droppable droppableId="actions">
             {(provided) => (
@@ -77,90 +124,113 @@ export default function Actions({
                 className="actions-card-body"
               >
                 {actions
-                  ? actions.map((action, key) => (
-                      <Draggable
-                        key={key}
-                        draggableId={key.toString()}
-                        index={key}
-                      >
+                  ? actions.map((action, i) => (
+
+                    action.type === "voice" ?
+                      <Draggable key={`${action.id}_draggable`} draggableId={action.id.toString()} index={i}>
                         {(provided) => (
-                          <div
-                            {...provided.draggableProps}
-                            ref={provided.innerRef}
-                          >
+                          <div{...provided.draggableProps} ref={provided.innerRef}>
+
                             <VoiceAction
-                              key={`${key}`}
-                              index={key}
-                              action={action}
-                              actionChanged={actionChanged}
+                              key={`${action.id}`}
+                              index={i}
+                              data={action.data}
+                              handleVoiceActionChanged={handleVoiceActionChanged}
                               delAction={delAction}
-                              duplAction={duplAction}
+                              duplicateAction={duplicateAction}
                               provided={provided}
                             />
                           </div>
                         )}
                       </Draggable>
-                    ))
-                  : null}
+                      :
+                      <Draggable key={`${action.id}_draggable`} draggableId={action.id.toString()} index={i}>
+                        {(provided) => (
+                          <div{...provided.draggableProps} ref={provided.innerRef}>
 
+                            <MidiAction
+                              key={`${action.id}`}
+                              index={i}
+                              port={action.data.port}
+                              channel={action.data.channel}
+                              type={action.data.type}
+                              data={action.data.data}
+                              value={action.data.value}
+                              handlePortChanged={handlePortChanged}
+                              handleTypeChanged={handleTypeChanged}
+                              handleChannelChanged={handleChannelChanged}
+                              handleDataChanged={handleDataChanged}
+                              handleValueChanged={handleValueChanged}
+                              delAction={delAction}
+                              duplicateAction={duplicateAction}
+                              provided={provided}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+
+
+                  )) : null}
                 {provided.placeholder}
               </div>
             )}
           </Droppable>
         </DragDropContext>
-        
+
         <div className="actions-card-footer">
-          
-            <button
-              className={showAddButtons ? "add-action-button add-action-button-clicked": "add-action-button"}
-              onClick={() => {
-                setShowAddButtons(!showAddButtons);
-              }}
-              onBlur={() => {
-                setShowAddButtons(false);
-              }}
-            >
-              <img src="./images/menu-icons/plus.svg" alt="menu plus icon"/>
-            </button>
-            {showAddButtons ? (
-              <div className="add-action-list">
-                <button
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                  }}
-                  onClick={(e) => {
-                    addAction();
-                  }}
-                >
-                  <img src="./images/menu-icons/soundwave.svg" alt="menu sound icon"/>
-                  Add voice action
-                </button>
-                <button disabled={true}>
-                  <img src="./images/menu-icons/midi.svg" alt="add midi action"/>
-                  Add MIDI action
-                </button>
-              </div>
-            ) : null}
-          
 
+          <button
+            className={showAddButtons ? "add-action-button add-action-button-clicked" : "add-action-button"}
+            onClick={() => {
+              setShowAddButtons(!showAddButtons);
+            }}
+            onBlur={() => {
+              setShowAddButtons(false);
+            }}
+          >
+            <img src="./images/menu-icons/plus.svg" alt="menu plus icon" />
+          </button>
+          {showAddButtons ? (
+            <div className="add-action-list">
+              <button
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                }}
+                onClick={(e) => {
+                  addVoiceAction();
+                }}
+              >
+                <img src="./images/menu-icons/soundwave.svg" alt="menu sound icon" />
+                Add voice action
+              </button>
+              <button
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                }}
+                onClick={(e) => {
+                  addMidiAction();
+                }}>
+                <img src="./images/menu-icons/midi.svg" alt="add midi action" />
+                Add MIDI action
+              </button>
+            </div>
+          ) : null}
 
+          <button
+            className="save-action-button"
+            onClick={() => {
+              dispatch({
+                type: "UPDATE_ACTIONS",
+                payload: { id: command.id, actions: actions },
+              });
+            }}
+            disabled={postLoading}
+          >
+            {postLoading ? "Saving..." : "Save"}
+          </button>
 
-          
-            <button
-              className="save-action-button"
-              onClick={() => {
-                dispatch({
-                  type: "UPDATE_ACTIONS",
-                  payload: { id: command.id, actions: actions },
-                });
-              }}
-              disabled={postLoading}
-            >
-              {postLoading ? "Saving..." : "Save"}
-            </button>
-            
-          </div>
-       
+        </div>
+
       </div>
     </>
   );

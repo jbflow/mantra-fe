@@ -97,8 +97,15 @@ export const STATUS_BYTES = {
   noteOn: 0x90,
   noteOff: 0x80,
   cc: 0xb0,
+  pc: 0xc0,
   sysex_start: 0xf0,
   sysex_end: 0xf7
 
 };
+
+export const midiType = {
+  cc: "CC",
+  note: "NOTE",
+  pc: "PC"
+}
 

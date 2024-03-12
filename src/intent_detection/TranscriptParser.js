@@ -43,6 +43,11 @@ const phrases = [
     "load a saturated": "load a Saturator",
     "un solo": "unsolo",
     "on arm": "unarm",
+    "so low": "solo",
+    "decreased": "decrease",
+    "drywear": "dry wet",
+    "drywall": "dry wet",
+    "drywap": "dry wet"
   };
 
 export class TranscriptParser {
@@ -63,6 +68,8 @@ export class TranscriptParser {
         for (let item in replace) {
             transcript = this.directReplace(filteredResults, item, replace[item]);
           }
+          
+        transcript = transcript.startsWith(' ') ? transcript.trimStart() : transcript;
         return wordsToNumbers(transcript)
     }
 

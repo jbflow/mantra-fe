@@ -22,10 +22,11 @@ import { MidiToJson } from "./utils/MidiToJson";
 import PreferencesPage from "./components/Preferences/PreferencesPage";
 import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
-import { TranscriptParser } from "./utils/TranscriptParser";
+import { TranscriptParser } from "./intent_detection/TranscriptParser";
 import * as spdCompact from "sdp-compact";
 import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
+import { detectWakeWord } from "./intent_detection/WakeWord";
 
 const options = { compress: true };
 const intentDetection = new IntentDetection()
@@ -70,7 +71,7 @@ function App({ signOut }) {
   }
 
   const handleIntentDetection = (finalTranscript) => {
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && finalTranscript.split(" ")[0] !== "TalkBack") {
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && detectWakeWord(transcript)) {
       return
     }
     const macroActions = checkCommands(finalTranscript)
@@ -114,9 +115,9 @@ function App({ signOut }) {
   }, [mainInput, mainOutput])
 
   useEffect(() => {
-    if (actions) {
+    if (actions && actions[0].type === "voice") {
       const config = JSON.parse(sessionStorage.getItem("config"))
-      const midiBytes = intentDetection.runDetection(String(actions[0]), config)
+      const midiBytes = intentDetection.runDetection(String(actions[0].data), config)
       let confirmationMsg = Array.from(midiBytes)
       confirmationMsg.splice(confirmationMsg.length - 2, 1)
       confirmationMsg[6] = 96
@@ -205,7 +206,10 @@ function App({ signOut }) {
     peer.on("connect", () => {
       setConnectionStatus("Connected")
       routerHistory.push('/voice-control');
+      peer.send(JSON.stringify(localStorage.getItem("preferences")))
 
+      const preferences = localStorage.getItem("preferences")
+      peer.send(preferences)
     })
     peer.on("close", () => {
       setConnectionStatus("Disconnected")
@@ -243,14 +247,14 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} midiInputs={midiInputs} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus}/>}
           />
           {/* <Route
             path="/preferences"
             render={(props) => <Preferences {...props} />}
           /> */}
           <Route
-          path="/account"
+            path="/account"
             render={(props) => <PreferencesPage {...props} />}
           />
           <Route
