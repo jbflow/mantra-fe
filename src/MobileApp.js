@@ -9,7 +9,7 @@ import { emptyConfig } from './utils/MidiConstants';
 
 
 
-import { TranscriptParser } from "./utils/TranscriptParser";
+import { TranscriptParser } from "./intent_detection/TranscriptParser";
 
 import MobileRTC from './components/MobileRTC';
 import { QrReader } from 'react-qr-reader';

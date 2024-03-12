@@ -22,10 +22,11 @@ import { MidiToJson } from "./utils/MidiToJson";
 import PreferencesPage from "./components/Preferences/PreferencesPage";
 import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
-import { TranscriptParser } from "./utils/TranscriptParser";
+import { TranscriptParser } from "./intent_detection/TranscriptParser";
 import * as spdCompact from "sdp-compact";
 import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
+import { detectWakeWord } from "./intent_detection/WakeWord";
 
 const options = { compress: true };
 const intentDetection = new IntentDetection()
@@ -70,7 +71,7 @@ function App({ signOut }) {
   }
 
   const handleIntentDetection = (finalTranscript) => {
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && finalTranscript.split(" ")[0] !== "TalkBack") {
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && detectWakeWord(transcript)) {
       return
     }
     const macroActions = checkCommands(finalTranscript)
