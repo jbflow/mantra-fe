@@ -115,7 +115,7 @@ function App({ signOut }) {
   }, [mainInput, mainOutput])
 
   useEffect(() => {
-    if (actions && actions[0].type === "voice") {
+    if (actions && actions.length !== 0 && actions[0].type === "voice") {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(actions[0].data), config)
       let confirmationMsg = Array.from(midiBytes)
