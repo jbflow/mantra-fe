@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 
 import { Auth, Hub } from 'aws-amplify'
-// import { signInButton, signInButtonContent } from '@aws-amplify/ui'
 import { Button } from 'react-bootstrap'
 
 /**

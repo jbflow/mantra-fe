@@ -98,7 +98,7 @@ const Authoriser = () => {
   if (hasPaid === "cancelled"){
     return (
       <>
-      Please update your payment details by visiting <a href={`https://app.gumroad.com/subscriptions/${data?.subscription_id}/manage`}> Gumroad</a>
+      Please update your payment details by visiting <a href={`https://app.gumroad.com/subscriptions/${data?.subscription_id}/manage`} target="_blank">Gumroad</a>
       </>
     )
   }
@@ -146,7 +146,7 @@ const Authoriser = () => {
             <Card.Body>
               <Card.Title>Sign In</Card.Title>
               <Card.Text>
-                New user? <a href="/">Create an account</a>
+                New user? <a href="https://flowstate.gumroad.com/l/oyeygv">Subscribe</a>
               </Card.Text>
               <SignInButton style={{ float: "right" }} />
             </Card.Body>
