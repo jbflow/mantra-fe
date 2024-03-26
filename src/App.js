@@ -70,7 +70,11 @@ function App({ signOut }) {
     }
   }
 
+
+
+
   const handleIntentDetection = (finalTranscript) => {
+
     if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && detectWakeWord(transcript)) {
       return
     }
@@ -81,6 +85,7 @@ function App({ signOut }) {
     else {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(finalTranscript), config)
+      
       sysex(midiBytes)
     }
   }

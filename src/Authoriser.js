@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Auth, Amplify } from "aws-amplify";
 import { Card } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
@@ -6,6 +6,8 @@ import App from "./App";
 import useAuthentication from "./hooks/useAuthentication";
 import ContextComposer from "./contexts/ContextComposer";
 import MobileApp from "./MobileApp";
+import { UserContext } from "./contexts/UserContext";
+import { useGetFromApi } from "./hooks/useGetFromApi";
 
 require('dotenv').config()
 Auth.configure({
@@ -17,7 +19,6 @@ Auth.configure({
   oauth: {
     domain: process.env.REACT_APP_COGNITO_DOMAIN,
     scope: [
-      "phone",
       "email",
       "openid",
       "aws.cognito.signin.user.admin",
@@ -53,6 +54,17 @@ Amplify.configure({
 const Authoriser = () => {
   const { user, isAuthenticated, isLoading, signOut, SignInButton } = useAuthentication();
   const [width, setWidth] = useState(window.innerWidth);
+  const [paymentUrl, setPaymentUrl] = useState(null)
+  const {data, loading, error} = useGetFromApi(paymentUrl)
+  let hasPaid = null
+  hasPaid = data?.payment_status
+
+  useEffect(() => {
+    if(user){
+      setPaymentUrl(`/user?userId=${user?.attributes?.sub}`)
+    }
+  },[user])
+  
 
   function handleWindowSizeChange() {
     setWidth(window.innerWidth);
@@ -64,6 +76,8 @@ const Authoriser = () => {
     }
   }, []);
 
+
+
   const isMobile = width <= 768;
   if (isLoading) {
     return (
@@ -73,7 +87,23 @@ const Authoriser = () => {
     )
   }
 
-  else if (isMobile && isAuthenticated) {
+  if (hasPaid === null){
+    return (
+      <>
+      checking payment
+      </>
+    )
+  }
+
+  if (hasPaid === "cancelled"){
+    return (
+      <>
+      Please update your payment details by visiting <a href={`https://app.gumroad.com/subscriptions/${data?.subscription_id}/manage`}> Gumroad</a>
+      </>
+    )
+  }
+
+  else if (isMobile && isAuthenticated && hasPaid === "paid") {
     return (
       <>
         <BrowserRouter>
