@@ -18,7 +18,6 @@ const styles = {
   },
   icon: {
     float: "right",
-    marginTop: 4
   },
 };
 
@@ -33,18 +32,18 @@ export default function NavBar({ signOut }) {
         <Navbar.Toggle aria-controls="navigation" />
         <Navbar.Collapse id="navigation" style={styles.forceColumn}>
           <Nav className="mr-auto" style={styles.forceColumn}>
-          <Link className="nav-link nav-link-sidebar" to="/voice-control">
+            <Link className="nav-link nav-link-sidebar" to="/voice-control">
               Voice Control
               <img
-                style={{...styles.icon, paddingRight: "3px", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)"}}
+                style={{ ...styles.icon, width: "35px", paddingLeft: "11px" }}
                 alt="Command Builder nav logo"
-                src="./images/menu-icons/soundwave.svg"
+                src="./images/menu-icons/mic-fill.svg"
               />
             </Link>
             <Link className="nav-link nav-link-sidebar" to="/commands">
               Build Macros
               <img
-                style={styles.icon}
+                style={{...styles.icon, width: "22px"}}
                 alt="Command Builder nav logo"
                 src="./images/menu-icons/command.svg"
               />
@@ -52,7 +51,7 @@ export default function NavBar({ signOut }) {
             <Link className="nav-link nav-link-sidebar" to="/account">
               Preferences
               <img
-                style={styles.icon}
+                style={{...styles.icon, width: "24px"}}
                 alt="Testing Area nav logo"
                 src="./images/menu-icons/gear-wide-connected.svg"
               />
@@ -60,8 +59,13 @@ export default function NavBar({ signOut }) {
 
             <Link className="nav-link nav-link-sidebar" to="/help-and-support">
               Help & Support
+              <img
+                style={{ ...styles.icon, width: "23px", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)" }}
+                alt="Command Builder nav logo"
+                src="./images/menu-icons/question.svg"
+              />
             </Link>
-          
+
           </Nav>
         </Navbar.Collapse>
       </Navbar>

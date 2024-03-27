@@ -258,14 +258,14 @@ function App({ signOut }) {
             path="/preferences"
             render={(props) => <Preferences {...props} />}
           /> */}
-          <Route
+          {/* <Route
             path="/account"
             render={(props) => <PreferencesPage {...props} />}
           />
           <Route
             path="/commands"
             render={(props) => <CommandBuilder {...props} />}
-          />
+          /> */}
           <Route
             path="/help-and-support"
             render={(props) => <CommandTesting {...props} />}
