@@ -40,7 +40,7 @@ export default function NavBar({ signOut }) {
                 src="./images/menu-icons/mic-fill.svg"
               />
             </Link>
-            <Link className="nav-link nav-link-sidebar" to="/commands">
+            {/* <Link className="nav-link nav-link-sidebar" to="/commands">
               Build Macros
               <img
                 style={{...styles.icon, width: "22px"}}
@@ -55,7 +55,7 @@ export default function NavBar({ signOut }) {
                 alt="Testing Area nav logo"
                 src="./images/menu-icons/gear-wide-connected.svg"
               />
-            </Link>
+            </Link> */}
 
             <Link className="nav-link nav-link-sidebar" to="/help-and-support">
               Help & Support
