@@ -23,6 +23,7 @@ export default function OptionsPanel() {
   }
 
   const handleLanguageChange = (e) => {
+    setLanguage(e.target.value)
     preferences.voice.language = e.target.value
     localStorage.setItem("preferences", JSON.stringify(preferences))
   }

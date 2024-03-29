@@ -14,15 +14,16 @@ const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListenin
 
     speechRecognition.maxAlternatives = 100
     speechRecognition.interimResults = false
-    speechRecognition.lang = JSON.parse(localStorage.getItem("preferences")).voice.language
+    
     try {
         speechRecognition.continuous = JSON.parse(localStorage.getItem("preferences")).voice.continuous
     }
     catch {
         speechRecognition.continuous = false
     }
-    speechRecognition.lang = "en-GB"
+    speechRecognition.lang = JSON.parse(localStorage.getItem("preferences")).voice.language
     speechRecognition.onresult = (result) => {
+        console.log(result)
         setAlternatives(result)
     }
 
