@@ -1,23 +1,39 @@
 .voice-control-container {
-    background: #ffffff;
-    display: flex;
-  }
+  /* background-image: radial-gradient(circle, #c6def4, #d4e3f7, #e0e9f9, #ebeffa, #f5f6fc, #f9f9fd, #fcfcfe, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff); */
+  display: flex;
+}
 
 .options-panel {
-    background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
-    background: #ffffff 0% 0% no-repeat padding-box;
-    border-right: 1px solid #e4e4e4;
-    height: calc(100vh - 100px);
-    width: 396px;
-    overflow-x: hidden;
-    overflow-y: visible;
-  }
+  /* background-image: linear-gradient(to right, #ffffff, #f5f7ff, #e5f0ff, #d0eaff, #b7e6ff); */
+  /* background: #ffffff 0% 0% no-repeat padding-box; */
+  /* border-right: 1px solid #e4e4e4; */
+  height: calc(100vh - 100px);
+  width: 396px;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
 
-  .voice-btn-container {
-    background: #f7f7f7;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-direction: column;
-  }
+.voice-btn-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-direction: column;
+}
+
+.options-box {
+  border: 5px solid #002775;
+  border-radius: 20px;
+  margin: 15px;
+  width: 280px;
+  background-color: rgba(245, 222, 179, 0.097);
+}
+
+.midi-map-btn{
+  border: 1px solid gray;
+  background-color: white;
+}
+.midi-map-btn:focused{
+  border: 1px solid gray;
+  background-color: white;
+}

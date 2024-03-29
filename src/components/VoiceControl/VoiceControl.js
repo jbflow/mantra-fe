@@ -58,11 +58,17 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
   return <>
     <div className="voice-control-container">
       <div>
-        <OptionsPanel mapping={mapping} handleMapMic={handleMapMic} />
+        <OptionsPanel mapping={mapping}  />
       </div>
       <div className="voice-btn-container">
         <p className="h1">{connectionStatus === "Disconnected" ? listening ? "tlkbck is listening!" : "Press to speak" : "Tethered"}</p>
         <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} />
+
+        <div className="d-flex p-3 flex-row align-items-center justify-content-between">
+            <p className="p-3">
+              <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
+            </p>
+          </div>
         <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p>
       </div>
     </div>
