@@ -59,7 +59,7 @@ function App({ signOut }) {
 
 
   if (!localStorage.getItem("preferences")) {
-    localStorage.setItem("preferences", JSON.stringify({ voice: {}, midi: {} }))
+    localStorage.setItem("preferences", JSON.stringify({ voice: {wakeWord: false, continuous: false, language: "en-UK"} }))
   }
 
   const handleQrResult = (data) => {
@@ -75,7 +75,7 @@ function App({ signOut }) {
 
   const handleIntentDetection = (finalTranscript) => {
 
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && detectWakeWord(transcript)) {
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && detectWakeWord(finalTranscript)) {
       return
     }
     const macroActions = checkCommands(finalTranscript)

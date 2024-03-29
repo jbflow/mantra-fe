@@ -27,7 +27,8 @@ export default function NavBar({ signOut }) {
       <Navbar
         variant="dark"
         expand="lg"
-        style={{ ...styles.forceColumn, ...styles.mainbar }}
+        style={{ ...styles.forceColumn }}
+        className="mainbar"
       >
         <Navbar.Toggle aria-controls="navigation" />
         <Navbar.Collapse id="navigation" style={styles.forceColumn}>

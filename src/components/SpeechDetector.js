@@ -14,6 +14,7 @@ const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListenin
 
     speechRecognition.maxAlternatives = 100
     speechRecognition.interimResults = false
+    speechRecognition.lang = JSON.parse(localStorage.getItem("preferences")).voice.language
     try {
         speechRecognition.continuous = JSON.parse(localStorage.getItem("preferences")).voice.continuous
     }

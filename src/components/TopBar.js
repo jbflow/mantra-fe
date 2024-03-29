@@ -5,30 +5,29 @@ import Logo from "../images/tlkbck.svg"; // relative path to image
 export default function TopBar({ signOut }) {
   return (
     <Navbar
-      variant="dark"
+      
       expand={false}
-      style={{ border: "1px solid #E4E4E4" }}
-      className="fixed-top bg-white"
+      className="fixed-top"
     >
       <div>
         <Navbar.Brand style={{ height: 36 }}>
           <img
-            src={Logo}
+            src="/images/menu-icons/tlkbck-not-listening.svg"
             alt="logo"
-            style={{ display: "inline", width: 30}}
+            style={{ display: "inline", width: 55}}
           />
           <span
             style={{
-              color: "#000000",
+              color: "#FFFFFF",
               margin: 0,
-              // fontSize: "1.5rem",
+              fontSize: "1.5rem",
               letterSpacing: "1px",
               fontWeight: "bold",
               marginLeft: "10px",
               marginTop: "5px",
             }}
           >
-            tlkbck
+            TLKBCK
           </span>
         </Navbar.Brand>
       </div>

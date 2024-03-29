@@ -11,13 +11,13 @@ export default function MidiPreferences() {
   useEffect(() => {
 
     function getMidiPorts() {
-      setAvailableCommandPorts(midiOutputs.map(i => i.id))
+      setAvailableCommandPorts(midiOutputs?.map(i => i.id))
     }
     getMidiPorts()
   }, [midiInputs, midiOutputs])
 
 
-  const getMidiName = (id) => (midiOutputs.find(i => i.id === id)?.name)
+  const getMidiName = (id) => (midiOutputs?.find(i => i.id === id)?.name)
 
 
 
@@ -40,11 +40,13 @@ export default function MidiPreferences() {
 
   return (
     <>
-      <div className="voice-btn-container">
+      
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-          <p className="p-3 text-secondary m-0">"From DAW"</p>
+
+          
+          <p className="p-3 text-secondary m-0">From DAW</p>
           <select className="form-select" aria-label="Default select example" onChange={handleMainInputChanged} value={midiSettings?.mainInput}>
-            {midiInputs.map((i) => {
+            {midiInputs?.map((i) => {
               return (
                 <option key={i.id} value={i.id}>{i.name}</option>
               )
@@ -55,7 +57,7 @@ export default function MidiPreferences() {
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">To DAW </p>
           <select className="form-select" aria-label="Default select example" onChange={handleMainOutputChanged} value={midiSettings?.mainOutput}>
-            {midiOutputs.map((i) => {
+            {midiOutputs?.map((i) => {
               return (
                 <option key={i.id} value={i.id}>{i.name}</option>
               )
@@ -66,7 +68,7 @@ export default function MidiPreferences() {
 
 
         {/* COMBO PICKLIST FOR COMMAND MIDI PORTS */}
-        <div className="d-flex p-3 flex-row align-items-center justify-content-between">
+        {/* <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3 text-secondary m-0">Command MIDI Ports</p>
           <div className="flex-col">
             <p>Available</p>
@@ -77,7 +79,7 @@ export default function MidiPreferences() {
               handleCommandPortsChanged([...selectedCommandPorts, ...values])
               setAvailableCommandPorts(availableCommandPorts.filter(i => i !== values[0]))
             }}>
-              {availableCommandPorts.map((i) => {
+              {availableCommandPorts?.map((i) => {
                 return (
                   <option key={i} value={i}>{getMidiName(i)}</option>
                 )
@@ -99,8 +101,8 @@ export default function MidiPreferences() {
               })}
             </select>
           </div>
-        </div>
-      </div>
+        </div> */}
+ 
     </>
   );
 }
