@@ -41,22 +41,15 @@ export default function NavBar({ signOut }) {
                 src="./images/menu-icons/mic-fill.svg"
               />
             </Link>
-            {/* <Link className="nav-link nav-link-sidebar" to="/commands">
-              Build Macros
+            <Link className="nav-link nav-link-sidebar" to="/commands">
+               Macros (Beta)
               <img
-                style={{...styles.icon, width: "22px"}}
+                style={{ ...styles.icon, width: "22px" }}
                 alt="Command Builder nav logo"
                 src="./images/menu-icons/command.svg"
               />
             </Link>
-            <Link className="nav-link nav-link-sidebar" to="/account">
-              Preferences
-              <img
-                style={{...styles.icon, width: "24px"}}
-                alt="Testing Area nav logo"
-                src="./images/menu-icons/gear-wide-connected.svg"
-              />
-            </Link> */}
+
 
             <Link className="nav-link nav-link-sidebar" to="/help-and-support">
               Help & Support

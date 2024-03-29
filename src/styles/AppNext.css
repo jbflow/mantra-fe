@@ -36,3 +36,6 @@ body {
 .statusItem {
   margin-right: 23px;
 }
+.statusItem:nth-child(4) {
+  margin-right: 0px;
+}

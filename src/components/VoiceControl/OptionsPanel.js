@@ -66,7 +66,7 @@ export default function OptionsPanel() {
         <p className="h5 px-4 pt-2">MIDI Settings</p>
 
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-            <p className="p-3 text-secondary m-0">MIDI Port</p>
+            <p className="p-3 text-secondary m-0">Mic Port</p>
             <select className="form-select" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midiSettings?.micInput}>
               {midiInputs?.map((input) => (
                 <option value={input.id} key={input.id}>{input.name}</option>

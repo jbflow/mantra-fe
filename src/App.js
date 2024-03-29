@@ -27,6 +27,7 @@ import * as spdCompact from "sdp-compact";
 import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
 import { detectWakeWord } from "./intent_detection/WakeWord";
+import Preferences from "./components/Preferences/PreferencesPage";
 
 const options = { compress: true };
 const intentDetection = new IntentDetection()
@@ -59,7 +60,7 @@ function App({ signOut }) {
 
 
   if (!localStorage.getItem("preferences")) {
-    localStorage.setItem("preferences", JSON.stringify({ voice: {wakeWord: false, continuous: false, language: "en-UK"} }))
+    localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: false, continuous: false, language: "en-UK" } }))
   }
 
   const handleQrResult = (data) => {
@@ -85,7 +86,7 @@ function App({ signOut }) {
     else {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(finalTranscript), config)
-      
+
       sysex(midiBytes)
     }
   }
@@ -252,20 +253,17 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus}/>}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} />}
           />
-          {/* <Route
+          <Route
             path="/preferences"
             render={(props) => <Preferences {...props} />}
-          /> */}
-          {/* <Route
-            path="/account"
-            render={(props) => <PreferencesPage {...props} />}
           />
+
           <Route
             path="/commands"
             render={(props) => <CommandBuilder {...props} />}
-          /> */}
+          />
           <Route
             path="/help-and-support"
             render={(props) => <CommandTesting {...props} />}

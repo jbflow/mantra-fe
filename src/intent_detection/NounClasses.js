@@ -123,7 +123,6 @@ export class NounSearchEngine extends IntentDetectionBase {
 
                 });
             } else if (levi) {
-                // console.log("LEVI: ", levi)
                 for (let l of levi) {
                     if (arraysEqual(list, ["audio track", "midi track", "return track"])) { l = [16126, 16382, 16254][l] }
                     nounAdj.push({

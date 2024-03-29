@@ -4,9 +4,6 @@
 }
 
 .options-panel {
-  /* background-image: linear-gradient(to right, #ffffff, #f5f7ff, #e5f0ff, #d0eaff, #b7e6ff); */
-  /* background: #ffffff 0% 0% no-repeat padding-box; */
-  /* border-right: 1px solid #e4e4e4; */
   height: calc(100vh - 100px);
   width: 396px;
   overflow-x: hidden;

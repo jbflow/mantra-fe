@@ -44,7 +44,7 @@ export default function MidiPreferences() {
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
 
           
-          <p className="p-3 text-secondary m-0">From DAW</p>
+          <p className="p-3 text-secondary m-0">In Port</p>
           <select className="form-select" aria-label="Default select example" onChange={handleMainInputChanged} value={midiSettings?.mainInput}>
             {midiInputs?.map((i) => {
               return (
@@ -55,7 +55,7 @@ export default function MidiPreferences() {
         </div>
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-          <p className="p-3 text-secondary m-0">To DAW </p>
+          <p className="p-3 text-secondary m-0">Out Port</p>
           <select className="form-select" aria-label="Default select example" onChange={handleMainOutputChanged} value={midiSettings?.mainOutput}>
             {midiOutputs?.map((i) => {
               return (
