@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Navbar, Button } from "react-bootstrap";
-import Logo from "../images/tlkbck.svg"; // relative path to image
+import UserModal from "./UserManage/UserModal";
 
 export default function TopBar({ signOut }) {
+  const [showAccountModal, setShowAccountModal] = useState(false)
+
+  const handleAccountModalClose = () => {
+    setShowAccountModal(false)
+  }
   return (
     <Navbar
-      
       expand={false}
       className="fixed-top"
     >
@@ -14,7 +18,7 @@ export default function TopBar({ signOut }) {
           <img
             src="/images/menu-icons/tlkbck-not-listening.svg"
             alt="logo"
-            style={{ display: "inline", width: 55}}
+            style={{ display: "inline", width: 55 }}
           />
           <span
             style={{
@@ -31,10 +35,15 @@ export default function TopBar({ signOut }) {
           </span>
         </Navbar.Brand>
       </div>
-      
+
       <div>
-        
-       
+
+        <img
+          src="/images/menu-icons/user.svg"
+          alt="user icon"
+          style={{ display: "inline", width: 30, marginRight: "20px" }}
+          onClick={() => { setShowAccountModal(true) }}
+        />
         <Button
           variant="dark"
           block={false}
@@ -45,6 +54,7 @@ export default function TopBar({ signOut }) {
           Sign Out
         </Button>
       </div>
+      <UserModal showAccountModal={showAccountModal} handleAccountModalClose={handleAccountModalClose} />
     </Navbar>
   );
 }

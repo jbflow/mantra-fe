@@ -7,6 +7,7 @@ export const UserContext = React.createContext(null);
 export default function UserProvider({ children, user, url }) {
   const userId = user.attributes?.sub;
   const email = user.attributes?.email;
+  console.log(user.attributes)
 
   return (
     <UserContext.Provider value={{ userId, email }}>

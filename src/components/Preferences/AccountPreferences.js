@@ -45,11 +45,6 @@ export default function AccountPreferences() {
     }
   }
 
-  const getPortal = () => {
-    API.post("talkbackBE", "/customer_portal?userId=" + userId).then((res) => {
-      window.location.href = res;
-    });
-  };
   return (
     <>
       {showAlert ? (
@@ -78,7 +73,7 @@ export default function AccountPreferences() {
         <Row className="p-3">
           <Col>Payment Details:</Col>
           <Col>
-            <Button onClick={getPortal}>Update</Button>
+            <Button>Update</Button>
           </Col>
         </Row>
         <Row className="p-3">

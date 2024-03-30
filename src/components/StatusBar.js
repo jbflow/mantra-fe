@@ -18,9 +18,9 @@ import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
 import SmartPhone from "../images/smartphone.svg";
 import "../styles/StatusBar.css"
 
-export default function StatusBar({ connectionStatus, dawLink, midiIn, midiOut, transcript, listening }) {
+export default function StatusBar({ connectionStatus, dawLink, midiIn, midiOut}) {
   const [micConnected, setMicConnected] = useState(false);
-  const [showTranscript, setShowTranscript] = useState(true);
+
 
   useEffect(() => {
     const constraints = { audio: true };
@@ -62,11 +62,6 @@ export default function StatusBar({ connectionStatus, dawLink, midiIn, midiOut, 
               className="statusItem"
               src={dawLink ? DawLinkGood : DawLinkBad} // Update me
             />
-
-            {/* <img
-            alt=""
-            src={listening ? TlkBckListening : TlkBckNotListening}
-          /> */}
           </div>
 
         </div>

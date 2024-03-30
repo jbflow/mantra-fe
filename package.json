@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@stripe/react-stripe-js": "^1.4.0",
-    "@stripe/stripe-js": "^1.14.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -13,7 +11,7 @@
     "aws-amplify-react": "^4.2.18",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
-    "bumblebee-hotword": "^0.2.0",
+    "bumblebee-hotword": "^0.2.1",
     "caniuse-lite": "^1.0.30001237",
     "classnames": "^2.2.6",
     "dotenv": "^16.4.1",
@@ -33,7 +31,6 @@
     "reconnecting-websocket": "^4.4.0",
     "sdp-compact": "0.0.6",
     "simple-peer": "^9.11.1",
-    "stripe": "^8.146.0",
     "uuid": "^8.3.2",
     "web-vitals": "^0.2.4",
     "words-to-numbers": "^1.5.1"
