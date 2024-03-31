@@ -22,6 +22,7 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
             <Modal
                 show={showAccountModal}
                 onHide={() => {
+                    setShowPasswordChange(false)
                     handleAccountModalClose(false);
                 }}
             >
@@ -59,20 +60,16 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
                             Password successfully changed.
                         </Alert>
                     ) : null}
-
-
-
-
-
-
-
-                </Modal.Body>
-                <Modal.Footer>
-
-                    <div className="row px-3">
-                        <p> Payment due: 01/04/2024:  <a href=''>Manage on gumroad</a></p>
+                    <div>
+                        <div className="row">
+                            <p className="col"> Payment due: 01/04/2024:</p>
+                            <div className="col">
+                                <a href='' className="row">Manage on gumroad</a>
+                            </div>
+                        </div>
                     </div>
-                </Modal.Footer>
+                </Modal.Body>
+
             </Modal>
 
 
