@@ -107,7 +107,7 @@ const Authoriser = () => {
     return (
       <>
         <BrowserRouter>
-          <ContextComposer user={user} isMobile={isMobile}>
+          <ContextComposer user={user} isMobile={isMobile} paymentData={data}>
             <MobileApp signOut={signOut} isMobile={isMobile} />
           </ContextComposer>
         </BrowserRouter>
@@ -120,7 +120,7 @@ const Authoriser = () => {
     return (
       <>
         <BrowserRouter>
-          <ContextComposer user={user} isMobile={isMobile}>
+          <ContextComposer user={user} isMobile={isMobile} paymentData={data}>
             <App signOut={signOut} isMobile={isMobile} />
           </ContextComposer>
         </BrowserRouter>

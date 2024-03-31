@@ -4,10 +4,10 @@ import UserProvider from "./UserContext";
 import MidiProvider from "./MidiContext";
 
 
-export default function ContextComposer({ children, user, isMobile }) {
+export default function ContextComposer({ children, user, isMobile, paymentData }) {
   if (!isMobile) {
     return (
-      <UserProvider user={user}>
+      <UserProvider user={user} paymentData={paymentData} >
         <MidiProvider>
           <CommandsProvider url={`/commands?userId=${user.attributes?.sub}`}>
             {children}
@@ -18,7 +18,7 @@ export default function ContextComposer({ children, user, isMobile }) {
   }
   else {
     return (
-      <UserProvider user={user}>
+      <UserProvider user={user} paymentData={paymentData}>
           <CommandsProvider url={`/commands?userId=${user.attributes?.sub}`}>
             {children}
           </CommandsProvider>

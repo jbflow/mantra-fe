@@ -5,9 +5,11 @@ import { UserContext } from '../../contexts/UserContext';
 import { BsPencil } from "react-icons/bs";
 
 export default function UserModal({ showAccountModal, handleAccountModalClose }) {
-    const { email, userId } = useContext(UserContext)
+    const { email, paymentData } = useContext(UserContext)
     const [showPasswordChange, setShowPasswordChange] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
+
+    console.log(paymentData)
 
     const handlePasswordChangedAlert = (value) => {
         setShowAlert(value)
@@ -60,14 +62,14 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
                             Password successfully changed.
                         </Alert>
                     ) : null}
-                    <div>
-                        <div className="row">
+              
+                        <div className="row pt-3">
                             <p className="col"> Payment due: 01/04/2024:</p>
                             <div className="col">
-                                <a href='' className="row">Manage on gumroad</a>
+                                <a href={`https://app.gumroad.com/subscriptions/${paymentData?.subscription_id}/manage`} target="_blank" className="row">Manage on gumroad</a>
                             </div>
                         </div>
-                    </div>
+           
                 </Modal.Body>
 
             </Modal>
