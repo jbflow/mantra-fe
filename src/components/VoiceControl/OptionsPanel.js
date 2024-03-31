@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { MidiContext } from '../../contexts/MidiContext'
 import "../../styles/VoiceControl.css"
 import MidiPreferences from '../Preferences/MidiPreferences'
+import PhoneConnect from '../PhoneConnect'
 
 
 export default function OptionsPanel() {
@@ -49,7 +50,7 @@ export default function OptionsPanel() {
           </div>
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
             <p className="p-3 text-secondary m-0">Language</p>
-            <select className="form-select" aria-label="Select Language" onChange={handleLanguageChange} defaultValue={language}> 
+            <select className="form-select" aria-label="Select Language" onChange={handleLanguageChange} defaultValue={language}>
               <option value="en-GB">English (UK)</option>
               <option value="en-US">English (USA)</option>
               <option value="en-CA">English (CA)</option>
@@ -63,7 +64,7 @@ export default function OptionsPanel() {
         </div>
 
         <div className='options-box'>
-        <p className="h5 px-4 pt-2">MIDI Settings</p>
+          <p className="h5 px-4 pt-2">MIDI Settings</p>
 
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
             <p className="p-3 text-secondary m-0">Mic Port</p>
@@ -76,9 +77,11 @@ export default function OptionsPanel() {
 
           <MidiPreferences />
 
-          
+
         </div>
+        
       </div>
+
     </>
   )
 }

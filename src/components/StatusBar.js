@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Link } from "react-router-dom";
+
 
 
 
@@ -13,9 +13,8 @@ import Mic from "../images/mic-fill.svg";
 import MicMute from "../images/mic-mute-fill.svg";
 import DawLinkGood from "../images/daw-link-good.svg";
 import DawLinkBad from "../images/daw-link-bad.svg";
-import TlkBckListening from "../images/tlkbck-listening.svg";
-import TlkBckNotListening from "../images/tlkbck-not-listening.svg";
-import SmartPhone from "../images/smartphone.svg";
+
+
 import "../styles/StatusBar.css"
 
 export default function StatusBar({ connectionStatus, dawLink, midiIn, midiOut}) {

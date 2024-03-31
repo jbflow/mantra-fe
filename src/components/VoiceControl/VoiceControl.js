@@ -5,6 +5,7 @@ import OptionsPanel from "./OptionsPanel";
 import useMIDIMessage from "../../hooks/useMIDIMessage";
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
+import PhoneConnect from "../PhoneConnect";
 
 
 export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, connectionStatus }) {
@@ -58,7 +59,7 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
   return <>
     <div className="voice-control-container">
       <div>
-        <OptionsPanel mapping={mapping}  />
+        <OptionsPanel/>
       </div>
       <div className="voice-btn-container">
         <p className="h1">{connectionStatus === "Disconnected" ? listening ? "tlkbck is listening!" : "Press to speak" : "Tethered"}</p>
@@ -70,7 +71,9 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
             </p>
           </div>
         <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p>
+        <PhoneConnect connectionStatus={connectionStatus} />
       </div>
+      
     </div>
   </>
 

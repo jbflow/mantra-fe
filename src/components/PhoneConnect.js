@@ -1,18 +1,19 @@
 import { Link } from 'aws-amplify-react'
 import React from 'react'
+import SmartPhone from "../images/smartphone.svg";
 
-export default function PhoneConnect() {
+export default function PhoneConnect({connectionStatus}) {
     return (
-        <div className="d-flex flex-row">
+        <div className="phone-connect d-flex flex-row">
             <Link className="connect-mobile-btn row" to="/connect-phone">
                 <img
                     alt=""
                     className="statusItem"
                     src={SmartPhone}
-                    style={{ marginRight: "unset", height: "3rem", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)" }}
+                    style={{ marginRight: "unset", height: "3rem"}}
                 />
             </Link>
-            <p className="text-white px-4" style={{ margin: "auto" }}>{connectionStatus}</p>
+            <p className="px-2" style={{ margin: "auto" }}>{connectionStatus}</p>
         </div>
     )
 }
