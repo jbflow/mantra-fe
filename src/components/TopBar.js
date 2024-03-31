@@ -12,6 +12,7 @@ export default function TopBar({ signOut }) {
     <Navbar
       expand={false}
       className="fixed-top"
+      // style={{"backgroundImage": "linear-gradient(to left, #306da3, #265e93, #1b5083, #0e4273, #003564)"}}
     >
       <div>
         <Navbar.Brand style={{ height: 36 }}>

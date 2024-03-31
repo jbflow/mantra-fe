@@ -16,8 +16,9 @@
 }
 .status-icon-container {
 	background-image: linear-gradient(to left, #306da3, #265e93, #1b5083, #0e4273, #003564);
-	border: 1px solid black;
+	border: 1px solid gold;
 	border-radius: 20px;
 	padding: 12px;
-	margin: 0 5px 5px 0
+	margin: 10px;
+	width: 190px;
 }

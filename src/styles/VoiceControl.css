@@ -1,16 +1,23 @@
 .voice-control-container {
-  /* background-image: radial-gradient(circle, #c6def4, #d4e3f7, #e0e9f9, #ebeffa, #f5f6fc, #f9f9fd, #fcfcfe, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff); */
+  height: calc(100vh - 60px);
+  
   display: flex;
 }
 
 .options-panel {
-  height: calc(100vh - 100px);
+  display: flex;
+  align-items: center;
   width: 396px;
+  height: calc(100vh - 60px);
   overflow-x: hidden;
   overflow-y: visible;
+  border-top: 1px solid #e4e4e4;
+  border-right: 1px solid #e4e4e4;
 }
 
 .voice-btn-container {
+  background: #f7f7f7;
+  border-top: 1px solid #e4e4e4;
   width: 100%;
   display: flex;
   align-items: center;
@@ -19,11 +26,13 @@
 }
 
 .options-box {
-  border: 5px solid #002775;
+  background: #f7f7f7;
+  border: 3px solid #002775;
   border-radius: 20px;
   margin: 15px;
   width: 280px;
-  background-color: rgba(245, 222, 179, 0.097);
+  box-shadow: 0px 6px 12px #00000029;
+  
 }
 
 .midi-map-btn{

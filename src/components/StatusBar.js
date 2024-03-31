@@ -30,42 +30,26 @@ export default function StatusBar({ connectionStatus, dawLink, midiIn, midiOut})
   }, []);
 
   return (
-    <div className="fixed-bottom w-100 " >
-      <div className="d-flex flex-row justify-content-between align-items-center">
-        <div className="d-flex flex-row">
-          <Link className="connect-mobile-btn row" to="/connect-phone">
-            <img
-              alt=""
-              className="statusItem"
-              src={SmartPhone}
-              style={{ marginRight: "unset", height: "3rem", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)" }}
-            />
-          </Link>
-          <p className="text-white px-4" style={{ margin: "auto" }}>{connectionStatus}</p>
-        </div>
-
-        <div className="status-icon-container">
+    
+        <div className="status-icon-container fixed-bottom">
           <div className="d-flex flex-row justify-content-end align-items-center">
             <img
               alt=""
               className="statusItem"
-              src={midiIn ? MidiInGood : MidiInBad} // Update me
+              src={midiIn ? MidiInGood : MidiInBad}
             />
             <img
               alt=""
               className="statusItem"
-              src={midiOut ? MidiOutGood : MidiOutBad} // Update me
+              src={midiOut ? MidiOutGood : MidiOutBad}
             />
             <img alt="" className="statusItem" src={micConnected ? Mic : MicMute} />
             <img
               alt=""
               className="statusItem"
-              src={dawLink ? DawLinkGood : DawLinkBad} // Update me
+              src={dawLink ? DawLinkGood : DawLinkBad}
             />
           </div>
-
         </div>
-      </div>
-    </div>
   );
 }
