@@ -1,20 +1,15 @@
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Mic from "../images/mic-fill.svg";
-import { useEffect, forwardRef, useImperativeHandle } from 'react';
+import { useEffect, forwardRef, useImperativeHandle, useState } from 'react';
 import "../styles/SpeechDetector.css"
 
-const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListening }, ref) => {
-    const {
-        transcript,
-        listening
-    } = useSpeechRecognition();
-
+const SpeechDetector = ({ setTranscript, setAlternatives, setListening, tlkbckSpeaking }) => {
+    const {transcript,listening} = useSpeechRecognition();
+    const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
 
     const speechRecognition = SpeechRecognition.getRecognition()
-
-    speechRecognition.maxAlternatives = 100
+    speechRecognition.maxAlternatives = 20
     speechRecognition.interimResults = false
-    
     try {
         speechRecognition.continuous = JSON.parse(localStorage.getItem("preferences")).voice.continuous
     }
@@ -23,8 +18,19 @@ const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListenin
     }
     speechRecognition.lang = JSON.parse(localStorage.getItem("preferences")).voice.language
     speechRecognition.onresult = (result) => {
-        console.log(result)
+        SpeechRecognition.stopListening()
         setAlternatives(result)
+    }
+
+    const handleSpeechRecognition = () => {
+        if (!listening){
+            setUserInitiatedSpeech(true)
+            SpeechRecognition.startListening()
+        }
+        else{
+            setUserInitiatedSpeech(false)
+            SpeechRecognition.stopListening()
+        }
     }
 
 
@@ -38,21 +44,20 @@ const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListenin
         setListening(listening)
     }, [listening])
 
-    useImperativeHandle(ref, () => ({
-        startListening() {
+    useEffect(() => {
+        if(!tlkbckSpeaking && JSON.parse(localStorage.getItem("preferences")).voice.continuous && userInitiatedSpeech && !listening ){
             SpeechRecognition.startListening()
-        },
-        stopListening() {
-            SpeechRecognition.stopListening()
         }
-    }))
+    }, [tlkbckSpeaking, userInitiatedSpeech, listening])
+
+
     
 
 
     return (
         <>
             <div className="speech-detector-container">
-                <div className="mic-container" onClick={!listening ? () => { SpeechRecognition.startListening() } : SpeechRecognition.stopListening}>
+                <div className="mic-container" onClick={handleSpeechRecognition}>
                     <div className={listening ? "mic-outline" : null}>
                     </div>
                     <div className={listening ? "mic-outline" : null} id="delayed">
@@ -71,5 +76,5 @@ const SpeechDetector = forwardRef(({ setTranscript, setAlternatives, setListenin
         </>
 
     );
-})
+}
 export default SpeechDetector;

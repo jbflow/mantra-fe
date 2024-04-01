@@ -6,9 +6,10 @@ import useMIDIMessage from "../../hooks/useMIDIMessage";
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
 import PhoneConnect from "../PhoneConnect";
+import useSpeechSynthesis from "../../hooks/useSpeechSynthesis";
 
 
-export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, connectionStatus }) {
+export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, connectionStatus, confirmation }) {
   useEffect(() => {
     setTranscript(finalTranscript)
   }, [finalTranscript])
@@ -16,6 +17,7 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
   const [mapping, setMapping] = useState(false) // button state
   const [message, clearMessage] = useMIDIMessage(micInput) // listen for midi message
   const speechRef = useRef()
+  const { speak, speaking } = useSpeechSynthesis()
 
   const convertToNoteOff = (noteArray) => {
     let newNoteArray = Array.from(noteArray)
@@ -23,11 +25,11 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
     return newNoteArray
   }
 
-  const isMappable = (statusByte) =>{
+  const isMappable = (statusByte) => {
     return (statusByte >= 128 && statusByte <= 143) || // Note Off (128-143)
-           (statusByte >= 144 && statusByte <= 159) || // Note On (144-159)
-           (statusByte >= 176 && statusByte <= 191);   // Control Change (176-191)
-}
+      (statusByte >= 144 && statusByte <= 159) || // Note On (144-159)
+      (statusByte >= 176 && statusByte <= 191);   // Control Change (176-191)
+  }
 
 
   useEffect(() => {
@@ -56,24 +58,37 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
 
   }, [midiSettings])
 
+  useEffect(async () => {
+    if (confirmation) {
+      
+      speak({ text: "Command confirmed" })
+    }
+
+  }, [confirmation])
+
+  useEffect(() => {
+    
+
+  }, [speaking])
+
   return <>
     <div className="voice-control-container">
       <div>
-        <OptionsPanel/>
+        <OptionsPanel />
       </div>
       <div className="voice-btn-container">
         <p className="h1">{connectionStatus === "Disconnected" ? listening ? "tlkbck is listening!" : "Press to speak" : "Tethered"}</p>
-        <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} />
+        <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} tlkbckSpeaking={speaking}/>
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-            <p className="p-3">
-              <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
-            </p>
-          </div>
+          <p className="p-3">
+            <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
+          </p>
+        </div>
         <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p>
         <PhoneConnect connectionStatus={connectionStatus} />
       </div>
-      
+
     </div>
   </>
 

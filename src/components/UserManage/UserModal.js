@@ -8,9 +8,6 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
     const { email, paymentData } = useContext(UserContext)
     const [showPasswordChange, setShowPasswordChange] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
-
-    console.log(paymentData)
-
     const handlePasswordChangedAlert = (value) => {
         setShowAlert(value)
         handleShowPasswordChange(false)

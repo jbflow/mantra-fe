@@ -19,7 +19,6 @@ import { MANUFACTURER_ID } from "./intent_detection/constants";
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
-import PreferencesPage from "./components/Preferences/PreferencesPage";
 import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./intent_detection/TranscriptParser";
@@ -28,6 +27,7 @@ import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
 import { detectWakeWord } from "./intent_detection/WakeWord";
 import Preferences from "./components/Preferences/PreferencesPage";
+import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 
 const options = { compress: true };
 const intentDetection = new IntentDetection()
@@ -48,8 +48,11 @@ function App({ signOut }) {
   const { commands } = useContext(CommandsContext)
   const { midiInputs, mainOutput, mainInput } = useContext(MidiContext)
 
+
+
   const [message] = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
+
 
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
@@ -76,7 +79,7 @@ function App({ signOut }) {
 
   const handleIntentDetection = (finalTranscript) => {
 
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && detectWakeWord(finalTranscript)) {
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && !detectWakeWord(finalTranscript)) {
       return
     }
     const macroActions = checkCommands(finalTranscript)
@@ -148,6 +151,9 @@ function App({ signOut }) {
   }, [configState])
 
 
+  
+
+
 
 
   useEffect(() => {
@@ -175,7 +181,6 @@ function App({ signOut }) {
           data.splice(message.data.length - 2, 1)
           setConfirmation(data)
           startTimer()
-
         }
       }
     }
@@ -253,7 +258,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} />}
           />
           <Route
             path="/preferences"
