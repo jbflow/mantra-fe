@@ -85,8 +85,7 @@ export class NounSearchEngine extends IntentDetectionBase {
     }
     getLoadable(config, tokenizedInput) {
         const loadable = []
-        loadable.push(...this.getNounAdj("track", ["audio track", "midi track", "return track"], tokenizedInput))
-
+        loadable.push(...this.getTrackNounAdj(tokenizedInput))
         if (loadable.length === 0) {
             const tracks = this.getNounAdj("track", config.track, tokenizedInput);
             for (let track of tracks) {
@@ -103,6 +102,27 @@ export class NounSearchEngine extends IntentDetectionBase {
         }
 
         return loadable
+    }
+
+    getTrackNounAdj(tokenizedInput) {
+        const tokensToCheck = {
+            "audio track": 16126,
+            "midi track": 16382,
+            "return track": 16254
+        };
+        let result = [];
+        tokenizedInput.forEach(token => {
+            const index = tokensToCheck[token];
+            if (index !== undefined) {
+                result.push({
+                    token: token,
+                    index: index,
+                    subject: `track_${index}`,
+                    path: ''
+                });
+            }
+        });
+        return result;
     }
 
     getNounAdj(noun, list, tokenizedInput, parents = []) {
