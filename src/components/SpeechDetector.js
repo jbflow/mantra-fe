@@ -1,10 +1,10 @@
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Mic from "../images/mic-fill.svg";
-import { useEffect, forwardRef, useImperativeHandle, useState } from 'react';
+import { useEffect, useState } from 'react';
 import "../styles/SpeechDetector.css"
 
 const SpeechDetector = ({ setTranscript, setAlternatives, setListening, tlkbckSpeaking }) => {
-    const {transcript,listening} = useSpeechRecognition();
+    const {transcript, listening} = useSpeechRecognition();
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
 
     const speechRecognition = SpeechRecognition.getRecognition()
@@ -23,13 +23,16 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, tlkbckSp
     }
 
     const handleSpeechRecognition = () => {
+        console.log("CLICK", listening)
         if (!listening){
-            setUserInitiatedSpeech(true)
+            console.log("HELLO")
             SpeechRecognition.startListening()
+            setUserInitiatedSpeech(true)
         }
         else{
-            setUserInitiatedSpeech(false)
+            console.log("HMM")
             SpeechRecognition.stopListening()
+            setUserInitiatedSpeech(false)
         }
     }
 
@@ -41,6 +44,7 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, tlkbckSp
     }, [transcript])
 
     useEffect(() => {
+        console.log("LISTENING", listening)
         setListening(listening)
     }, [listening])
 
