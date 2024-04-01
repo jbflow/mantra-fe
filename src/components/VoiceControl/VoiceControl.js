@@ -9,7 +9,7 @@ import PhoneConnect from "../PhoneConnect";
 import useSpeechSynthesis from "../../hooks/useSpeechSynthesis";
 
 
-export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, connectionStatus, confirmation }) {
+export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, connectionStatus, confirmation, speak, speaking }) {
   useEffect(() => {
     setTranscript(finalTranscript)
   }, [finalTranscript])
@@ -17,7 +17,7 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
   const [mapping, setMapping] = useState(false) // button state
   const [message, clearMessage] = useMIDIMessage(micInput) // listen for midi message
   const speechRef = useRef()
-  const { speak, speaking } = useSpeechSynthesis()
+
 
   const convertToNoteOff = (noteArray) => {
     let newNoteArray = Array.from(noteArray)
@@ -58,12 +58,11 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
 
   }, [midiSettings])
 
-  useEffect(async () => {
+  useEffect(() => {
+    console.log(confirmation)
     if (confirmation) {
-      
       speak({ text: "Command confirmed" })
     }
-
   }, [confirmation])
 
   useEffect(() => {

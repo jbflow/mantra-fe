@@ -179,7 +179,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             })
         }
         console.log("bytes: ", bytes)
-        return bytes
+        return bytes.length > 0 ? bytes : null
 
 
     }

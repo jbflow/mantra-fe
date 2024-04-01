@@ -47,6 +47,7 @@ function App({ signOut }) {
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
   const { commands } = useContext(CommandsContext)
   const { midiInputs, mainOutput, mainInput } = useContext(MidiContext)
+  const { speak, speaking } = useSpeechSynthesis()
 
 
 
@@ -88,9 +89,14 @@ function App({ signOut }) {
     }
     else {
       const config = JSON.parse(sessionStorage.getItem("config"))
-      const midiBytes = intentDetection.runDetection(String(finalTranscript), config)
+      const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
+      console.log(intentDetectionResult)
+      if (intentDetectionResult) {
+        sysex(intentDetectionResult)
+      } else {
+        speak({text: "Sorry, I didn't detect a valid command"})
+      }
 
-      sysex(midiBytes)
     }
   }
 
@@ -151,7 +157,7 @@ function App({ signOut }) {
   }, [configState])
 
 
-  
+
 
 
 
@@ -258,7 +264,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
           />
           <Route
             path="/preferences"
