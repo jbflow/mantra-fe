@@ -9,10 +9,8 @@ import PhoneConnect from "../PhoneConnect";
 import useSpeechSynthesis from "../../hooks/useSpeechSynthesis";
 
 
-export default function VoiceControl({ finalTranscript, transcript, setTranscript, setAlternatives, listening, setListening, connectionStatus, confirmation, speak, speaking }) {
-  useEffect(() => {
-    setTranscript(finalTranscript)
-  }, [finalTranscript])
+export default function VoiceControl({transcript, setAlternatives, listening, setListening, connectionStatus, confirmation, speak, speaking }) {
+  
   const { dispatch, midiSettings, micInput } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
   const [message, clearMessage] = useMIDIMessage(micInput) // listen for midi message
@@ -46,6 +44,8 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
 
   }, [mapping, message])
 
+
+
   const handleMapMic = () => {
     dispatch({ type: "SAVE_MIC_MAPPING", payload: null })
     setMapping(true)
@@ -77,7 +77,7 @@ export default function VoiceControl({ finalTranscript, transcript, setTranscrip
       </div>
       <div className="voice-btn-container">
         <p className="h1">{connectionStatus === "Disconnected" ? listening ? "tlkbck is listening!" : "Press to speak" : "Tethered"}</p>
-        <SpeechDetector setTranscript={setTranscript} setAlternatives={setAlternatives} setListening={setListening} tlkbckSpeaking={speaking}/>
+        <SpeechDetector setAlternatives={setAlternatives} setListening={setListening} tlkbckSpeaking={speaking}/>
 
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3">

@@ -90,7 +90,7 @@ function App({ signOut }) {
     else {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
-      console.log(intentDetectionResult)
+      console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
       if (intentDetectionResult) {
         sysex(intentDetectionResult)
       } else {
@@ -209,6 +209,7 @@ function App({ signOut }) {
       const macroCommands = commands.map(cmd => cmd.command)
       const finalTranscript = transcriptParser.cleanupTranscript(alternatives, macroCommands);
       handleIntentDetection(finalTranscript)
+      console.log("FINAL ", finalTranscript)
       setTranscript(finalTranscript)
     }
   }, [alternatives])
@@ -264,7 +265,7 @@ function App({ signOut }) {
         >
           <Route
             path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} setTranscript={setTranscript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
+            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
           />
           <Route
             path="/preferences"

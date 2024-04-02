@@ -1,7 +1,7 @@
-import {wordsToNumbers } from "words-to-numbers"
+import { wordsToNumbers } from "words-to-numbers"
 
 
-const phrases = [
+let phrases = [
     "un arm the",
     "un arm track [0-9]",
     "arm track [0-9]",
@@ -20,9 +20,9 @@ const phrases = [
     "[0-9] [A-Z][0-9] notes",
     "eq8",
     "eq3",
-  ];
-  
-  const replace = {
+];
+
+const replace = {
     loading: "load an",
     "load of": "load a",
     "load and": "load a",
@@ -47,8 +47,12 @@ const phrases = [
     "decreased": "decrease",
     "drywear": "dry wet",
     "drywall": "dry wet",
-    "drywap": "dry wet"
-  };
+    "drywap": "dry wet",
+    "wave table": "wavetable",
+    "analogue": "analog",
+    "raw": "roar"
+
+};
 
 export class TranscriptParser {
     constructor() {
@@ -61,28 +65,37 @@ export class TranscriptParser {
 
     cleanupTranscript(event, macroCommands) {
         this.currentResult = event.results[event.resultIndex]
-        // console.log("CURRENT RESULT: ", this.currentResult)
+        console.log("CURRENT RESULT: ", this.currentResult)
         const filteredResults = this.checkPhrases(this.currentResult, macroCommands)
-        // console.log("FILTERED RESULTS", filteredResults)
+        console.log("FILTERED RESULTS", filteredResults)
         let transcript = ""
         for (let item in replace) {
             transcript = this.directReplace(filteredResults, item, replace[item]);
-          }
-          
+        }
+
         transcript = transcript.startsWith(' ') ? transcript.trimStart() : transcript;
         return wordsToNumbers(transcript)
     }
 
+
+
     checkPhrases(results, macroCommands) {
-        // Loop through the alternatives to check if any of our hot phrases are contained in them.
-        // console.log("alt", results);
-        phrases.concat(macroCommands)
-        for (let result in results) {
-            if (new RegExp(phrases.join("|")).test(results[result].transcript)) {
-                return results[result].transcript; // Return them if they are
+        let config = JSON.parse(sessionStorage.getItem("config"))
+        phrases = phrases.concat(macroCommands)
+        phrases = phrases.concat(config.track)
+        phrases = phrases.concat(config.audioDevice)
+        phrases = phrases.concat(config.instrument)
+        phrases = phrases.concat(config.midiDevice)
+        console.log("SPEECH RECOGNITION RESULTS: ", results)
+  
+
+        
+        for (let result of results) {
+            if (new RegExp(phrases.join("|").toLowerCase()).test(result.transcript.toLowerCase())) {
+                return result.transcript.toLowerCase(); // Return them if they are
             }
         }
-        return results[0].transcript; // Otherwise return the highest confidence
+        return results[0].transcript.toLowerCase(); // Otherwise return the highest confidence
     };
     directReplace = (transcript, find, rep) => {
         let finalTranscript = transcript.replace(find, rep);

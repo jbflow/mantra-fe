@@ -3,7 +3,7 @@ import Mic from "../images/mic-fill.svg";
 import { useEffect, useState } from 'react';
 import "../styles/SpeechDetector.css"
 
-const SpeechDetector = ({ setTranscript, setAlternatives, setListening, tlkbckSpeaking }) => {
+const SpeechDetector = ({ setAlternatives, setListening, tlkbckSpeaking }) => {
     const {transcript, listening} = useSpeechRecognition();
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
 
@@ -37,11 +37,6 @@ const SpeechDetector = ({ setTranscript, setAlternatives, setListening, tlkbckSp
     }
 
 
-    useEffect(() => {
-        if (transcript) {
-            setTranscript(transcript)
-        }
-    }, [transcript])
 
     useEffect(() => {
         console.log("LISTENING", listening)
