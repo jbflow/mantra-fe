@@ -21,7 +21,13 @@ export class NounSearchEngine extends IntentDetectionBase {
             this.nounAdjArray = this.getMutatable(config, tokenizedInput);
         }
         this.nounAdjArray = this.removeDuplicateResults(this.nounAdjArray)
-        return this.makeBytesFromFullPath()
+        this.nounAdjArray = this.sortMultipleResults(this.nounAdjArray)
+        if (this.nounAdjArray.length === 0 ){
+            return null
+        }
+        this.fullPath = this.convertNounAdjToPath(this.nounAdjArray)
+
+        return this.makeBytesFromFullPath(this.fullPath)
 
 
     }
@@ -49,7 +55,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             }
         }
 
-        
+
         if (parameters.length === 0) {
             console.log("CHECKING SEL TRACK AND SEL DEVICE FOR PARAMS")
             // If haven't found a parameter yet, try the selected track and device
@@ -163,22 +169,47 @@ export class NounSearchEngine extends IntentDetectionBase {
     removeDuplicateResults(nounAdjArray) {
         const uniquePaths = new Set();
         const filteredNouns = [];
+        let path;
         // console.log("NOUN ADJ ARRAY", nounAdjArray)
         for (const nounAdj of nounAdjArray) {
-            this.fullPath = `${nounAdj.path}_${nounAdj.subject}`
-            if (!uniquePaths.has(this.fullPath)) {
-                uniquePaths.add(this.fullPath);
+            path = `${nounAdj.path}_${nounAdj.subject}`
+            if (!uniquePaths.has(path)) {
+                uniquePaths.add(path);
                 filteredNouns.push(nounAdj);
             }
         }
         return filteredNouns;
     }
 
+    sortMultipleResults(nounAdjArray) {
+        const maxWordsArray = nounAdjArray.reduce((maxObjects, obj) => {
+            const { token } = obj;
+            const words = token.split(' ').length;
     
-    makeBytesFromFullPath() {
-        console.log("I AM PATH: ", this.fullPath)
+            if (words > 0) {
+                if (!maxObjects.length || words > maxObjects[0].words) {
+                    return [{ obj, words }];
+                } else if (words === maxObjects[0].words) {
+                    maxObjects.push({ obj, words });
+                }
+            }
+    
+            return maxObjects;
+        }, []);
+    
+        return maxWordsArray.map(obj => obj.obj);
+    }
+
+    convertNounAdjToPath(nounAdjArray) {
+        return `${nounAdjArray[0].path}_${nounAdjArray[0].subject}`
+
+    }
+
+
+    makeBytesFromFullPath(fullPath) {
+        console.log("I AM PATH: ", fullPath)
         const pattern = /([a-zA-Z]+_\d+)/g;
-        const matches = this.fullPath.match(pattern);
+        const matches = fullPath.match(pattern);
         let bytes = []
         if (matches) {
             matches.forEach(match => {

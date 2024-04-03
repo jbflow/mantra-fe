@@ -51,7 +51,8 @@ const replace = {
     "drywap": "dry wet",
     "wave table": "wavetable",
     "analogue": "analog",
-    "raw": "roar"
+    "raw": "roar",
+    "attention": "a tension"
 
 };
 
