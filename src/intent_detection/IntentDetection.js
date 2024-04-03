@@ -9,7 +9,7 @@ export class IntentDetection extends IntentDetectionBase {
         this.config = {}
         this.lastSubject = "";
         this.tokenizedInput = [];
-        this.nounSearcher = new NounSearchEngine()
+        
     }
 
     runDetection(textInput = "", config = emptyConfig) {
@@ -23,7 +23,7 @@ export class IntentDetection extends IntentDetectionBase {
         }
 
         const verb = this.getVerb();
-
+        this.nounSearcher = new NounSearchEngine()
         const nounAdj = this.nounSearcher.search(verb, this.tokenizedInput, this.config)
         console.log("verb: ", verb)
         console.log("potential nouns found: ", nounAdj)

@@ -42,6 +42,7 @@ const replace = {
     "phase of lounger": "Phaser-Flanger",
     "load a saturated": "load a Saturator",
     "un solo": "unsolo",
+    "on solo": "unsolo",
     "on arm": "unarm",
     "so low": "solo",
     "decreased": "decrease",
@@ -66,15 +67,15 @@ export class TranscriptParser {
     cleanupTranscript(event, macroCommands) {
         this.currentResult = event.results[event.resultIndex]
         console.log("CURRENT RESULT: ", this.currentResult)
-        const filteredResults = this.checkPhrases(this.currentResult, macroCommands)
+        let filteredResults = this.checkPhrases(this.currentResult, macroCommands)
         console.log("FILTERED RESULTS", filteredResults)
-        let transcript = ""
+        
         for (let item in replace) {
-            transcript = this.directReplace(filteredResults, item, replace[item]);
+            filteredResults = this.directReplace(filteredResults, item, replace[item]);
         }
 
-        transcript = transcript.startsWith(' ') ? transcript.trimStart() : transcript;
-        return wordsToNumbers(transcript)
+        filteredResults = filteredResults.startsWith(' ') ? filteredResults.trimStart() : filteredResults;
+        return wordsToNumbers(filteredResults)
     }
 
 
@@ -99,6 +100,7 @@ export class TranscriptParser {
     };
     directReplace = (transcript, find, rep) => {
         let finalTranscript = transcript.replace(find, rep);
+        console.log("FINAL TRANSCRIPT", finalTranscript)
         return finalTranscript;
     };
 }
