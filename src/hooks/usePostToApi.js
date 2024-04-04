@@ -1,4 +1,4 @@
-import { API } from "aws-amplify";
+import { post } from "aws-amplify/api";
 import { useState, useEffect, useRef } from "react";
 
 export function usePostToApi(state, url) {
@@ -10,7 +10,7 @@ export function usePostToApi(state, url) {
     const postData = async () => {
       try {
         setPostLoading(true);
-        await API.post("talkbackBE", url, { body: state });
+        await post("talkbackBE", url, { body: state });
       } catch ({ message }) {
         setPostError(message);
       } finally {

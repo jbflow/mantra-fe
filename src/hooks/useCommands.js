@@ -35,5 +35,5 @@ export default function useCommands(
       setCurrent(confirmCount.current);
     }
   }, [confirm]);
-  return <div></div>;
+  return null;
 }

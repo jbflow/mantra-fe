@@ -1,4 +1,4 @@
-import { API } from "aws-amplify";
+import { get } from "aws-amplify/api";
 import { useState, useEffect } from "react";
 
 export const useGetFromApi = (url) => {
@@ -11,7 +11,7 @@ export const useGetFromApi = (url) => {
     const getData = async () => {
       try {
         setLoading(true);
-        setData(await API.get("talkbackBE", url));
+        setData(await get("talkbackBE", url));
       } catch ({ message }) {
         setError(message);
       } finally {

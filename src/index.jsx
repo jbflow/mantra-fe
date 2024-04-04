@@ -1,11 +1,6 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import Authoriser from "./Authoriser";
-
-ReactDOM.render(
-  // <React.StrictMode>
-  
-  <Authoriser />,
-  // </React.StrictMode>
-  document.getElementById("app")
-);
+import 'regenerator-runtime/runtime'
+import { createRoot } from 'react-dom/client';
+import Authoriser from './Authoriser';
+const container = document.getElementById('app');
+const root = createRoot(container); // createRoot(container!) if you use TypeScript
+root.render(<Authoriser tab="home" />);

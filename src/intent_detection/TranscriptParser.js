@@ -1,4 +1,4 @@
-import { wordsToNumbers } from "words-to-numbers"
+// import { wordsToNumbers } from "words-to-numbers"
 
 
 let phrases = [
@@ -76,7 +76,7 @@ export class TranscriptParser {
         }
 
         filteredResults = filteredResults.startsWith(' ') ? filteredResults.trimStart() : filteredResults;
-        return wordsToNumbers(filteredResults)
+        return filteredResults
     }
 
 

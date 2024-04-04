@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react'
 import { Alert, Button, Form } from 'react-bootstrap'
 import Accordion from 'react-bootstrap/Accordion'
 import { UserContext } from '../../contexts/UserContext';
-import { Auth } from 'aws-amplify';
+import { getCurrentUser, updatePassword } from 'aws-amplify/auth';
 import PasswordValidator from './PasswordValidator';
 
 export default function PasswordChange({ handleShowPasswordChange, handlePasswordChangedAlert }) {
@@ -25,9 +25,9 @@ export default function PasswordChange({ handleShowPasswordChange, handlePasswor
     async function changePassword() {
 
         setChangingPassword(true);
-        const currentUser = await Auth.currentAuthenticatedUser();
+        const currentUser = await getCurrentUser();
         try {
-            await Auth.changePassword(currentUser, oldPassword, newPassword);
+            await updatePassword(currentUser, oldPassword, newPassword);
             handlePasswordChangedAlert(true);
             window.setTimeout(() => {
                 handlePasswordChangedAlert(false)

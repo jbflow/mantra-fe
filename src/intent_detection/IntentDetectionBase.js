@@ -1,6 +1,7 @@
 
-const fuzz = require('fuzzball');
-const constants = require('./constants');
+import * as fuzz from "fuzzball"
+
+import * as constants from "./constants"
 
 export class IntentDetectionBase {
     constructor() {

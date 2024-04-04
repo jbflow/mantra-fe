@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 
-import { Auth, Hub } from 'aws-amplify'
+import {  Hub } from 'aws-amplify/utils'
 import { Button } from 'react-bootstrap'
+import { getCurrentUser, signInWithRedirect, signOut } from 'aws-amplify/auth'
 
 /**
  * Handle user authentication and related features.
@@ -29,7 +30,7 @@ const useAuthentication = () => {
 	const refreshState = useCallback(() => {
 		setIsLoading(true)
 
-		Auth.currentAuthenticatedUser()
+		getCurrentUser()
 			.then(user => {
 				setUser(user)
 				setIsAuthenticated(_isAuthenticated(user))
@@ -77,13 +78,13 @@ const useAuthentication = () => {
 	}, [refreshState])
 
 	const signIn = useCallback(() => {
-		Auth.federatedSignIn({ provider: 'COGNITO' }).catch(err => {
+		signInWithRedirect({ provider: 'COGNITO' }).catch(err => {
 			setError(err)
 		})
 	}, [])
 
-	const signOut = useCallback(() => {
-		Auth.signOut()
+	const handleSignOut = useCallback(() => {
+		signOut()
 			.then(_ => refreshState())
 			.catch(err => {
 				setError(err)
@@ -105,7 +106,7 @@ const useAuthentication = () => {
 		user,
 		error,
 		signIn,
-		signOut,
+		handleSignOut,
 		SignInButton: CognitoSignInButton,
 	}
 }

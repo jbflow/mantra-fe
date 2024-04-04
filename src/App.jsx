@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
 import { Route } from "react-router-dom";
-import Peer from "simple-peer"
+// import Peer from "simple-peer"
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
@@ -57,8 +57,8 @@ function App({ signOut }) {
 
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
-  const routerHistory = useHistory();
-  let peer;
+  const routerHistory = useNavigate();
+  // let peer;
 
 
 
@@ -67,13 +67,7 @@ function App({ signOut }) {
     localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: false, continuous: false, language: "en-UK" } }))
   }
 
-  const handleQrResult = (data) => {
-    if (data) {
-      let answer = JSON.parse(atob(data.text))
-      answer.sdp = spdCompact.decompactSDP(answer.sdp, false, { compress: true });
-      peer?.signal(answer)
-    }
-  }
+ 
 
 
 
@@ -218,37 +212,6 @@ function App({ signOut }) {
 
 
 
-  const startConnection = () => {
-    peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
-
-    peer.on("connect", () => {
-      setConnectionStatus("Connected")
-      routerHistory.push('/voice-control');
-      peer.send(JSON.stringify(localStorage.getItem("preferences")))
-
-      const preferences = localStorage.getItem("preferences")
-      peer.send(preferences)
-    })
-    peer.on("close", () => {
-      setConnectionStatus("Disconnected")
-    })
-
-    peer.on("error", () => {
-      setConnectionStatus("Disconnected")
-    })
-    peer.on("data", (data) => {
-      const transcript = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
-      handleIntentDetection(transcript.toLowerCase())
-    })
-    peer.on('signal', data => {
-      if (data.type === "offer") {
-        data.sdp = spdCompact.compactSDP(data.sdp, { compress: true });
-        const url = window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
-        setCode(url)
-
-      }
-    })
-  }
 
 
 
@@ -281,10 +244,7 @@ function App({ signOut }) {
             render={(props) => <CommandTesting {...props} />}
           />
 
-          <Route
-            path="/connect-phone"
-            render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}
-          />
+          
         </div>
 
         <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} listening={listening} />
