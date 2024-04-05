@@ -1,7 +1,8 @@
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+// import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Mic from "../images/mic-fill.svg";
 import { useEffect, useState } from 'react';
 import "../styles/SpeechDetector.css"
+import useSpeechRecognition from "../hooks/useSpeechRecognition";
 
 const SpeechDetector = ({ setAlternatives, setListening, tlkbckSpeaking }) => {
     const {transcript, listening} = useSpeechRecognition();

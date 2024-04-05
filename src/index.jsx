@@ -1,6 +1,8 @@
-import 'regenerator-runtime/runtime'
+// import 'regenerator-runtime/runtime'
 import { createRoot } from 'react-dom/client';
-import Authoriser from './Authoriser';
+
+
+import Main from './Main';
 const container = document.getElementById('app');
-const root = createRoot(container); // createRoot(container!) if you use TypeScript
-root.render(<Authoriser tab="home" />);
+const root = createRoot(container);
+root.render(<Main />);

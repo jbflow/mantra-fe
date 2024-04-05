@@ -1,9 +1,9 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router';
+import React, { useState, useContext, useEffect } from "react";
+
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
-import { Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 // import Peer from "simple-peer"
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import CommandTesting from "./components/CommandTesting";
@@ -29,12 +29,15 @@ import { detectWakeWord } from "./intent_detection/WakeWord";
 import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 
+
+
 const options = { compress: true };
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
 
 
 function App({ signOut }) {
+
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
   const [listening, setListening] = useState(false)
@@ -57,7 +60,7 @@ function App({ signOut }) {
 
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
-  const routerHistory = useNavigate();
+
   // let peer;
 
 
@@ -67,7 +70,7 @@ function App({ signOut }) {
     localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: false, continuous: false, language: "en-UK" } }))
   }
 
- 
+
 
 
 
@@ -88,7 +91,7 @@ function App({ signOut }) {
       if (intentDetectionResult) {
         sysex(intentDetectionResult)
       } else {
-        speak({text: "Sorry, I didn't detect a valid command"})
+        speak({ text: "Sorry, I didn't detect a valid command" })
       }
 
     }
@@ -217,6 +220,7 @@ function App({ signOut }) {
 
   return (
     <>
+
       <div>
         <TopBar signOut={signOut} />
         <NavBar />
@@ -226,31 +230,34 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
-          <Route
-            path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
-          />
-          <Route
-            path="/preferences"
-            render={(props) => <Preferences {...props} />}
-          />
+          <Routes>
+            <Route
+              path="/voice-control"
+              render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
+            />
+            <Route
+              path="/preferences"
+              render={(props) => <Preferences {...props} />}
+            />
 
-          <Route
-            path="/commands"
-            render={(props) => <CommandBuilder {...props} />}
-          />
-          <Route
-            path="/help-and-support"
-            render={(props) => <CommandTesting {...props} />}
-          />
+            <Route
+              path="/commands"
+              render={(props) => <CommandBuilder {...props} />}
+            />
+            <Route
+              path="/help-and-support"
+              render={(props) => <CommandTesting {...props} />}
+            />
+          </Routes>
 
-          
+
         </div>
 
         <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} listening={listening} />
-      </div>
+      </div >
+
     </>
   );
 }
 
-export default App;
+export default App
