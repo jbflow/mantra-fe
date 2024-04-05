@@ -230,25 +230,27 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
-          <Routes>
-            <Route
-              path="/voice-control"
-              render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
-            />
-            <Route
-              path="/preferences"
-              render={(props) => <Preferences {...props} />}
-            />
+  
+            <Routes>
+              <Route
+                path="/voice-control"
+                element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
+              />
+              <Route
+                path="/preferences"
+                element={<Preferences />}
+              />
 
-            <Route
-              path="/commands"
-              render={(props) => <CommandBuilder {...props} />}
-            />
-            <Route
-              path="/help-and-support"
-              render={(props) => <CommandTesting {...props} />}
-            />
-          </Routes>
+              <Route
+                path="/commands"
+                element={<CommandBuilder />}
+              />
+              <Route
+                path="/help-and-support"
+                element={<CommandTesting />}
+              />
+            </Routes>
+
 
 
         </div>

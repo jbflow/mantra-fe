@@ -11,9 +11,9 @@ export const useGetFromApi = (url) => {
     const getData = async () => {
       try {
         setLoading(true);
-        const getRequest = get({apiName: "backend", path: url})
+        const getRequest = await get({apiName: "backend", path: url})
         const response = await getRequest.response
-        setData(response.body.json());
+        response.body.json().then(setData)
       } catch ({ message }) {
         setError(message);
       } finally {
@@ -21,7 +21,7 @@ export const useGetFromApi = (url) => {
       }
     };
     getData();
-  }, []);
+  }, [url]);
 
   return { data, error, loading };
 };
