@@ -5,9 +5,7 @@ import MidiProvider from "./MidiContext";
 
 
 export default function ContextComposer({ children, user, isMobile, paymentData }) {
-  console.log("HELLO THERE", children, user, isMobile, paymentData)
   if (!isMobile) {
-    console.log("TEST")
     return (
       <UserProvider user={user} paymentData={paymentData} >
         <MidiProvider>

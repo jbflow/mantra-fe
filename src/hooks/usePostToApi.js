@@ -10,7 +10,7 @@ export function usePostToApi(state, url) {
     const postData = async () => {
       try {
         setPostLoading(true);
-        await post("talkbackBE", url, { body: state });
+        await post("backend", url, { body: state });
       } catch ({ message }) {
         setPostError(message);
       } finally {

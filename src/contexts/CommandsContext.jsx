@@ -6,7 +6,6 @@ import * as uuid from "uuid";
 export const CommandsContext = React.createContext(null);
 
 export default function CommandsProvider({ children, url }) {
-  console.log("HELLO")
   const { data, loading } = useGetFromApi(url);
   const reducer = (state, action) => {
     if (loading) return state;
@@ -38,6 +37,7 @@ export default function CommandsProvider({ children, url }) {
   };
 
   const [commands, dispatch] = useReducer(reducer, null);
+  console.log(commands)
 
   const { postLoading } = usePostToApi(commands, url);
 

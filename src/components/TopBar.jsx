@@ -47,7 +47,7 @@ export default function TopBar({ signOut }) {
         />
         <Button
           variant="dark"
-          block={false}
+          
           onClick={signOut}
           style={{ margin: "initial" }}
           className="rounded-more"

@@ -32,7 +32,6 @@ export class IntentDetection extends IntentDetectionBase {
         const units = this.getUnits();
         console.log("units: ", units)
         if (verb || nounAdj) {
-            console.log("hello")
             const modifiedVerb = this.VERBS['select'] && nounAdj && !verb ? this.VERBS['select'] : verb;
             return this.encodeMidi(nounAdj, modifiedVerb, adverb, units)
         }

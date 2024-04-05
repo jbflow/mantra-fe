@@ -24,9 +24,7 @@ const SpeechDetector = ({ setAlternatives, setListening, tlkbckSpeaking }) => {
     }
 
     const handleSpeechRecognition = () => {
-        console.log("CLICK", listening)
         if (!listening){
-            console.log("HELLO")
             SpeechRecognition.startListening()
             setUserInitiatedSpeech(true)
         }
