@@ -11,7 +11,9 @@ export const useGetFromApi = (url) => {
     const getData = async () => {
       try {
         setLoading(true);
-        setData(await get({apiName: "backend", path: url}));
+        const getRequest = get({apiName: "backend", path: url})
+        const response = await getRequest.response
+        setData(response.body.json());
       } catch ({ message }) {
         setError(message);
       } finally {
