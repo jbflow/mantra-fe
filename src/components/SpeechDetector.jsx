@@ -5,32 +5,28 @@ import "../styles/SpeechDetector.css"
 import useSpeechRecognition from "../hooks/useSpeechRecognition";
 
 const SpeechDetector = ({ setAlternatives, setListening, tlkbckSpeaking }) => {
-    const {transcript, listening} = useSpeechRecognition();
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
 
-    const speechRecognition = SpeechRecognition.getRecognition()
-    speechRecognition.maxAlternatives = 20
-    speechRecognition.interimResults = false
-    try {
-        speechRecognition.continuous = JSON.parse(localStorage.getItem("preferences")).voice.continuous
-    }
-    catch {
-        speechRecognition.continuous = false
-    }
-    speechRecognition.lang = JSON.parse(localStorage.getItem("preferences")).voice.language
-    speechRecognition.onresult = (result) => {
-        SpeechRecognition.stopListening()
+
+    const handleSpeechResult = (result) => {
         setAlternatives(result)
+        stop()
+
     }
+    const {listen, listening, stop} = useSpeechRecognition(handleSpeechResult);
+
+    
+
+   
 
     const handleSpeechRecognition = () => {
         if (!listening){
-            SpeechRecognition.startListening()
+            listen()
             setUserInitiatedSpeech(true)
         }
         else{
-            console.log("HMM")
-            SpeechRecognition.stopListening()
+            
+            stop()
             setUserInitiatedSpeech(false)
         }
     }
@@ -38,13 +34,12 @@ const SpeechDetector = ({ setAlternatives, setListening, tlkbckSpeaking }) => {
 
 
     useEffect(() => {
-        console.log("LISTENING", listening)
         setListening(listening)
     }, [listening])
 
     useEffect(() => {
         if(!tlkbckSpeaking && JSON.parse(localStorage.getItem("preferences")).voice.continuous && userInitiatedSpeech && !listening ){
-            SpeechRecognition.startListening()
+            listen()
         }
     }, [tlkbckSpeaking, userInitiatedSpeech, listening])
 

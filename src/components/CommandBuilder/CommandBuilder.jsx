@@ -8,7 +8,6 @@ import "./Commands.css";
 
 export default function CommandBuilder() {
   const { commands, dispatch, postLoading } = useContext(CommandsContext);
-  console.log("COMMANDS", commands)
   const [selected, setSelected] = useState(null);
   return (
     <div className="command-builder-container">

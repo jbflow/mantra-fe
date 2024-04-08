@@ -17,9 +17,7 @@ export default function ContextComposer({ children, user, isMobile, paymentData 
     );
   }
   else {
-    console.log("HERE")
     return (
-      
       <UserProvider user={user} paymentData={paymentData}>
           <CommandsProvider url={`/commands?userId=${user.attributes?.sub}`}>
             {children}

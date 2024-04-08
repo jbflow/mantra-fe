@@ -37,7 +37,7 @@ export default function CommandsProvider({ children, url }) {
   };
 
   const [commands, dispatch] = useReducer(reducer, null);
-  console.log(commands)
+
 
   const { postLoading } = usePostToApi(commands, url);
 
