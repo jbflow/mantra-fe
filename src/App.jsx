@@ -54,26 +54,17 @@ function App({ signOut }) {
 
 
 
-  const [message] = useMIDIMessage(mainInput)
+  
   const { sysex } = useMIDIOutput(mainOutput)
 
 
   const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
 
-  // let peer;
-
-
-
 
   if (!localStorage.getItem("preferences")) {
     localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: false, continuous: false, language: "en-UK" } }))
   }
-
-
-
-
-
 
   const handleIntentDetection = (finalTranscript) => {
 
@@ -158,11 +149,11 @@ function App({ signOut }) {
 
 
 
-
-  useEffect(() => {
+  const handleMidiMessage = (message) => {
     /*/
     MIDI Entry Point
    /*/
+
     if (message) {
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
       if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
@@ -187,8 +178,11 @@ function App({ signOut }) {
         }
       }
     }
+  }
 
-  }, [message])
+  useMIDIMessage(mainInput, handleMidiMessage)
+
+
 
 
   useEffect(() => {
