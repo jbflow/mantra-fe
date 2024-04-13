@@ -44,6 +44,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
             recognition.current = new window.SpeechRecognition();
             recognition.current.lang = voicePreferences.language
             recognition.current.interimResults = false
+            recognition.current.maxAlternatives = 100
             recognition.current.continuous = voicePreferences.continuous
             recognition.current.onresult = handleSpeechRecognitionResult
 
