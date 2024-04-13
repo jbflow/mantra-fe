@@ -1,56 +1,64 @@
-// import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Mic from "../images/mic-fill.svg";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import "../styles/SpeechDetector.css"
-import useSpeechRecognition from "../hooks/useSpeechRecognition";
 
-const SpeechDetector = ({ setAlternatives, setListening, tlkbckSpeaking }) => {
+
+const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetListening }) => {
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
-
-
-    const handleSpeechResult = (result) => {
-        setAlternatives(result)
-        stop()
-
-    }
-    const {listen, listening, stop} = useSpeechRecognition(handleSpeechResult);
-
-    
-
-   
-
-    const handleSpeechRecognition = () => {
-        if (!listening){
-            listen()
+    const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
+    const recognition = useRef()
+    const handleSpeechRecognitionToggle = () => {
+        if (!listening) {
+            recognition.current.start()
+            handleSetListening(true)
             setUserInitiatedSpeech(true)
         }
-        else{
-            
-            stop()
+        else {
+            recognition.current.stop()
+            handleSetListening(false)
             setUserInitiatedSpeech(false)
         }
     }
 
+    const handleSpeechRecognitionResult = (result) => {
+        setAlternatives(result)
+        recognition.current.stop()
+        handleSetListening(false)
+    }
 
 
     useEffect(() => {
-        setListening(listening)
-    }, [listening])
-
-    useEffect(() => {
-        if(!tlkbckSpeaking && JSON.parse(localStorage.getItem("preferences")).voice.continuous && userInitiatedSpeech && !listening ){
-            listen()
+        if(!tlkbckSpeaking && voicePreferences.continuous && userInitiatedSpeech){
+            recognition.current.start()
+            handleSetListening(true)
         }
-    }, [tlkbckSpeaking, userInitiatedSpeech, listening])
+        
+    }, [tlkbckSpeaking])
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        window.SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (window.SpeechRecognition) {
+            
+            recognition.current = new window.SpeechRecognition();
+            recognition.current.lang = voicePreferences.language
+            recognition.current.interimResults = false
+            recognition.current.continuous = voicePreferences.continuous
+            recognition.current.onresult = handleSpeechRecognitionResult
 
 
-    
+        }
+    }, []);
+
+
+
 
 
     return (
         <>
             <div className="speech-detector-container">
-                <div className="mic-container" onClick={handleSpeechRecognition}>
+                <div className="mic-container" onClick={handleSpeechRecognitionToggle}>
                     <div className={listening ? "mic-outline" : null}>
                     </div>
                     <div className={listening ? "mic-outline" : null} id="delayed">

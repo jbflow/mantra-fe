@@ -33,31 +33,6 @@ const useSpeechRecognition = (props = {}) => {
     onError(event);
   };
 
-  const listen = useEventCallback((args = {}) => {
-    if (listening || !supported) return;
-    const {
-      lang = '',
-      interimResults = true,
-      continuous = false,
-      maxAlternatives = 1,
-      grammars,
-    } = args;
-    setListening(true);
-    recognition.current.lang = lang;
-    recognition.current.interimResults = interimResults;
-    recognition.current.onresult = onResult
-    recognition.current.onerror = handleError;
-    recognition.current.continuous = continuous;
-    recognition.current.maxAlternatives = maxAlternatives;
-    if (grammars) {
-      recognition.current.grammars = grammars;
-    }
-    // SpeechRecognition stops automatically after inactivity
-    // We want it to keep going until we tell it to stop
-    recognition.current.onend = () => recognition.current.start();
-    recognition.current.start();
-  }, [listening, supported, recognition]);
-
   const stop = useEventCallback(() => {
     if (!listening || !supported) return;
     recognition.current.onresult = () => {};
@@ -67,6 +42,30 @@ const useSpeechRecognition = (props = {}) => {
     recognition.current.stop();
     onEnd();
   }, [listening, supported, recognition, onEnd]);
+
+  const listen = useEventCallback((args = {}) => {
+    if (listening || !supported) return;
+    const {
+      lang = '',
+      interimResults = false,
+      continuous = true,
+      maxAlternatives = 20,
+      grammars,
+    } = args;
+    setListening(true);
+    recognition.current.lang = lang;
+    recognition.current.interimResults = interimResults;
+    recognition.current.onresult = (result) => {onResult(result, stop)}
+    recognition.current.onerror = handleError;
+    recognition.current.continuous = continuous;
+    recognition.current.maxAlternatives = maxAlternatives;
+    if (grammars) {
+      recognition.current.grammars = grammars;
+    }
+    
+  }, [listening, supported, recognition]);
+
+  
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

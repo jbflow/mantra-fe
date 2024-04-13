@@ -40,7 +40,7 @@ function App({ signOut }) {
 
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
-  const [listening, setListening] = useState(false)
+
   const [dawLink, setDawLink] = useState(false)
   const [midiIn, setMidiIn] = useState(false)
   const [midiOut, setMidiOut] = useState(false)
@@ -228,7 +228,7 @@ function App({ signOut }) {
             <Routes>
               <Route
                 path="/voice-control"
-                element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
+                element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
               />
               <Route
                 path="/preferences"
@@ -249,7 +249,7 @@ function App({ signOut }) {
 
         </div>
 
-        <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} listening={listening} />
+        <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} />
       </div >
 
     </>
