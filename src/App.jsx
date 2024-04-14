@@ -49,16 +49,10 @@ function App({ signOut }) {
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
   const { commands } = useContext(CommandsContext)
-  const { midiInputs, mainOutput, mainInput } = useContext(MidiContext)
+  const { mainOutput, mainInput } = useContext(MidiContext)
   const { speak, speaking } = useSpeechSynthesis()
 
-
-
-  
   const { sysex } = useMIDIOutput(mainOutput)
-
-
-  const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
 
 
@@ -68,7 +62,7 @@ function App({ signOut }) {
 
   const handleIntentDetection = (finalTranscript) => {
 
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && !detectWakeWord(finalTranscript)) {
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && !detectWakeWord(finalTranscript) || finalTranscript === "") {
       return
     }
     const macroActions = checkCommands(finalTranscript)
@@ -76,15 +70,20 @@ function App({ signOut }) {
       setActions(macroActions)
     }
     else {
-      const config = JSON.parse(sessionStorage.getItem("config"))
-      const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
-      console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
-      if (intentDetectionResult) {
-        sysex(intentDetectionResult)
-      } else {
-        speak({ text: "Sorry, I didn't detect a valid command" })
+      try {
+        const config = JSON.parse(sessionStorage.getItem("config"))
+        const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
+        console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
+        if (intentDetectionResult) {
+          sysex(intentDetectionResult)
+        } else {
+          speak({ text: "Sorry, I didn't detect a valid command" })
+        }
       }
+      catch(err){
+        speak({text: "Sorry, I don't think I can do that"})
 
+      }
     }
   }
 
@@ -100,14 +99,17 @@ function App({ signOut }) {
   useEffect(() => {
 
     if (mainInput) {
+      if (mainInput.connection === "open") { setMidiIn(true) }
       mainInput.onstatechange = (event) => {
         if (event.currentTarget.connection === "open") {
+          console.log("HELLO")
           setMidiIn(true)
         }
 
       }
     }
     if (mainOutput) {
+      if (mainOutput.connection === "open") { setMidiOut(true) }
       mainOutput.onstatechange = (event) => {
         if (event.currentTarget.connection === "open") {
           setMidiOut(true)
@@ -224,26 +226,26 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
-  
-            <Routes>
-              <Route
-                path="/voice-control"
-                element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
-              />
-              <Route
-                path="/preferences"
-                element={<Preferences />}
-              />
 
-              <Route
-                path="/commands"
-                element={<CommandBuilder />}
-              />
-              <Route
-                path="/help-and-support"
-                element={<CommandTesting />}
-              />
-            </Routes>
+          <Routes>
+            <Route
+              path="/voice-control"
+              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
+            />
+            <Route
+              path="/preferences"
+              element={<Preferences />}
+            />
+
+            <Route
+              path="/commands"
+              element={<CommandBuilder />}
+            />
+            <Route
+              path="/help-and-support"
+              element={<CommandTesting />}
+            />
+          </Routes>
 
 
 
