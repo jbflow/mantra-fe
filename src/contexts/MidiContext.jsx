@@ -48,9 +48,10 @@ export default function MidiProvider({ children, url }) {
     setMidiAccess(() => midiAccess)
     setMidiInputs(() => ([...midiAccess.inputs].map((input) => (input[1]))));
     setMidiOutputs(() => ([...midiAccess.outputs].map((output) => (output[1]))));
+    openMidiPorts()
   }, [])
 
-  useEffect(() => {
+  const openMidiPorts = () => {
     midiInputs?.map((input) => {
       if (input.id === midiSettings.mainInput) {
         input.open()
@@ -70,6 +71,11 @@ export default function MidiProvider({ children, url }) {
         output.open()
       }
     })
+
+  }
+
+  useEffect(() => {
+    openMidiPorts()
     localStorage.setItem("midiSettings", JSON.stringify(midiSettings))
   }, [midiSettings, midiInputs, midiOutputs])
 
