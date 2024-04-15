@@ -1,4 +1,4 @@
-import Mic from "../images/mic-fill.svg";
+
 import { useEffect, useRef, useState } from 'react';
 import "../styles/SpeechDetector.css"
 
@@ -7,11 +7,40 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
     const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
     const recognition = useRef()
+
+
+    const initSpeechRecognition = () => {
+        if (typeof window === 'undefined') return;
+        window.SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (window.SpeechRecognition) {
+
+            recognition.current = new window.SpeechRecognition();
+            recognition.current.lang = voicePreferences.language
+            recognition.current.interimResults = false
+            recognition.current.maxAlternatives = 100
+            recognition.current.continuous = voicePreferences.continuous
+            recognition.current.onresult = handleSpeechRecognitionResult
+        }
+
+    }
     const handleSpeechRecognitionToggle = () => {
+        console.log("LISTENING", listening)
         if (!listening) {
-            recognition.current.start()
-            handleSetListening(true)
-            setUserInitiatedSpeech(true)
+            console.log(recognition.current)
+            try {
+                recognition.current.start()
+                handleSetListening(true)
+                setUserInitiatedSpeech(true)
+            }
+            catch (err) {
+                console.log("ERRROR", err)
+                handleSetListening(false)
+                setUserInitiatedSpeech(false)
+                recognition.current.abort()
+                initSpeechRecognition()
+
+            }
         }
         else {
             recognition.current.stop()
@@ -27,30 +56,26 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
     }
 
 
+
     useEffect(() => {
-        if(!tlkbckSpeaking && voicePreferences.continuous && userInitiatedSpeech){
-            recognition.current.start()
+        if (!tlkbckSpeaking && voicePreferences.continuous && userInitiatedSpeech) {
+            try {
+                recognition.current.start()
+            }
+            catch (err) {
+                recognition.current.abort()
+                initSpeechRecognition()
+                recognition.current.start()
+            }
             handleSetListening(true)
         }
-        
+
     }, [tlkbckSpeaking])
 
     useEffect(() => {
-        if (typeof window === 'undefined') return;
-        window.SpeechRecognition =
-            window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (window.SpeechRecognition) {
-            
-            recognition.current = new window.SpeechRecognition();
-            recognition.current.lang = voicePreferences.language
-            recognition.current.interimResults = false
-            recognition.current.maxAlternatives = 100
-            recognition.current.continuous = voicePreferences.continuous
-            recognition.current.onresult = handleSpeechRecognitionResult
-
-
-        }
+        initSpeechRecognition()
     }, []);
+
 
 
 

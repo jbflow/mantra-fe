@@ -14,6 +14,7 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
   const [mapping, setMapping] = useState(false) // button state
 
 
+
   const handleMidiMessage = (message) => {
     console.log(message)
     console.log("hi", mapping)
@@ -22,7 +23,7 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
       setMapping(false)
     }
     else if (!mapping && message && arraysEqual(Array.from(message.data.slice(0, 2)), midiSettings.micMapping)) {
-      document.getElementById('tlkbck-btn').click()
+      document.getElementById("tlkbck-btn").click()
     }
   }
 
@@ -56,16 +57,14 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
 
 
   useEffect(() => {
-    console.log(confirmation)
+    console.log("CONFIRMATION", confirmation)
     if (confirmation) {
+
       speak({ text: "Command confirmed" })
     }
   }, [confirmation])
 
-  useEffect(() => {
 
-
-  }, [speaking])
 
   return <>
     <div className="voice-control-container">
