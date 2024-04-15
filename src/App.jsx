@@ -138,11 +138,12 @@ function App({ signOut }) {
         setActions(actions.slice(1))
       }
       else if (actions.length === 0) {
-        // console.log("FINISHED EXECUTING MACRO")
+        console.log("FINISHED EXECUTING MACRO")
+        speak({text: "Executed Macro"})
         setActions(false)
       }
     }
-  }, [configState])
+  }, [configState, actions])
 
 
 
@@ -228,7 +229,7 @@ function App({ signOut }) {
           <Routes>
             <Route
               path="/voice-control"
-              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
+              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} actions={actions}/>}
             />
             <Route
               path="/preferences"

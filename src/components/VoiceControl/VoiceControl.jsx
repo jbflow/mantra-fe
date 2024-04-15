@@ -8,7 +8,7 @@ import { arraysEqual } from "../../utils/utils";
 import PhoneConnect from "../PhoneConnect";
 
 
-export default function VoiceControl({ transcript, setAlternatives, connectionStatus, confirmation, speak, speaking }) {
+export default function VoiceControl({ transcript, setAlternatives, connectionStatus, confirmation, speak, speaking, actions }) {
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
@@ -57,8 +57,8 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
 
 
   useEffect(() => {
-    console.log("CONFIRMATION", confirmation)
-    if (confirmation) {
+    
+    if (confirmation && !actions) {
 
       speak({ text: "Command confirmed" })
     }
