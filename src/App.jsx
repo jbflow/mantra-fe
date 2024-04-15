@@ -80,8 +80,8 @@ function App({ signOut }) {
           speak({ text: "Sorry, I didn't detect a valid command" })
         }
       }
-      catch(err){
-        speak({text: "Sorry, I don't think I can do that"})
+      catch (err) {
+        speak({ text: "Sorry, I don't think I can do that" })
 
       }
     }
@@ -128,7 +128,10 @@ function App({ signOut }) {
       setAwaitConfirmation(confirmationMsg)
       sysex(midiBytes)
     }
-
+    else if (actions.length === 0) {
+      speak({ text: "Executed Macro" })
+      setActions(false)
+    }
   }, [actions])
 
   useEffect(() => {
@@ -137,13 +140,8 @@ function App({ signOut }) {
       if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
         setActions(actions.slice(1))
       }
-      else if (actions.length === 0) {
-        console.log("FINISHED EXECUTING MACRO")
-        speak({text: "Executed Macro"})
-        setActions(false)
-      }
     }
-  }, [configState, actions])
+  }, [configState])
 
 
 
@@ -229,7 +227,7 @@ function App({ signOut }) {
           <Routes>
             <Route
               path="/voice-control"
-              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} actions={actions}/>}
+              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} actions={actions} />}
             />
             <Route
               path="/preferences"
