@@ -19,9 +19,9 @@ export default function MidiProvider({ children, url }) {
         return { ...state, mainOutput: action.payload }
       case "SAVE_MIC_INPUT":
         setMicInput(midiInputs.find(input => input.id === action.payload))
-        state.micInput = action.payload
         return { ...state, micInput: action.payload }
       case "SAVE_MIC_MAPPING":
+        console.log(action.payload)
         return { ...state, micMapping: action.payload }
       case "SAVE_CMD_PORTS":
         return { ...state, cmdPorts: action.payload }

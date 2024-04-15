@@ -59,7 +59,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
     return (
         <>
             <div className="speech-detector-container">
-                <div className="mic-container" onClick={handleSpeechRecognitionToggle}>
+                <div className="mic-container" onClick={handleSpeechRecognitionToggle} id="tlkbck-btn">
                     <div className={listening ? "mic-outline" : null}>
                     </div>
                     <div className={listening ? "mic-outline" : null} id="delayed">

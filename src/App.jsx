@@ -102,7 +102,6 @@ function App({ signOut }) {
       if (mainInput.connection === "open") { setMidiIn(true) }
       mainInput.onstatechange = (event) => {
         if (event.currentTarget.connection === "open") {
-          console.log("HELLO")
           setMidiIn(true)
         }
 
@@ -127,7 +126,6 @@ function App({ signOut }) {
       confirmationMsg.splice(confirmationMsg.length - 2, 1)
       confirmationMsg[6] = 96
       setAwaitConfirmation(confirmationMsg)
-      // console.log(midiBytes)
       sysex(midiBytes)
     }
 
