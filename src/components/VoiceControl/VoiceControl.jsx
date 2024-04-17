@@ -19,7 +19,7 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
   const handleMidiMessage = (message) => {
     console.log(message)
     console.log("hi", mapping)
-    if (mapping && message && isMappable(message.data[0])) {
+    if (mapping && message && isMappable(message.data[0]) && message.data[2] === 0) {
       dispatch({ type: "SAVE_MIC_MAPPING", payload: Array.from(message.data.slice(0, 2)) })
       setMapping(false)
     }
@@ -77,12 +77,12 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
         <p className="h1">{connectionStatus === "Disconnected" ? listening ? "tlkbck is listening!" : "Press to speak" : "Tethered"}</p>
         <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} />
 
-        <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-          <p className="p-3">
-            <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
-            {midiDataToNames(midiSettings.micMapping)}
+        <div className="map-btn-container">
           
-          </p>
+            <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
+            <p>{midiDataToNames(midiSettings.micMapping)}</p>
+          
+         
         </div>
         <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p>
         <PhoneConnect connectionStatus={connectionStatus} />
