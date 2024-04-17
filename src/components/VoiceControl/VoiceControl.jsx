@@ -5,10 +5,11 @@ import OptionsPanel from "./OptionsPanel";
 import useMIDIMessage from "../../hooks/useMIDIMessage";
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
+import { midiDataToNames } from "../../utils/utils";
 import PhoneConnect from "../PhoneConnect";
 
 
-export default function VoiceControl({ transcript, setAlternatives, connectionStatus, confirmation, speak, speaking, actions }) {
+export default function VoiceControl({ transcript, setAlternatives, connectionStatus, confirmation, setConfirmation, speak, speaking, actions }) {
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
@@ -61,6 +62,7 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
     if (confirmation && !actions) {
 
       speak({ text: "Command confirmed" })
+      setConfirmation(false)
     }
   }, [confirmation])
 
@@ -78,6 +80,8 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
         <div className="d-flex p-3 flex-row align-items-center justify-content-between">
           <p className="p-3">
             <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
+            {midiDataToNames(midiSettings.micMapping)}
+          
           </p>
         </div>
         <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p>

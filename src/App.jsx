@@ -227,7 +227,7 @@ function App({ signOut }) {
           <Routes>
             <Route
               path="/voice-control"
-              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} actions={actions} />}
+              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
             />
             <Route
               path="/preferences"
