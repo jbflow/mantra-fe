@@ -81,7 +81,8 @@ function App({ signOut }) {
         }
       }
       catch (err) {
-        speak({ text: "Sorry, I don't think I can do that" })
+        console.log(err)
+        speak({ text: "I'm sorry, somethings gone wrong. Please try again" })
 
       }
     }

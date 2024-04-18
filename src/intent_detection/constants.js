@@ -1,5 +1,5 @@
 const THRESHOLD = 85;
-const THRESH_WEIGHT = 0.1;
+
 
 const SYSEX_START = 240;
 const MANUFACTURER_ID = [0, 0, 0, 0, 0];
@@ -64,6 +64,7 @@ const NOUNS = {
   instrument: 39,
   audioDevice: 40,
   midiDevice: 41,
+  browserClip: 42,
 };
 
 const NOUN_MAP = {
@@ -77,6 +78,7 @@ const NOUN_MAP = {
   39: 'instrument',
   40: 'audioDevice',
   41: 'midiDevice',
+  42: 'browserClip',
 };
 
 const SUB_NOUN_BYTES = {
@@ -95,6 +97,7 @@ const THRESH = {
   instrument: 100,
   audio_device: 100,
   midiDevice: 100,
+  browserClip: 60,
 };
 
 const UNITS = {
@@ -120,7 +123,6 @@ const SINGLE_WORD = {
 
 export {
   THRESHOLD,
-  THRESH_WEIGHT,
   SYSEX_START,
   MANUFACTURER_ID,
   SYSEX_END,

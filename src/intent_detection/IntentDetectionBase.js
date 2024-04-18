@@ -92,12 +92,14 @@ export class IntentDetectionBase {
         }
     }
 
-    leviSearch(token, word_list) {
+    leviSearch(token, word_list, threshold) {
         if (token.split('').some(t => /\d/.test(t)) || this.EXCLUDED.includes(token)) {
             return;
         }
         const result = fuzz.extract(token, word_list)[0];
-        if (result && result[1] >= this.threshold) {
+        console.log(result)
+        console.log(threshold)
+        if (result && result[1] >= threshold) {
             console.log("FUZZ RESULT: ", result)
             this.threshold = result[1];
             const name = result[0];

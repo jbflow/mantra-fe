@@ -99,13 +99,16 @@ export class NounSearchEngine extends IntentDetectionBase {
                 loadable.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', t]]))
                 loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', t]]))
                 loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', t]]))
+                loadable.push(...this.getNounAdj("browserClip", config.browserClip, tokenizedInput, [['track', t]]))
             }
         }
         if (loadable.length === 0) {
             loadable.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', config.sel_track]]))
             loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', config.sel_track]]))
             loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', config.sel_track]]))
+            loadable.push(...this.getNounAdj("browserClip", config.browserClip, tokenizedInput, [['track', config.sel_track]]))
         }
+        console.log(loadable)
 
         return loadable
     }
@@ -132,14 +135,15 @@ export class NounSearchEngine extends IntentDetectionBase {
     }
 
     getNounAdj(noun, list, tokenizedInput, parents = []) {
-        // console.log("NOUN: ", noun)
-        // console.log("list: ", list)
-        // console.log("tokenizedInput: ", tokenizedInput)
-        // console.log("parents: ", parents)
+        console.log("NOUN: ", noun)
+        console.log("list: ", list)
+        console.log("tokenizedInput: ", tokenizedInput)
+        console.log("parents: ", parents)
+        const threshold = this.THRESH[noun]
         const nounAdj = [];
         for (const token of tokenizedInput) {
             const integer = this.integerSearch(token, noun);
-            const levi = this.leviSearch(token, list);
+            const levi = this.leviSearch(token, list, threshold);
             if (integer) {
                 nounAdj.push({
                     token: token,

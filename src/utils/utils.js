@@ -34,8 +34,6 @@ const midiNoteToName = (dataByte) => {
   const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   const octave = Math.floor(dataByte / 12) - 1;
   const noteIndex = dataByte % 12;
-  console.log(dataByte)
-  console.log(noteNames[noteIndex])
   return noteNames[noteIndex] + octave;
 }
 
