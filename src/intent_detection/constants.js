@@ -1,6 +1,4 @@
 const THRESHOLD = 85;
-
-
 const SYSEX_START = 240;
 const MANUFACTURER_ID = [0, 0, 0, 0, 0];
 const SYSEX_END = 247;
@@ -48,6 +46,7 @@ const VERBS = {
   stop: 20,
   record: 21,
   // loop: 22,
+  launch: 23,
 };
 
 const NOUNS = {
@@ -65,6 +64,7 @@ const NOUNS = {
   audioDevice: 40,
   midiDevice: 41,
   browserClip: 42,
+  favorites: 43,
 };
 
 const NOUN_MAP = {
@@ -79,6 +79,7 @@ const NOUN_MAP = {
   40: 'audioDevice',
   41: 'midiDevice',
   42: 'browserClip',
+  43: 'favorites',
 };
 
 const SUB_NOUN_BYTES = {
@@ -92,12 +93,13 @@ const THRESH = {
   scene: 85,
   'cue point': 85,
   device: 90,
-  clip: 95,
-  parameter: 100,
-  instrument: 100,
-  audio_device: 100,
+  clip: 80,
+  parameter: 60,
+  instrument: 80,
+  audioDevice: 100,
   midiDevice: 100,
   browserClip: 60,
+  favorites: 60,
 };
 
 const UNITS = {

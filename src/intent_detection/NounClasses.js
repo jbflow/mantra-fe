@@ -10,7 +10,7 @@ export class NounSearchEngine extends IntentDetectionBase {
         if ([this.VERBS.increase, this.VERBS.decrease, this.VERBS.set].includes(verb)) {
             this.nounAdjArray = this.getIncremental(config, tokenizedInput);
         } else if (
-            [this.VERBS.select, this.VERBS.rename, this.VERBS.delete, this.VERBS.duplicate, this.VERBS.mute, this.VERBS.unmute, this.VERBS.arm, this.VERBS.unarm, this.VERBS.solo, this.VERBS.unsolo].includes(verb) ||
+            [this.VERBS.select, this.VERBS.rename, this.VERBS.delete, this.VERBS.duplicate, this.VERBS.mute, this.VERBS.unmute, this.VERBS.arm, this.VERBS.unarm, this.VERBS.solo, this.VERBS.unsolo, this.VERBS.launch].includes(verb) ||
             !verb
         ) {
             this.nounAdjArray = this.getMutatable(config, tokenizedInput);
@@ -100,6 +100,7 @@ export class NounSearchEngine extends IntentDetectionBase {
                 loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', t]]))
                 loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', t]]))
                 loadable.push(...this.getNounAdj("browserClip", config.browserClip, tokenizedInput, [['track', t]]))
+                loadable.push(...this.getNounAdj("favorites", config.favorites, tokenizedInput, [['track', t]]))
             }
         }
         if (loadable.length === 0) {
@@ -107,8 +108,9 @@ export class NounSearchEngine extends IntentDetectionBase {
             loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', config.sel_track]]))
             loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', config.sel_track]]))
             loadable.push(...this.getNounAdj("browserClip", config.browserClip, tokenizedInput, [['track', config.sel_track]]))
+            loadable.push(...this.getNounAdj("favorites", config.favorites, tokenizedInput, [['track', config.sel_track]]))
         }
-        console.log(loadable)
+        console.log("loadable", loadable)
 
         return loadable
     }
@@ -144,6 +146,7 @@ export class NounSearchEngine extends IntentDetectionBase {
         for (const token of tokenizedInput) {
             const integer = this.integerSearch(token, noun);
             const levi = this.leviSearch(token, list, threshold);
+            console.log("I AM LEVI RESULT", levi)
             if (integer) {
                 nounAdj.push({
                     token: token,
@@ -154,7 +157,6 @@ export class NounSearchEngine extends IntentDetectionBase {
                 });
             } else if (levi) {
                 for (let l of levi) {
-                    if (arraysEqual(list, ["audio track", "midi track", "return track"])) { l = [16126, 16382, 16254][l] }
                     nounAdj.push({
                         token: token,
                         index: l,
@@ -167,7 +169,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
             }
         }
-        // console.log("nounAdj: ", nounAdj)
+        console.log("nounAdj: ", nounAdj)
         return nounAdj;
     }
     removeDuplicateResults(nounAdjArray) {

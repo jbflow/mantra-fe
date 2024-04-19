@@ -17,6 +17,7 @@ export const emptyConfig = {
   audioDevice: [],
   midiDevice: [],
   browserClip: [],
+  favorites: [],
   sel_track: 0,
   sel_device: 0,
 };
@@ -58,6 +59,7 @@ export const NOUNS = {
   audioDevice: 40,
   midiDevice: 41,
   browserClip: 42,
+  favorites: 43,
 };
 
 export const NOUN_MAP = {
@@ -72,6 +74,7 @@ export const NOUN_MAP = {
   40: "audioDevice",
   41: "midiDevice",
   42: "browserClip",
+  43: "favorites",
 };
 
 export const SUB_NOUNS = {

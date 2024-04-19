@@ -97,8 +97,8 @@ export class IntentDetectionBase {
             return;
         }
         const result = fuzz.extract(token, word_list)[0];
-        console.log(result)
-        console.log(threshold)
+        console.log("LEVI RESULT: ", result)
+        console.log("LEVI THRESHOLD SET: ", threshold)
         if (result && result[1] >= threshold) {
             console.log("FUZZ RESULT: ", result)
             this.threshold = result[1];

@@ -37,7 +37,6 @@ export class IntentDetection extends IntentDetectionBase {
             return this.encodeMidi(nounAdj, modifiedVerb, adverb, units)
         }
         else {
-            console.log("DIDsfdds")
             return null
         }
     }
