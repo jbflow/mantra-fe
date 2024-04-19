@@ -10,12 +10,15 @@ export class NounSearchEngine extends IntentDetectionBase {
         if ([this.VERBS.increase, this.VERBS.decrease, this.VERBS.set].includes(verb)) {
             this.nounAdjArray = this.getIncremental(config, tokenizedInput);
         } else if (
-            [this.VERBS.select, this.VERBS.rename, this.VERBS.delete, this.VERBS.duplicate, this.VERBS.mute, this.VERBS.unmute, this.VERBS.arm, this.VERBS.unarm, this.VERBS.solo, this.VERBS.unsolo, this.VERBS.launch].includes(verb) ||
+            [this.VERBS.select, this.VERBS.rename, this.VERBS.delete, this.VERBS.duplicate, this.VERBS.mute, this.VERBS.unmute, this.VERBS.arm, this.VERBS.unarm, this.VERBS.solo, this.VERBS.unsolo].includes(verb) ||
             !verb
         ) {
             this.nounAdjArray = this.getMutatable(config, tokenizedInput);
         } else if (verb === this.VERBS.load) {
             this.nounAdjArray = this.getLoadable(config, tokenizedInput);
+        }
+        else if (verb === this.VERBS.launch){
+            this.nounAdjArray = this.getLaunchable(config, tokenizedInput);
         }
         else {
             this.nounAdjArray = this.getMutatable(config, tokenizedInput);
@@ -115,17 +118,58 @@ export class NounSearchEngine extends IntentDetectionBase {
         return loadable
     }
 
+    getLaunchable(config, tokenizedInput){
+        const clip_slots = []
+        const scenes = []
+        const tracks = this.getNounAdj("track", config.track, tokenizedInput);
+        for (let track of tracks){
+            const t = track.index
+           
+            clip_slots.push(...this.getClipSlotNounAdj(tokenizedInput, [['track', t]]))
+        }
+        if (clip_slots.length === 0){
+            clip_slots.push(...this.getClipSlotNounAdj(tokenizedInput, [['track', config.sel_track]]))
+        }
+
+        scenes.push(...this.getNounAdj("scene", config.scene, tokenizedInput))
+
+        return [...scenes, ...clip_slots]    
+    }
+
+    toCamelCase(str) {
+        console.log("STR", str)
+        return str.toLowerCase().split(' ').map((word, index) => {
+          if (index === 0) {
+            return word;
+          }
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        }).join('');
+      }
+      
+
+    generateNounAdj(token, index, noun, parents){
+        const nounAdj = {
+            token: token,
+            index: index,
+            subject: `${this.toCamelCase(noun)}_${index}`,
+            path: parents.map(parent => parent.join('_')).join('_'),
+        }
+        console.log("GENERATED NOUN ADJ", nounAdj)
+        return nounAdj
+
+    }
+
     getTrackNounAdj(tokenizedInput) {
         const tokensToCheck = {
             "audio track": 16126,
             "midi track": 16382,
             "return track": 16254
         };
-        let result = [];
+        const nounAdj = [];
         tokenizedInput.forEach(token => {
             const index = tokensToCheck[token];
             if (index !== undefined) {
-                result.push({
+                nounAdj.push({
                     token: token,
                     index: index,
                     subject: `track_${index}`,
@@ -133,7 +177,18 @@ export class NounSearchEngine extends IntentDetectionBase {
                 });
             }
         });
-        return result;
+        return nounAdj;
+    }
+
+    getClipSlotNounAdj(tokenizedInput, parents){
+        const nounAdj = []
+        tokenizedInput.forEach(token => {
+            const integer = this.integerSearch(token, "clip slot");
+            if (integer) {
+                nounAdj.push(this.generateNounAdj(token, integer, "clip slot", parents))
+            }
+        })
+        return nounAdj
     }
 
     getNounAdj(noun, list, tokenizedInput, parents = []) {

@@ -12,6 +12,7 @@ let phrases = [
     "load an [a-z]*",
     "load a drum bus",
     "load a reverb",
+    "clip slot",
     "tuner",
     "a reverb",
     "beat [0-9] to beat [0-9]",
