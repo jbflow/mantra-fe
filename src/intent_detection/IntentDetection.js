@@ -17,7 +17,8 @@ export class IntentDetection extends IntentDetectionBase {
         this.textInput = textInput;
         this.config = config
         // console.log("CONFIG", config)
-        this.tokenizedInput = this.parseInput(textInput, 3)
+        this.tokenizedInput = this.parseInput(textInput, 5)
+        console.log(this.tokenizedInput)
         if (textInput.split(" ").length === 1 && Object.keys(this.SINGLE_WORD).includes(textInput)) {
             return this.SINGLE_WORD[textInput]
         }
@@ -32,12 +33,10 @@ export class IntentDetection extends IntentDetectionBase {
         const units = this.getUnits();
         console.log("units: ", units)
         if (verb || nounAdj) {
-            console.log("hello")
             const modifiedVerb = this.VERBS['select'] && nounAdj && !verb ? this.VERBS['select'] : verb;
             return this.encodeMidi(nounAdj, modifiedVerb, adverb, units)
         }
         else {
-            console.log("DIDsfdds")
             return null
         }
     }

@@ -1,10 +1,10 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
-import { useHistory } from 'react-router';
+import React, { useState, useContext, useEffect } from "react";
+
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
-import { Route } from "react-router-dom";
-import Peer from "simple-peer"
+import { Route, Routes } from "react-router-dom";
+// import Peer from "simple-peer"
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
@@ -29,15 +29,18 @@ import { detectWakeWord } from "./intent_detection/WakeWord";
 import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 
+
+
 const options = { compress: true };
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
 
 
 function App({ signOut }) {
+
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
-  const [listening, setListening] = useState(false)
+
   const [dawLink, setDawLink] = useState(false)
   const [midiIn, setMidiIn] = useState(false)
   const [midiOut, setMidiOut] = useState(false)
@@ -46,41 +49,20 @@ function App({ signOut }) {
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
   const { commands } = useContext(CommandsContext)
-  const { midiInputs, mainOutput, mainInput } = useContext(MidiContext)
+  const { mainOutput, mainInput } = useContext(MidiContext)
   const { speak, speaking } = useSpeechSynthesis()
 
-
-
-  const [message] = useMIDIMessage(mainInput)
   const { sysex } = useMIDIOutput(mainOutput)
-
-
-  const [code, setCode] = useState("")
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
-  const routerHistory = useHistory();
-  let peer;
-
-
 
 
   if (!localStorage.getItem("preferences")) {
     localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: false, continuous: false, language: "en-UK" } }))
   }
 
-  const handleQrResult = (data) => {
-    if (data) {
-      let answer = JSON.parse(atob(data.text))
-      answer.sdp = spdCompact.decompactSDP(answer.sdp, false, { compress: true });
-      peer?.signal(answer)
-    }
-  }
-
-
-
-
   const handleIntentDetection = (finalTranscript) => {
 
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && !detectWakeWord(finalTranscript)) {
+    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && !detectWakeWord(finalTranscript) || finalTranscript === "") {
       return
     }
     const macroActions = checkCommands(finalTranscript)
@@ -88,15 +70,21 @@ function App({ signOut }) {
       setActions(macroActions)
     }
     else {
-      const config = JSON.parse(sessionStorage.getItem("config"))
-      const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
-      console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
-      if (intentDetectionResult) {
-        sysex(intentDetectionResult)
-      } else {
-        speak({text: "Sorry, I didn't detect a valid command"})
+      try {
+        const config = JSON.parse(sessionStorage.getItem("config"))
+        const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
+        console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
+        if (intentDetectionResult) {
+          sysex(intentDetectionResult)
+        } else {
+          speak({ text: "Sorry, I didn't detect a valid command" })
+        }
       }
+      catch (err) {
+        console.log(err)
+        speak({ text: "I'm sorry, somethings gone wrong. Please try again" })
 
+      }
     }
   }
 
@@ -112,6 +100,7 @@ function App({ signOut }) {
   useEffect(() => {
 
     if (mainInput) {
+      if (mainInput.connection === "open") { setMidiIn(true) }
       mainInput.onstatechange = (event) => {
         if (event.currentTarget.connection === "open") {
           setMidiIn(true)
@@ -120,6 +109,7 @@ function App({ signOut }) {
       }
     }
     if (mainOutput) {
+      if (mainOutput.connection === "open") { setMidiOut(true) }
       mainOutput.onstatechange = (event) => {
         if (event.currentTarget.connection === "open") {
           setMidiOut(true)
@@ -137,10 +127,12 @@ function App({ signOut }) {
       confirmationMsg.splice(confirmationMsg.length - 2, 1)
       confirmationMsg[6] = 96
       setAwaitConfirmation(confirmationMsg)
-      // console.log(midiBytes)
       sysex(midiBytes)
     }
-
+    else if (actions.length === 0) {
+      speak({ text: "Executed Macro" })
+      setActions(false)
+    }
   }, [actions])
 
   useEffect(() => {
@@ -148,10 +140,6 @@ function App({ signOut }) {
     if (awaitConfirmation && confirmation && actions && !configState) {
       if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
         setActions(actions.slice(1))
-      }
-      else if (actions.length === 0) {
-        // console.log("FINISHED EXECUTING MACRO")
-        setActions(false)
       }
     }
   }, [configState])
@@ -161,11 +149,11 @@ function App({ signOut }) {
 
 
 
-
-  useEffect(() => {
+  const handleMidiMessage = (message) => {
     /*/
     MIDI Entry Point
    /*/
+
     if (message) {
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
       if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
@@ -190,8 +178,11 @@ function App({ signOut }) {
         }
       }
     }
+  }
 
-  }, [message])
+  useMIDIMessage(mainInput, handleMidiMessage)
+
+
 
 
   useEffect(() => {
@@ -218,42 +209,12 @@ function App({ signOut }) {
 
 
 
-  const startConnection = () => {
-    peer = new Peer({ initiator: true, trickle: false, config: { iceServers: [] } })
-
-    peer.on("connect", () => {
-      setConnectionStatus("Connected")
-      routerHistory.push('/voice-control');
-      peer.send(JSON.stringify(localStorage.getItem("preferences")))
-
-      const preferences = localStorage.getItem("preferences")
-      peer.send(preferences)
-    })
-    peer.on("close", () => {
-      setConnectionStatus("Disconnected")
-    })
-
-    peer.on("error", () => {
-      setConnectionStatus("Disconnected")
-    })
-    peer.on("data", (data) => {
-      const transcript = data.reduce((acc, cur) => acc + String.fromCharCode(cur), "")
-      handleIntentDetection(transcript.toLowerCase())
-    })
-    peer.on('signal', data => {
-      if (data.type === "offer") {
-        data.sdp = spdCompact.compactSDP(data.sdp, { compress: true });
-        const url = window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
-        setCode(url)
-
-      }
-    })
-  }
 
 
 
   return (
     <>
+
       <div>
         <TopBar signOut={signOut} />
         <NavBar />
@@ -263,34 +224,36 @@ function App({ signOut }) {
             paddingLeft: 210,
           }}
         >
-          <Route
-            path="/voice-control"
-            render={(props) => <VoiceControl {...props} setAlternatives={setAlternatives} transcript={transcript} listening={listening} setListening={setListening} connectionStatus={connectionStatus} confirmation={confirmation} speak={speak} speaking={speaking} />}
-          />
-          <Route
-            path="/preferences"
-            render={(props) => <Preferences {...props} />}
-          />
 
-          <Route
-            path="/commands"
-            render={(props) => <CommandBuilder {...props} />}
-          />
-          <Route
-            path="/help-and-support"
-            render={(props) => <CommandTesting {...props} />}
-          />
+          <Routes>
+            <Route
+              path="/voice-control"
+              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
+            />
+            <Route
+              path="/preferences"
+              element={<Preferences />}
+            />
 
-          <Route
-            path="/connect-phone"
-            render={(props) => <DesktopRTC {...props} code={code} handleQrResult={handleQrResult} startConnection={startConnection} />}
-          />
+            <Route
+              path="/commands"
+              element={<CommandBuilder />}
+            />
+            <Route
+              path="/help-and-support"
+              element={<CommandTesting />}
+            />
+          </Routes>
+
+
+
         </div>
 
-        <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} listening={listening} />
-      </div>
+        <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} />
+      </div >
+
     </>
   );
 }
 
-export default App;
+export default App

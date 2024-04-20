@@ -17,6 +17,9 @@ export class NounSearchEngine extends IntentDetectionBase {
         } else if (verb === this.VERBS.load) {
             this.nounAdjArray = this.getLoadable(config, tokenizedInput);
         }
+        else if (verb === this.VERBS.launch){
+            this.nounAdjArray = this.getLaunchable(config, tokenizedInput);
+        }
         else {
             this.nounAdjArray = this.getMutatable(config, tokenizedInput);
         }
@@ -99,15 +102,61 @@ export class NounSearchEngine extends IntentDetectionBase {
                 loadable.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', t]]))
                 loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', t]]))
                 loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', t]]))
+                loadable.push(...this.getNounAdj("browserClip", config.browserClip, tokenizedInput, [['track', t]]))
+                loadable.push(...this.getNounAdj("favorites", config.favorites, tokenizedInput, [['track', t]]))
             }
         }
         if (loadable.length === 0) {
             loadable.push(...this.getNounAdj("audioDevice", config.audioDevice, tokenizedInput, [['track', config.sel_track]]))
             loadable.push(...this.getNounAdj("midiDevice", config.midiDevice, tokenizedInput, [['track', config.sel_track]]))
             loadable.push(...this.getNounAdj("instrument", config.instrument, tokenizedInput, [['track', config.sel_track]]))
+            loadable.push(...this.getNounAdj("browserClip", config.browserClip, tokenizedInput, [['track', config.sel_track]]))
+            loadable.push(...this.getNounAdj("favorites", config.favorites, tokenizedInput, [['track', config.sel_track]]))
         }
+        console.log("loadable", loadable)
 
         return loadable
+    }
+
+    getLaunchable(config, tokenizedInput){
+        const clip_slots = []
+        const scenes = []
+        const tracks = this.getNounAdj("track", config.track, tokenizedInput);
+        for (let track of tracks){
+            const t = track.index
+           
+            clip_slots.push(...this.getClipSlotNounAdj(tokenizedInput, [['track', t]]))
+        }
+        if (clip_slots.length === 0){
+            clip_slots.push(...this.getClipSlotNounAdj(tokenizedInput, [['track', config.sel_track]]))
+        }
+
+        scenes.push(...this.getNounAdj("scene", config.scene, tokenizedInput))
+
+        return [...scenes, ...clip_slots]    
+    }
+
+    toCamelCase(str) {
+        console.log("STR", str)
+        return str.toLowerCase().split(' ').map((word, index) => {
+          if (index === 0) {
+            return word;
+          }
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        }).join('');
+      }
+      
+
+    generateNounAdj(token, index, noun, parents){
+        const nounAdj = {
+            token: token,
+            index: index,
+            subject: `${this.toCamelCase(noun)}_${index}`,
+            path: parents.map(parent => parent.join('_')).join('_'),
+        }
+        console.log("GENERATED NOUN ADJ", nounAdj)
+        return nounAdj
+
     }
 
     getTrackNounAdj(tokenizedInput) {
@@ -116,11 +165,11 @@ export class NounSearchEngine extends IntentDetectionBase {
             "midi track": 16382,
             "return track": 16254
         };
-        let result = [];
+        const nounAdj = [];
         tokenizedInput.forEach(token => {
             const index = tokensToCheck[token];
             if (index !== undefined) {
-                result.push({
+                nounAdj.push({
                     token: token,
                     index: index,
                     subject: `track_${index}`,
@@ -128,18 +177,31 @@ export class NounSearchEngine extends IntentDetectionBase {
                 });
             }
         });
-        return result;
+        return nounAdj;
+    }
+
+    getClipSlotNounAdj(tokenizedInput, parents){
+        const nounAdj = []
+        tokenizedInput.forEach(token => {
+            const integer = this.integerSearch(token, "clip slot");
+            if (integer) {
+                nounAdj.push(this.generateNounAdj(token, integer, "clip slot", parents))
+            }
+        })
+        return nounAdj
     }
 
     getNounAdj(noun, list, tokenizedInput, parents = []) {
-        // console.log("NOUN: ", noun)
-        // console.log("list: ", list)
-        // console.log("tokenizedInput: ", tokenizedInput)
-        // console.log("parents: ", parents)
+        console.log("NOUN: ", noun)
+        console.log("list: ", list)
+        console.log("tokenizedInput: ", tokenizedInput)
+        console.log("parents: ", parents)
+        const threshold = this.THRESH[noun]
         const nounAdj = [];
         for (const token of tokenizedInput) {
             const integer = this.integerSearch(token, noun);
-            const levi = this.leviSearch(token, list);
+            const levi = this.leviSearch(token, list, threshold);
+            console.log("I AM LEVI RESULT", levi)
             if (integer) {
                 nounAdj.push({
                     token: token,
@@ -150,7 +212,6 @@ export class NounSearchEngine extends IntentDetectionBase {
                 });
             } else if (levi) {
                 for (let l of levi) {
-                    if (arraysEqual(list, ["audio track", "midi track", "return track"])) { l = [16126, 16382, 16254][l] }
                     nounAdj.push({
                         token: token,
                         index: l,
@@ -163,7 +224,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
             }
         }
-        // console.log("nounAdj: ", nounAdj)
+        console.log("nounAdj: ", nounAdj)
         return nounAdj;
     }
     removeDuplicateResults(nounAdjArray) {

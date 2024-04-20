@@ -1,4 +1,4 @@
-import { wordsToNumbers } from "words-to-numbers"
+// import { wordsToNumbers } from "words-to-numbers"
 
 
 let phrases = [
@@ -12,6 +12,7 @@ let phrases = [
     "load an [a-z]*",
     "load a drum bus",
     "load a reverb",
+    "clip slot",
     "tuner",
     "a reverb",
     "beat [0-9] to beat [0-9]",
@@ -76,7 +77,7 @@ export class TranscriptParser {
         }
 
         filteredResults = filteredResults.startsWith(' ') ? filteredResults.trimStart() : filteredResults;
-        return wordsToNumbers(filteredResults)
+        return this.replaceWordsWithNumbers(filteredResults)
     }
 
 
@@ -89,9 +90,7 @@ export class TranscriptParser {
         phrases = phrases.concat(config.instrument)
         phrases = phrases.concat(config.midiDevice)
         console.log("SPEECH RECOGNITION RESULTS: ", results)
-  
 
-        
         for (let result of results) {
             if (new RegExp(phrases.join("|").toLowerCase()).test(result.transcript.toLowerCase())) {
                 return result.transcript.toLowerCase(); // Return them if they are
@@ -100,8 +99,38 @@ export class TranscriptParser {
         return results[0].transcript.toLowerCase(); // Otherwise return the highest confidence
     };
     directReplace = (transcript, find, rep) => {
-        let finalTranscript = transcript.replace(find, rep);
-        console.log("FINAL TRANSCRIPT", finalTranscript)
-        return finalTranscript;
+        return transcript.replace(find, rep);
     };
+
+    replaceWordsWithNumbers(transcript) {
+        const wordMap = {
+            "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+            "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+            "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
+            "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
+            "nineteen": 19, "twenty": 20,
+            "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60,
+            "seventy": 70, "eighty": 80, "ninety": 90,
+            "hundred": 100, "thousand": 1000
+        };
+    
+        // Split the sentence into words
+        const words = transcript.split(' ');
+    
+        // Iterate through each word
+        const replacedWords = words.map(word => {
+            // Check if the word is in the wordMap
+            if (wordMap[word.toLowerCase()] !== undefined) {
+                // If yes, replace with the numeric equivalent
+                return wordMap[word.toLowerCase()].toString();
+            } else {
+                // If not, keep the word as is
+                return word;
+            }
+        });
+    
+        // Join the words back into a sentence
+        const result = replacedWords.join(' ');
+        return result;
+    }
 }

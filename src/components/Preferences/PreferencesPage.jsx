@@ -1,6 +1,6 @@
 import { useState } from "react"
 import MidiPreferences from "./MidiPreferences"
-import AccountPreferences from "./AccountPreferences"
+
 
 export default function Preferences() {
   const [page, setPage] = useState("account")
@@ -15,7 +15,6 @@ export default function Preferences() {
         </div>
 
         {page === "midi" && <MidiPreferences />}
-        {page === "account" && <AccountPreferences />}
       </div>
     </>
   )
