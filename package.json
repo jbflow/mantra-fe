@@ -21,7 +21,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "vite build --config staging.config.js",
     "serve": "vite preview"
   },
   "eslintConfig": {
