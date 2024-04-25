@@ -56,9 +56,11 @@ const rename_item = (noun_adj, noun, value, config) => {
   // Handles renaming an item
   const { path, index } = get_all_paths(noun_adj, noun, config);
   // Try overwriting first, otherwise insert.
+  
   try {
     path[index] = value;
   } catch (error) {
+    console.log(path)
     path.splice(index, 0, value);
   }
 };
@@ -124,3 +126,5 @@ const updateConfig = (midiArray, config) => {
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map
   return config;
 };
+
+
