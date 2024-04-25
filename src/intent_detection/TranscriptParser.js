@@ -1,7 +1,7 @@
-import {wordsToNumbers } from "words-to-numbers"
+// import { wordsToNumbers } from "words-to-numbers"
 
 
-const phrases = [
+let phrases = [
     "un arm the",
     "un arm track [0-9]",
     "arm track [0-9]",
@@ -12,6 +12,7 @@ const phrases = [
     "load an [a-z]*",
     "load a drum bus",
     "load a reverb",
+    "clip slot",
     "tuner",
     "a reverb",
     "beat [0-9] to beat [0-9]",
@@ -20,9 +21,9 @@ const phrases = [
     "[0-9] [A-Z][0-9] notes",
     "eq8",
     "eq3",
-  ];
-  
-  const replace = {
+];
+
+const replace = {
     loading: "load an",
     "load of": "load a",
     "load and": "load a",
@@ -42,13 +43,19 @@ const phrases = [
     "phase of lounger": "Phaser-Flanger",
     "load a saturated": "load a Saturator",
     "un solo": "unsolo",
+    "on solo": "unsolo",
     "on arm": "unarm",
     "so low": "solo",
     "decreased": "decrease",
     "drywear": "dry wet",
     "drywall": "dry wet",
-    "drywap": "dry wet"
-  };
+    "drywap": "dry wet",
+    "wave table": "wavetable",
+    "analogue": "analog",
+    "raw": "roar",
+    "attention": "a tension"
+
+};
 
 export class TranscriptParser {
     constructor() {
@@ -61,31 +68,69 @@ export class TranscriptParser {
 
     cleanupTranscript(event, macroCommands) {
         this.currentResult = event.results[event.resultIndex]
-        // console.log("CURRENT RESULT: ", this.currentResult)
-        const filteredResults = this.checkPhrases(this.currentResult, macroCommands)
-        // console.log("FILTERED RESULTS", filteredResults)
-        let transcript = ""
+        console.log("CURRENT RESULT: ", this.currentResult)
+        let filteredResults = this.checkPhrases(this.currentResult, macroCommands)
+        console.log("FILTERED RESULTS", filteredResults)
+        
         for (let item in replace) {
-            transcript = this.directReplace(filteredResults, item, replace[item]);
-          }
-          
-        transcript = transcript.startsWith(' ') ? transcript.trimStart() : transcript;
-        return wordsToNumbers(transcript)
+            filteredResults = this.directReplace(filteredResults, item, replace[item]);
+        }
+
+        filteredResults = filteredResults.startsWith(' ') ? filteredResults.trimStart() : filteredResults;
+        return this.replaceWordsWithNumbers(filteredResults)
     }
 
+
+
     checkPhrases(results, macroCommands) {
-        // Loop through the alternatives to check if any of our hot phrases are contained in them.
-        // console.log("alt", results);
-        phrases.concat(macroCommands)
-        for (let result in results) {
-            if (new RegExp(phrases.join("|")).test(results[result].transcript)) {
-                return results[result].transcript; // Return them if they are
+        let config = JSON.parse(sessionStorage.getItem("config"))
+        phrases = phrases.concat(macroCommands)
+        phrases = phrases.concat(config.track)
+        phrases = phrases.concat(config.audioDevice)
+        phrases = phrases.concat(config.instrument)
+        phrases = phrases.concat(config.midiDevice)
+        console.log("SPEECH RECOGNITION RESULTS: ", results)
+
+        for (let result of results) {
+            if (new RegExp(phrases.join("|").toLowerCase()).test(result.transcript.toLowerCase())) {
+                return result.transcript.toLowerCase(); // Return them if they are
             }
         }
-        return results[0].transcript; // Otherwise return the highest confidence
+        return results[0].transcript.toLowerCase(); // Otherwise return the highest confidence
     };
     directReplace = (transcript, find, rep) => {
-        let finalTranscript = transcript.replace(find, rep);
-        return finalTranscript;
+        return transcript.replace(find, rep);
     };
+
+    replaceWordsWithNumbers(transcript) {
+        const wordMap = {
+            "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+            "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+            "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
+            "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
+            "nineteen": 19, "twenty": 20,
+            "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60,
+            "seventy": 70, "eighty": 80, "ninety": 90,
+            "hundred": 100, "thousand": 1000
+        };
+    
+        // Split the sentence into words
+        const words = transcript.split(' ');
+    
+        // Iterate through each word
+        const replacedWords = words.map(word => {
+            // Check if the word is in the wordMap
+            if (wordMap[word.toLowerCase()] !== undefined) {
+                // If yes, replace with the numeric equivalent
+                return wordMap[word.toLowerCase()].toString();
+            } else {
+                // If not, keep the word as is
+                return word;
+            }
+        });
+    
+        // Join the words back into a sentence
+        const result = replacedWords.join(' ');
+        return result;
+    }
 }

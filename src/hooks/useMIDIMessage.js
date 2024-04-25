@@ -1,20 +1,11 @@
 import { useEffect, useState } from "react";
 
 
-export default function useMIDIMessage(input) { 
-    const [message, setMessage] = useState();
-
-    const clearMessage = () => {
-        setMessage(null)
-    }
-    
-    const handleMessage = (message) => {
-        setMessage(message);
-    };
+export default function useMIDIMessage(input, handleMidiMessage) { 
     useEffect(() => {
         if (!input) return;
-        input.addEventListener("midimessage", handleMessage)
+        input.addEventListener("midimessage", handleMidiMessage)
     }, [input]);
-    return [message, clearMessage]
+    return []
 }
 

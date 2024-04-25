@@ -45,3 +45,6 @@ amplifytools.xcconfig
 .env
 
 .VSCodeCounter
+
+localhost-key.pem
+localhost.pem

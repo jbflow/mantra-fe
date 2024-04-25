@@ -16,6 +16,8 @@ export const emptyConfig = {
   instrument: [],
   audioDevice: [],
   midiDevice: [],
+  browserClip: [],
+  favorites: [],
   sel_track: 0,
   sel_device: 0,
 };
@@ -47,15 +49,18 @@ export const VERBS = {
 export const NOUNS = {
   transport: 1,
   track: 3,
-  "return track": 4,
+  "returnTrack": 4,
   scene: 5,
-  "cue point": 6,
+  "cuePoint": 6,
   device: 10,
   clip: 11,
+  "clipSlot": 12,
   parameter: 22,
   instrument: 39,
   audioDevice: 40,
   midiDevice: 41,
+  browserClip: 42,
+  favorites: 43,
 };
 
 export const NOUN_MAP = {
@@ -65,10 +70,13 @@ export const NOUN_MAP = {
   6: "cue point",
   10: "device",
   11: "clip",
+  12: "clip slot",
   22: "parameter",
   39: "instrument",
   40: "audioDevice",
   41: "midiDevice",
+  42: "browserClip",
+  43: "favorites",
 };
 
 export const SUB_NOUNS = {
