@@ -5,11 +5,12 @@ import MidiProvider from "./MidiContext";
 
 
 export default function ContextComposer({ children, user, isMobile, paymentData }) {
+  console.log(user)
   if (!isMobile) {
     return (
       <UserProvider user={user} paymentData={paymentData} >
         <MidiProvider>
-          <CommandsProvider url={`/commands?userId=${user.attributes?.sub}`}>
+          <CommandsProvider url={`/commands?userId=${user.userId}`}>
             {children}
           </CommandsProvider>
         </MidiProvider>
@@ -19,7 +20,7 @@ export default function ContextComposer({ children, user, isMobile, paymentData 
   else {
     return (
       <UserProvider user={user} paymentData={paymentData}>
-          <CommandsProvider url={`/commands?userId=${user.attributes?.sub}`}>
+          <CommandsProvider url={`/commands?userId=${user.userId}`}>
             {children}
           </CommandsProvider>
       </UserProvider>
