@@ -6,10 +6,17 @@ import { Amplify } from 'aws-amplify';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import config from '../amplifyconfiguration.json';
+import stagingConfig from '../amplifyconfiguration-staging.json';
 import ContextComposer from "./contexts/ContextComposer";
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
-Amplify.configure(config);
+
+if (import.meta.env.VITE_MODE === "dev") {
+    Amplify.configure(config);
+}
+else if (import.meta.env.VITE_MODE === "staging") {
+    Amplify.configure(config);
+}
 
 function Main({ signOut, user }) {
     return (

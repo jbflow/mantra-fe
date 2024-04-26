@@ -37,10 +37,8 @@ const transcriptParser = new TranscriptParser()
 
 
 function App({ signOut }) {
-
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
-
   const [dawLink, setDawLink] = useState(false)
   const [midiIn, setMidiIn] = useState(false)
   const [midiOut, setMidiOut] = useState(false)
