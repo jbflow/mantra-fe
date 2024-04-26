@@ -15,7 +15,7 @@ if (import.meta.env.VITE_MODE === "dev") {
     Amplify.configure(config);
 }
 else if (import.meta.env.VITE_MODE === "staging") {
-    Amplify.configure(config);
+    Amplify.configure(stagingConfig);
 }
 
 function Main({ signOut, user }) {
