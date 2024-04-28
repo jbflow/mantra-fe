@@ -32,6 +32,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
                 recognition.current.start()
                 handleSetListening(true)
                 setUserInitiatedSpeech(true)
+                
             }
             catch (err) {
                 console.log("ERRROR", err)
@@ -92,11 +93,15 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
                     <div className={listening ? "mic-btn mic-btn-listening" : "mic-btn"}>
                     </div>
                     <div className={listening ? "mic-btn circlein circlein-listening" : "mic-btn circlein"}>
-                        <img
-                            alt="btn to start mic for speech recognition"
-                            src="./images/menu-icons/mic-fill.svg"
-                            className="w-75 m-auto"
-                        />
+                        <button aria-label="click to start speaking">
+                            <img
+                                alt="btn to start mic for speech recognition"
+                                src="./images/menu-icons/mic-fill.svg"
+                                className="w-75 m-auto"
+                            /></button>
+                        <div aria-live="polite" aria-atomic="true" class="sr-only">
+                            {listening ? "started listening" : "stopped listening"}
+                        </div>
                     </div>
                 </div>
             </div>
