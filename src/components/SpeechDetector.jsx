@@ -97,7 +97,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
                                 src="./images/menu-icons/mic-fill.svg"
                                 className="w-75 m-auto"
                             />
-                            <div aria-live="polite" aria-atomic="true" className="sr-only">
+                            <div aria-live="assertive" aria-atomic="true" className="sr-only">
                                 {listening ? "started listening" : "stopped listening"}
                             </div>
                         </div>
