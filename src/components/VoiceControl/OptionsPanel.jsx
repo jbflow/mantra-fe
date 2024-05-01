@@ -40,7 +40,7 @@ export default function OptionsPanel() {
         <div className="options-box">
           <p className="h5 px-4 pt-2">Voice Settings</p>
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
-            <p className="p-3 text-secondary m-0">Wake word</p>
+            <p className="p-3 text-secondary m-0">Voice feedback</p>
             <button onClick={handleWakeWordPressed} className={`btn ${wakeWord ? "btn-primary" : "btn-secondary"} m-0 w-25 text-center`}>   {wakeWord ? "On" : "Off"}</button>
           </div>
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">

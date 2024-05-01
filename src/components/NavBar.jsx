@@ -50,16 +50,6 @@ export default function NavBar({ signOut }) {
               />
             </Link>
 
-
-            <Link className="nav-link nav-link-sidebar" to="/help-and-support">
-              Help & Support
-              <img
-                style={{ ...styles.icon, width: "23px", filter: "invert(100%) sepia(0%) saturate(0%) hue-rotate(108deg) brightness(110%) contrast(101%)" }}
-                alt="Command Builder nav logo"
-                src="./images/menu-icons/question.svg"
-              />
-            </Link>
-
           </Nav>
         </Navbar.Collapse>
       </Navbar>
