@@ -10,7 +10,9 @@ export function usePostToApi(state, url) {
     const postData = async () => {
       try {
         setPostLoading(true);
-        await post("backend", url, { body: state });
+        const postRequest = await post({apiName: "backend", path: url})
+        const response = await postRequest.response
+        response.body.json().then(console.log)
       } catch ({ message }) {
         setPostError(message);
       } finally {
@@ -20,7 +22,6 @@ export function usePostToApi(state, url) {
     if (initRender.current && state) {
       initRender.current = false;
     } else if (state) {
-      console.log("post", state);
       postData();
     }
   }, [state, url]);

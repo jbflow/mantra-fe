@@ -32,7 +32,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
                 recognition.current.start()
                 handleSetListening(true)
                 setUserInitiatedSpeech(true)
-                
+
             }
             catch (err) {
                 console.log("ERRROR", err)
@@ -79,34 +79,33 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
 
 
 
-
-
-
     return (
         <>
             <div className="speech-detector-container">
-                <div className="mic-container" onClick={handleSpeechRecognitionToggle} id="tlkbck-btn">
-                    <div className={listening ? "mic-outline" : null}>
-                    </div>
-                    <div className={listening ? "mic-outline" : null} id="delayed">
-                    </div>
-                    <div className={listening ? "mic-btn mic-btn-listening" : "mic-btn"}>
-                    </div>
-                    <div className={listening ? "mic-btn circlein circlein-listening" : "mic-btn circlein"}>
-                        <button aria-label="click to start speaking">
+                <button aria-label="click to start speaking" onClick={handleSpeechRecognitionToggle}>
+                    <div className="mic-container"  id="tlkbck-btn">
+                        <div className={listening ? "mic-outline" : null}>
+                        </div>
+                        <div className={listening ? "mic-outline" : null} id="delayed">
+                        </div>
+                        <div className={listening ? "mic-btn mic-btn-listening" : "mic-btn"}>
+                        </div>
+                        <div className={listening ? "mic-btn circlein circlein-listening" : "mic-btn circlein"}>
+
                             <img
                                 alt="btn to start mic for speech recognition"
                                 src="./images/menu-icons/mic-fill.svg"
                                 className="w-75 m-auto"
-                            /></button>
-                        <div aria-live="polite" aria-atomic="true" className="sr-only">
-                            {listening ? "started listening" : "stopped listening"}
+                            />
+                            <div aria-live="assertive" aria-atomic="true" className="sr-only">
+                                {listening ? "started listening" : "stopped listening"}
+                            </div>
                         </div>
                     </div>
-                </div>
+                </button>
             </div>
-        </>
 
+        </>
     );
 }
 export default SpeechDetector;
