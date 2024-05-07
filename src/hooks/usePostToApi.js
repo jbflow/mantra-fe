@@ -10,7 +10,7 @@ export function usePostToApi(state, url) {
     const postData = async () => {
       try {
         setPostLoading(true);
-        const postRequest = await post({apiName: "backend", path: url})
+        const postRequest = await post({ apiName: "backend", path: url, options: { body: state } })
         const response = await postRequest.response
         response.body.json().then(console.log)
       } catch ({ message }) {
