@@ -47,7 +47,7 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <button className="accessible-btn" aria-label={`${command.command} trash button`}>
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete command`}>
               <img alt="trash icon" src="./images/menu-icons/trash2.svg" />
             </button>
           </div>
@@ -105,7 +105,7 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <button className="accessible-btn" aria-label={`${command.command} trash button`}>
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete command`}>
               <img alt="" src="./images/menu-icons/trash2.svg" />
             </button>
           </div>
@@ -124,15 +124,17 @@ export default function CommandItem({
             <button className="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window, press space to rename the command`}>{command.command}</button>
           </div>
 
-          <div
-            className="cmd-button cmd-button-edit"
+          <button
+            className="accessible-btn cmd-button cmd-button-edit"
             onClick={() => {
               setEditing(command.id);
               changedValue.current = command.command;
+              
             }}
+            aria-label={`${command.command} command, press to edit the name`}
           >
             <BsPencil />
-          </div>
+          </button>
         </div>
         {showModal ? (
           <DeleteModal
@@ -154,7 +156,7 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <button className="accessible-btn" aria-label={`${command.command} trash button`}>
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete the command`}>
               <img alt="" src="./images/menu-icons/trash2.svg" />
             </button>
           </div>
