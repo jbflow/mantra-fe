@@ -11,7 +11,7 @@ export default function CommandItem({
   dispatch,
 }) {
   const changedValue = useRef(null);
-  
+
   const [showModal, setShowModal] = useState(false);
 
   const updateCmd = (id) => {
@@ -42,7 +42,9 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img alt="trash icon" src="./images/menu-icons/trash2.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} trash button`}>
+              <img alt="trash icon" src="./images/menu-icons/trash2.svg" />
+            </button>
           </div>
           <div className="cmd-input">
             <input
@@ -63,7 +65,9 @@ export default function CommandItem({
               updateCmd(command.id);
             }}
           >
-            <img alt="" src="./images/menu-icons/check.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} confirm button`}>
+              <img alt="" src="./images/menu-icons/check.svg" />
+            </button>
           </div>
           <div
             className="cmd-button cmd-button-close"
@@ -71,7 +75,9 @@ export default function CommandItem({
               setEditing(null);
             }}
           >
-            <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} close button`}>
+              <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
+            </button>
           </div>
         </div>
         {showModal ? (
@@ -94,7 +100,9 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img alt="" src="./images/menu-icons/trash2.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} trash button`}>
+              <img alt="" src="./images/menu-icons/trash2.svg" />
+            </button>
           </div>
 
           <div
@@ -105,7 +113,7 @@ export default function CommandItem({
               changedValue.current = command.command;
             }}
           >
-            <button class="cmd-btn-txt-btn" style={{ margin: "2px" }}  aria-label={`${command.command} command, press enter to open the edit window`}>{command.command}</button>
+            <button class="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window`}>{command.command}</button>
           </div>
 
           <div
@@ -138,7 +146,9 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img alt="" src="./images/menu-icons/trash2.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} trash button`}>
+              <img alt="" src="./images/menu-icons/trash2.svg" />
+            </button>
           </div>
           <div
             style={{ width: "335px" }}
@@ -152,7 +162,7 @@ export default function CommandItem({
               changedValue.current = command.command;
             }}
           >
-            <button class="cmd-btn-txt-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window`}>
+            <button class="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window`}>
               {command.command}
             </button>
           </div>
