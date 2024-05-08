@@ -66,6 +66,22 @@
   cursor: pointer;
 }
 
+.cmd-btn-txt-btn {
+  background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+.cmd-btn-txt-btn:focus {
+  border: none;
+  background: none;
+  outline: none;
+}
+
 .cmd-button img {
   width: 15px;
   height: 15px;

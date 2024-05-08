@@ -42,7 +42,7 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img alt="" src="./images/menu-icons/trash2.svg" />
+            <img alt="trash icon" src="./images/menu-icons/trash2.svg" />
           </div>
           <div className="cmd-input">
             <input
@@ -105,7 +105,7 @@ export default function CommandItem({
               changedValue.current = command.command;
             }}
           >
-            <span style={{ margin: "2px" }}>{command.command}</span>
+            <button class="cmd-btn-txt-btn" style={{ margin: "2px" }}  aria-label={`${command.command} command, press enter to open the edit window`}>{command.command}</button>
           </div>
 
           <div
@@ -152,9 +152,9 @@ export default function CommandItem({
               changedValue.current = command.command;
             }}
           >
-            <span style={{ margin: "2px" }} className="cmd-input">
+            <button class="cmd-btn-txt-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window`}>
               {command.command}
-            </span>
+            </button>
           </div>
         </div>
         {showModal ? (
