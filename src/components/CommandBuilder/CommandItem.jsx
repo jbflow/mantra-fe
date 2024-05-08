@@ -29,6 +29,11 @@ export default function CommandItem({
     });
   };
 
+  const handleEditingCommand = (command) => {
+    setEditing(command.id);
+    changedValue.current = command.command;
+  }
+
 
 
   if (editing) {
@@ -108,12 +113,15 @@ export default function CommandItem({
           <div
             className="cmd-input"
             style={{ width: "273px" }}
-            onDoubleClick={() => {
-              setEditing(command.id);
-              changedValue.current = command.command;
+            onDoubleClick={() => { handleEditingCommand(command) }}
+            tabIndex="0"
+            onKeyDown={(e) => {
+              if (e.code === "Space") {
+                handleEditingCommand(command)
+              }
             }}
           >
-            <button class="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window`}>{command.command}</button>
+            <button className="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window, press space to rename the command`}>{command.command}</button>
           </div>
 
           <div
@@ -157,14 +165,14 @@ export default function CommandItem({
               setSelected(command.id);
               setEditing(null);
             }}
-            onDoubleClick={() => {
-              setEditing(command.id);
-              changedValue.current = command.command;
+            onDoubleClick={() => { handleEditingCommand(command) }}
+            onKeyDown={(e) => {
+              if (e.code === "Space") {
+                handleEditingCommand(command)
+              }
             }}
           >
-            <button class="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window`}>
-              {command.command}
-            </button>
+            <button className="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window, press space to rename the command`}>{command.command}</button>
           </div>
         </div>
         {showModal ? (
