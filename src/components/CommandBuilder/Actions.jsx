@@ -184,11 +184,9 @@ export default function Actions({
             onClick={() => {
               setShowAddButtons(!showAddButtons);
             }}
-            onBlur={() => {
-              setShowAddButtons(false);
-            }}
+            
           >
-            <img src="./images/menu-icons/plus.svg" alt="menu plus icon" />
+            <img src="./images/menu-icons/plus.svg" alt="press to expand actions menu" />
           </button>
           {showAddButtons ? (
             <div className="add-action-list">
@@ -200,17 +198,17 @@ export default function Actions({
                   addVoiceAction();
                 }}
               >
-                <img src="./images/menu-icons/soundwave.svg" alt="menu sound icon" />
+                <img src="./images/menu-icons/soundwave.svg" alt="" />
                 Add voice action
               </button>
-              <button
+              <button disabled
                 onMouseDown={(e) => {
                   e.preventDefault();
                 }}
                 onClick={(e) => {
                   addMidiAction();
                 }}>
-                <img src="./images/menu-icons/midi.svg" alt="add midi action" />
+                <img src="./images/menu-icons/midi.svg" alt="" />
                 Add MIDI action
               </button>
             </div>
