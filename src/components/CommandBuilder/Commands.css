@@ -1,3 +1,18 @@
+.accessible-btn {
+  background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+.accessible-btn:focus{
+  border: none;
+  background: none;
+  outline: none;
+}
+
 .command-builder-container {
   background: #ffffff;
   display: flex;

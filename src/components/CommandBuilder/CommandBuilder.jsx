@@ -5,6 +5,7 @@ import CommandItem from "./CommandItem";
 // import { UserContext } from "../../contexts/UserContext";
 import { CommandsContext } from "../../contexts/CommandsContext";
 import "./Commands.css";
+import AddCommand from "./AddCommand";
 
 export default function CommandBuilder() {
   const { commands, dispatch, postLoading } = useContext(CommandsContext);
@@ -20,7 +21,7 @@ export default function CommandBuilder() {
             dispatch={dispatch}
           />
         </div>
-        <CommandItem addCommand dispatch={dispatch} />
+        <AddCommand dispatch={dispatch}/>
       </div>
       <div className="actions-container">
         {selected ? (

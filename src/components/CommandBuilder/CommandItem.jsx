@@ -8,11 +8,10 @@ export default function CommandItem({
   selected,
   setSelected,
   setEditing,
-  addCommand,
   dispatch,
 }) {
   const changedValue = useRef(null);
-  const newValue = useRef(null);
+
   const [showModal, setShowModal] = useState(false);
 
   const updateCmd = (id) => {
@@ -30,12 +29,12 @@ export default function CommandItem({
     });
   };
 
-  const addCmd = (cmd) => {
-    dispatch({
-      type: "ADD_CMD",
-      payload: newValue.current,
-    });
-  };
+  const handleEditingCommand = (command) => {
+    setEditing(command.id);
+    changedValue.current = command.command;
+  }
+
+
 
   if (editing) {
     return (
@@ -48,7 +47,9 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img alt="" src="./images/menu-icons/trash2.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete command`}>
+              <img alt="trash icon" src="./images/menu-icons/trash2.svg" />
+            </button>
           </div>
           <div className="cmd-input">
             <input
@@ -69,7 +70,9 @@ export default function CommandItem({
               updateCmd(command.id);
             }}
           >
-            <img alt="" src="./images/menu-icons/check.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} confirm button`}>
+              <img alt="" src="./images/menu-icons/check.svg" />
+            </button>
           </div>
           <div
             className="cmd-button cmd-button-close"
@@ -77,7 +80,9 @@ export default function CommandItem({
               setEditing(null);
             }}
           >
-            <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} close button`}>
+              <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
+            </button>
           </div>
         </div>
         {showModal ? (
@@ -100,29 +105,36 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img alt="" src="./images/menu-icons/trash2.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete command`}>
+              <img alt="" src="./images/menu-icons/trash2.svg" />
+            </button>
           </div>
 
           <div
             className="cmd-input"
             style={{ width: "273px" }}
-            onDoubleClick={() => {
-              setEditing(command.id);
-              changedValue.current = command.command;
+            onDoubleClick={() => { handleEditingCommand(command) }}
+            tabIndex="0"
+            onKeyDown={(e) => {
+              if (e.code === "Space") {
+                handleEditingCommand(command)
+              }
             }}
           >
-            <span style={{ margin: "2px" }}>{command.command}</span>
+            <button className="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window, press space to rename the command`}>{command.command}</button>
           </div>
 
-          <div
-            className="cmd-button cmd-button-edit"
+          <button
+            className="accessible-btn cmd-button cmd-button-edit"
             onClick={() => {
               setEditing(command.id);
               changedValue.current = command.command;
+              
             }}
+            aria-label={`${command.command} command, press to edit the name`}
           >
             <BsPencil />
-          </div>
+          </button>
         </div>
         {showModal ? (
           <DeleteModal
@@ -133,33 +145,8 @@ export default function CommandItem({
         ) : null}
       </>
     );
-  } else if (addCommand) {
-    return (
-      <>
-        <div className="cmd-row cmd-r-add">
-          <input
-            placeholder="Type new command here"
-            type="text"
-            onChange={(e) => {
-              newValue.current = e.target.value;
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") addCmd();
-            }}
-          />
-
-          <div
-            className="cmd-button cmd-button-add"
-            onClick={() => {
-              addCmd();
-            }}
-          >
-            <img alt="" className="trash-button" src="./images/menu-icons/plus.svg" />
-          </div>
-        </div>
-      </>
-    );
-  } else {
+  }
+  else {
     return (
       <>
         <div className="cmd-row cmd-r-default">
@@ -169,7 +156,9 @@ export default function CommandItem({
               setShowModal(true);
             }}
           >
-            <img alt="" src="./images/menu-icons/trash2.svg" />
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete the command`}>
+              <img alt="" src="./images/menu-icons/trash2.svg" />
+            </button>
           </div>
           <div
             style={{ width: "335px" }}
@@ -178,14 +167,14 @@ export default function CommandItem({
               setSelected(command.id);
               setEditing(null);
             }}
-            onDoubleClick={() => {
-              setEditing(command.id);
-              changedValue.current = command.command;
+            onDoubleClick={() => { handleEditingCommand(command) }}
+            onKeyDown={(e) => {
+              if (e.code === "Space") {
+                handleEditingCommand(command)
+              }
             }}
           >
-            <span style={{ margin: "2px" }} className="cmd-input">
-              {command.command}
-            </span>
+            <button className="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window, press space to rename the command`}>{command.command}</button>
           </div>
         </div>
         {showModal ? (
