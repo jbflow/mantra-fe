@@ -29,22 +29,24 @@ export default function VoiceAction({
           />
         </div>
         <div>
-          <div
-            className="cmd-button cmd-button-dupl"
+          <button
+            className="accessible-btn cmd-button cmd-button-dupl"
             onClick={() => {
               duplicateAction(index);
             }}
+            aria-label={`${data} action duplicate button`}
           >
             <IoMdCopy />
-          </div>
-          <div
-            className="cmd-button cmd-button-close"
+          </button>
+          <button
+            className="accessible-btn cmd-button cmd-button-close"
             onClick={() => {
               delAction(index);
             }}
+            aria-label={`${data} action delete button`}
           >
             <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
-          </div>
+          </button>
         </div>
       </div>
     </>
