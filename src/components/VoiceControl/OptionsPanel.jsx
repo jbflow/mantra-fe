@@ -8,6 +8,7 @@ import PhoneConnect from '../PhoneConnect'
 export default function OptionsPanel() {
   const preferences = JSON.parse(localStorage.getItem("preferences"))
   const [wakeWord, setWakeWord] = useState(preferences.voice.wakeWord)
+  const [voiceFeedback, setVoiceFeedback] = useState(preferences.voice.feedback)
   const [continuous, setContinuous] = useState(preferences.voice.continuous)
   const [language, setLanguage] = useState(preferences.voice.language)
   const { midiSettings, midiInputs, dispatch } = useContext(MidiContext)
@@ -16,6 +17,14 @@ export default function OptionsPanel() {
     setWakeWord(!wakeWord)
     preferences.voice.wakeWord = !wakeWord
     localStorage.setItem("preferences", JSON.stringify(preferences))
+  }
+
+  const handleVoiceFeedbackPressed = () => {
+    setVoiceFeedback(!voiceFeedback)
+    preferences.voice.feedback = !voiceFeedback
+    localStorage.setItem("preferences", JSON.stringify(preferences))
+
+
   }
   const handleContinuousPressed = () => {
     setContinuous(!continuous)
@@ -41,7 +50,7 @@ export default function OptionsPanel() {
           <p className="h5 px-4 pt-2">Voice Settings</p>
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
             <p className="p-3 text-secondary m-0">Voice feedback</p>
-            <button onClick={handleWakeWordPressed} className={`btn ${wakeWord ? "btn-primary" : "btn-secondary"} m-0 w-25 text-center`}>   {wakeWord ? "On" : "Off"}</button>
+            <button onClick={handleVoiceFeedbackPressed} className={`btn ${voiceFeedback ? "btn-primary" : "btn-secondary"} m-0 w-25 text-center`}>   {voiceFeedback ? "On" : "Off"}</button>
           </div>
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
             <p className="p-3 text-secondary m-0">Continuous</p>
