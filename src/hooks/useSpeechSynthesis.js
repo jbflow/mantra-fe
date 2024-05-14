@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 const useSpeechSynthesis = (props = {}) => {
-  const { onEnd = () => {} } = props;
+  const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
+  const { onEnd = () => { } } = props;
   const [voices, setVoices] = useState([]);
   const [speaking, setSpeaking] = useState(false);
   const [supported, setSupported] = useState(false);
@@ -36,7 +37,7 @@ const useSpeechSynthesis = (props = {}) => {
   }, []);
 
   const speak = (args = {}) => {
-    
+    if (!voicePreferences.feedback) { return }
     const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
     if (!supported) return;
     setSpeaking(true);
@@ -47,7 +48,6 @@ const useSpeechSynthesis = (props = {}) => {
     utterance.rate = rate;
     utterance.pitch = pitch;
     utterance.volume = volume;
-    console.log("SPEAK", utterance)
     window.speechSynthesis.speak(utterance);
   };
 
