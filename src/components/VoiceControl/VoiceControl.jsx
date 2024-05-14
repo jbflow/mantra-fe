@@ -10,6 +10,7 @@ import PhoneConnect from "../PhoneConnect";
 
 
 export default function VoiceControl({ transcript, setAlternatives, connectionStatus, confirmation, setConfirmation, speak, speaking, actions }) {
+  
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
@@ -17,8 +18,6 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
 
 
   const handleMidiMessage = (message) => {
-    console.log(message)
-    console.log("hi", mapping)
     if (mapping && message && isMappable(message.data[0]) && message.data[2] === 0) {
       dispatch({ type: "SAVE_MIC_MAPPING", payload: Array.from(message.data.slice(0, 2)) })
       setMapping(false)
@@ -42,8 +41,6 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
       (statusByte >= 144 && statusByte <= 159) || // Note On (144-159)
       (statusByte >= 176 && statusByte <= 191);   // Control Change (176-191)
   }
-
-
 
 
 

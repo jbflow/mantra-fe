@@ -52,8 +52,11 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
 
     const handleSpeechRecognitionResult = (result) => {
         setAlternatives(result)
-        recognition.current.stop()
-        handleSetListening(false)
+        if (!voicePreferences.continuous || voicePreferences.feedback) {
+            recognition.current.stop()
+            handleSetListening(false)
+        }
+        
     }
 
 
@@ -83,7 +86,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
         <>
             <div className="speech-detector-container">
                 <button aria-label="click to start speaking" onClick={handleSpeechRecognitionToggle}>
-                    <div className="mic-container"  id="tlkbck-btn">
+                    <div className="mic-container" id="tlkbck-btn">
                         <div className={listening ? "mic-outline" : null}>
                         </div>
                         <div className={listening ? "mic-outline" : null} id="delayed">
