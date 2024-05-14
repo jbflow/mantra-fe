@@ -1,3 +1,18 @@
+.accessible-btn {
+  background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+.accessible-btn:focus{
+  border: none;
+  background: none;
+  outline: none;
+}
+
 .command-builder-container {
   background: #ffffff;
   display: flex;
@@ -7,7 +22,8 @@
   background: var(--universal-white-ffffff) 0% 0% no-repeat padding-box;
   background: #ffffff 0% 0% no-repeat padding-box;
   border-right: 1px solid #e4e4e4;
-  height: calc(100vh - 150px);
+  border-top: 1px solid #e4e4e4;
+  height: calc(100vh - 105px);
   width: 396px;
   overflow-x: hidden;
   overflow-y: visible;
@@ -121,6 +137,7 @@
 
 .actions-container {
   background: #f7f7f7;
+  border-top: 1px solid #e4e4e4;
   width: 100%;
   display: flex;
   align-items: center;
@@ -287,6 +304,13 @@
 
 .action-input input:focus {
   outline: None;
+}
+
+.midi-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .add-action-button {

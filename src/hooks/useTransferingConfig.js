@@ -20,7 +20,6 @@ export default function useTransferingConfig() {
   const startTimer = () => {
     setConfigState(true)
     interval.current = setInterval(() => {
-      console.log(configTimer)
       setConfigTimer((prevTime) => prevTime + 50);
     }, 50);
 

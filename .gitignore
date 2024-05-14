@@ -37,7 +37,6 @@ dist/
 node_modules/
 aws-exports.js
 awsconfiguration.json
-amplifyconfiguration.json
 amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
@@ -45,3 +44,6 @@ amplifytools.xcconfig
 .env
 
 .VSCodeCounter
+
+localhost-key.pem
+localhost.pem

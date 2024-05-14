@@ -37,13 +37,14 @@
     border-radius: 50%;
     background: #7A7E83;
     box-shadow: 0px 0px 80px #7A7E83;
-    
+
     position: absolute;
     cursor: pointer;
 }
-.mic-btn-listening{
-   background-color:  #009dff;
-   box-shadow: 0px 0px 80px #2283fc;
+
+.mic-btn-listening {
+    background-color: #009dff;
+    box-shadow: 0px 0px 80px #2283fc;
 }
 
 .circlein {
@@ -59,6 +60,19 @@
     background: #2283fc;
     box-shadow: 0px -2px 15px #ffffff;
     border: none;
+}
+
+.map-btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    button {
+        padding: 2px
+    }
+    p{
+        padding: 1rem;
+    }
 }
 
 @keyframes pulse {

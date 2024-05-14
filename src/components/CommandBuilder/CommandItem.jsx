@@ -1,0 +1,190 @@
+import React, { useState, useRef } from "react";
+import { BsPencil } from "react-icons/bs";
+import DeleteModal from "./DeleteModal";
+
+export default function CommandItem({
+  command,
+  editing,
+  selected,
+  setSelected,
+  setEditing,
+  dispatch,
+}) {
+  const changedValue = useRef(null);
+
+  const [showModal, setShowModal] = useState(false);
+
+  const updateCmd = (id) => {
+    dispatch({
+      type: "UPDATE_CMD",
+      payload: { id: id, command: changedValue.current },
+    });
+    setEditing(null);
+  };
+
+  const delCmd = (id) => {
+    dispatch({
+      type: "DELETE_CMD",
+      payload: { id: id },
+    });
+  };
+
+  const handleEditingCommand = (command) => {
+    setEditing(command.id);
+    changedValue.current = command.command;
+  }
+
+
+
+  if (editing) {
+    return (
+      <>
+        <div className="cmd-row cmd-r-editing">
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              setSelected(null);
+              setShowModal(true);
+            }}
+          >
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete command`}>
+              <img alt="trash icon" src="./images/menu-icons/trash2.svg" />
+            </button>
+          </div>
+          <div className="cmd-input">
+            <input
+              type="text"
+              autoFocus
+              defaultValue={command.command}
+              onChange={(e) => {
+                changedValue.current = e.target.value;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") updateCmd(command.id);
+              }}
+            />
+          </div>
+          <div
+            className="cmd-button cmd-button-tick"
+            onClick={() => {
+              updateCmd(command.id);
+            }}
+          >
+            <button className="accessible-btn" aria-label={`${command.command} confirm button`}>
+              <img alt="" src="./images/menu-icons/check.svg" />
+            </button>
+          </div>
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              setEditing(null);
+            }}
+          >
+            <button className="accessible-btn" aria-label={`${command.command} close button`}>
+              <img alt="" className="close-button" src="./images/menu-icons/close.svg" />
+            </button>
+          </div>
+        </div>
+        {showModal ? (
+          <DeleteModal
+            delCmd={delCmd}
+            id={command.id}
+            setShowModal={setShowModal}
+          />
+        ) : null}
+      </>
+    );
+  } else if (selected) {
+    return (
+      <>
+        <div className="cmd-row cmd-r-selected">
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              setSelected(null);
+              setShowModal(true);
+            }}
+          >
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete command`}>
+              <img alt="" src="./images/menu-icons/trash2.svg" />
+            </button>
+          </div>
+
+          <div
+            className="cmd-input"
+            style={{ width: "273px" }}
+            onDoubleClick={() => { handleEditingCommand(command) }}
+            tabIndex="0"
+            onKeyDown={(e) => {
+              if (e.code === "Space") {
+                handleEditingCommand(command)
+              }
+            }}
+          >
+            <button className="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window, press space to rename the command`}>{command.command}</button>
+          </div>
+
+          <button
+            className="accessible-btn cmd-button cmd-button-edit"
+            onClick={() => {
+              setEditing(command.id);
+              changedValue.current = command.command;
+              
+            }}
+            aria-label={`${command.command} command, press to edit the name`}
+          >
+            <BsPencil />
+          </button>
+        </div>
+        {showModal ? (
+          <DeleteModal
+            delCmd={delCmd}
+            id={command.id}
+            setShowModal={setShowModal}
+          />
+        ) : null}
+      </>
+    );
+  }
+  else {
+    return (
+      <>
+        <div className="cmd-row cmd-r-default">
+          <div
+            className="cmd-button cmd-button-close"
+            onClick={() => {
+              setShowModal(true);
+            }}
+          >
+            <button className="accessible-btn" aria-label={`${command.command} trash button, press to delete the command`}>
+              <img alt="" src="./images/menu-icons/trash2.svg" />
+            </button>
+          </div>
+          <div
+            style={{ width: "335px" }}
+            className="cmd-input"
+            onClick={() => {
+              setSelected(command.id);
+              setEditing(null);
+            }}
+            onDoubleClick={() => { handleEditingCommand(command) }}
+            onKeyDown={(e) => {
+              if (e.code === "Space") {
+                handleEditingCommand(command)
+              }
+            }}
+          >
+            <button className="accessible-btn" style={{ margin: "2px" }} aria-label={`${command.command} command, press enter to open the edit window, press space to rename the command`}>{command.command}</button>
+          </div>
+        </div>
+        {showModal ? (
+          <DeleteModal
+            delCmd={delCmd}
+            id={command.id}
+            setShowModal={setShowModal}
+          />
+        ) : null}
+      </>
+    );
+  }
+}

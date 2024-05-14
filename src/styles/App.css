@@ -81,7 +81,7 @@ body {
   line-height: 1.5;
   color: #373a3c;
   text-align: left;
-  background-color: #fff;
+  background-color: white;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -8719,7 +8719,6 @@ button.bg-dark:focus {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 1030;
 }
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
