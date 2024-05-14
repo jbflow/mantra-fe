@@ -1,6 +1,7 @@
 
-const fuzz = require('fuzzball');
-const constants = require('./constants');
+import * as fuzz from "fuzzball"
+
+import * as constants from "./constants"
 
 export class IntentDetectionBase {
     constructor() {
@@ -14,7 +15,7 @@ export class IntentDetectionBase {
         this.SINGLE_WORD = constants.SINGLE_WORD;
         this.CUES = constants.CUES;
         this.EXCLUDED = constants.EXCLUDED;
-        this.threshold = null;
+        this.threshold = 80;
     }
 
     parseInput(textIn = "", max_n = 3) {
@@ -91,12 +92,14 @@ export class IntentDetectionBase {
         }
     }
 
-    leviSearch(token, word_list) {
+    leviSearch(token, word_list, threshold) {
         if (token.split('').some(t => /\d/.test(t)) || this.EXCLUDED.includes(token)) {
             return;
         }
         const result = fuzz.extract(token, word_list)[0];
-        if (result && result[1] >= this.threshold) {
+        console.log("LEVI RESULT: ", result)
+        console.log("LEVI THRESHOLD SET: ", threshold)
+        if (result && result[1] >= threshold) {
             console.log("FUZZ RESULT: ", result)
             this.threshold = result[1];
             const name = result[0];

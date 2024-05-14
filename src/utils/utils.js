@@ -28,3 +28,26 @@ export const clearConfig = () => {
   }
   return emptyConfig;
 };
+
+
+const midiNoteToName = (dataByte) => {
+  const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const octave = Math.floor(dataByte / 12) - 1;
+  const noteIndex = dataByte % 12;
+  return noteNames[noteIndex] + octave;
+}
+
+// Function to convert MIDI channel number to channel name
+const midiChannelToName = (statusByte) => {
+  return statusByte & 0x0F;
+}
+
+// Function to convert MIDI data to note and channel names
+export const midiDataToNames = ([statusByte, dataByte]) => {
+  const note = midiNoteToName(dataByte);
+  const channel = midiChannelToName(statusByte);
+  return `Note: ${note} Ch: ${channel}`
+    
+  
+}
+

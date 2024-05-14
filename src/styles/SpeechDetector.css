@@ -1,0 +1,118 @@
+.speech-detector-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 40%;
+
+}
+
+
+
+.mic-container {
+    display: flex;
+    flex: 0 1 100%;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    padding-top: 20%;
+}
+
+.mic-outline {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 8px solid #B5A4A4;
+    animation: pulse 3s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: infinite;
+    position: absolute;
+}
+
+.mic-btn {
+    display: flex;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #7A7E83;
+    box-shadow: 0px 0px 80px #7A7E83;
+
+    position: absolute;
+    cursor: pointer;
+}
+
+.mic-btn-listening {
+    background-color: #009dff;
+    box-shadow: 0px 0px 80px #2283fc;
+}
+
+.circlein {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #7A7E83;
+    border: 1.5px dotted #ffffff;
+    position: absolute;
+}
+
+.circlein-listening {
+    background: #2283fc;
+    box-shadow: 0px -2px 15px #ffffff;
+    border: none;
+}
+
+.map-btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    button {
+        padding: 2px
+    }
+    p{
+        padding: 1rem;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0;
+        border: 20px solid #00aeff;
+    }
+
+    50% {
+        transform: scale(1.5);
+        border: solid #00eaff;
+        opacity: 0.8;
+    }
+
+    90% {
+        transform: scale(2);
+        opacity: 0.2;
+        border: 3px solid #2e7bff;
+    }
+
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+        border: 1px solid #0d00ff;
+    }
+}
+
+
+
+#delayed {
+    animation-delay: 1.5s;
+}
+
+@media only screen and (min-width: 768px) {
+    .speech-detector-container {
+        padding-top: 10%
+    }
+
+    .mic-container {
+        padding-top: 10%
+    }
+}

@@ -1,6 +1,7 @@
+import { emptyConfig } from "../utils/MidiConstants";
 import { IntentDetectionBase } from "./IntentDetectionBase";
 import { NounSearchEngine } from "./NounClasses"
-import { config } from "./test_data"
+// import { config } from "./test_data"
 export class IntentDetection extends IntentDetectionBase {
     constructor() {
         super();
@@ -8,28 +9,36 @@ export class IntentDetection extends IntentDetectionBase {
         this.config = {}
         this.lastSubject = "";
         this.tokenizedInput = [];
-        this.nounSearcher = new NounSearchEngine()
+        
     }
 
-    runDetection(textInput = "", config = {}) {
+    runDetection(textInput = "", config = emptyConfig) {
+        console.log("RUNNING DETECTION")
         this.textInput = textInput;
         this.config = config
-        this.tokenizedInput = this.parseInput(textInput, 3)
+        // console.log("CONFIG", config)
+        this.tokenizedInput = this.parseInput(textInput, 5)
+        console.log(this.tokenizedInput)
         if (textInput.split(" ").length === 1 && Object.keys(this.SINGLE_WORD).includes(textInput)) {
             return this.SINGLE_WORD[textInput]
         }
 
         const verb = this.getVerb();
-
+        this.nounSearcher = new NounSearchEngine()
         const nounAdj = this.nounSearcher.search(verb, this.tokenizedInput, this.config)
-        // console.log("verb: ", verb)
-        // console.log("potential nouns found: ", nounAdj)
+        console.log("verb: ", verb)
+        console.log("potential nouns found: ", nounAdj)
         const adverb = this.getAdverb(verb);
-        // console.log("adverb: ", adverb)
+        console.log("adverb: ", adverb)
         const units = this.getUnits();
-        // console.log("units: ", units)
-        const modifiedVerb = this.VERBS['select'] && nounAdj && !verb ? this.VERBS['select'] : verb;
-        return this.encodeMidi(nounAdj, modifiedVerb, adverb, units)
+        console.log("units: ", units)
+        if (verb || nounAdj) {
+            const modifiedVerb = this.VERBS['select'] && nounAdj && !verb ? this.VERBS['select'] : verb;
+            return this.encodeMidi(nounAdj, modifiedVerb, adverb, units)
+        }
+        else {
+            return null
+        }
     }
 
     getVerb() {
@@ -38,9 +47,8 @@ export class IntentDetection extends IntentDetectionBase {
                 return this.VERBS[v];
             }
         }
+        return null
     }
-
-
 
     getAdverb(verb) {
         if (verb === 1) {
@@ -78,18 +86,18 @@ export class IntentDetection extends IntentDetectionBase {
     encodeMidi(nounAdj, verb, adverb, unit) {
         if (nounAdj && verb) {
             const msg = [this.SYSEX_START, ...this.MANUFACTURER_ID];
-            console.log("MSG", msg)
+            // console.log("MSG", msg)
             const ttByte = 1;
-            console.log("CIOAOD", nounAdj)
+            // console.log("CIOAOD", nounAdj)
             const tqByte = this.makeSubjObjQuant(0, Math.floor(nounAdj.length / 3));
             msg.push(ttByte);
             msg.push(tqByte);
             msg.push(...nounAdj);
             msg.push(verb);
-            console.log("VERB", verb)
+            // console.log("VERB", verb)
 
             if (adverb) {
-                console.log("ADVERB")
+                // console.log("ADVERB")
                 msg.push(...adverb);
                 if (unit) {
                     msg.push(unit);
