@@ -49,6 +49,32 @@ const VERBS = {
   launch: 23,
 };
 
+
+CONFIRMATION_VERB_MAP = {
+  1: "rename",
+  2: "load",
+  3: "select",
+  4: "delete",
+  5: "duplicate",
+  6: "arm",
+  7: "unarm",
+  8: "solo",
+  9: "unsolo",
+  10: "mute",
+  11: "unmute",
+  12: "increase",
+  13: "decrease",
+  14: "set",
+  15: "move",
+  17: "undo",
+  18: "redo",
+  19: "play",
+  20: "stop",
+  21: "record",
+  22: "loop",
+  23: "launch"
+}
+
 const NOUNS = {
   global: 0,
   transport: 1,
