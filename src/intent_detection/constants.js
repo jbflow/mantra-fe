@@ -50,7 +50,7 @@ const VERBS = {
 };
 
 
-CONFIRMATION_VERB_MAP = {
+const CONFIRMATION_VERB_MAP = {
   1: "rename",
   2: "load",
   3: "select",
@@ -157,6 +157,7 @@ export {
   MANUFACTURER_ID,
   SYSEX_END,
   VERBS,
+  CONFIRMATION_VERB_MAP,
   NOUNS,
   NOUN_MAP,
   SUB_NOUN_BYTES,
