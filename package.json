@@ -16,8 +16,7 @@
     "react-router-dom": "^6.22.3",
     "react-speech-recognition": "^3.10.0",
     "regenerator-runtime": "^0.14.1",
-    "sdp-compact": "0.0.6",
-    "simple-peer": "^9.11.1"
+    "sdp-compact": "0.0.6"
   },
   "scripts": {
     "start": "vite",
@@ -43,6 +42,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.2.8"
+    "vite": "^5.2.8",
+    "vitest": "^1.6.0"
   }
 }

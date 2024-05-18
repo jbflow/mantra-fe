@@ -51,3 +51,18 @@ export const midiDataToNames = ([statusByte, dataByte]) => {
   
 }
 
+export const convertBytes = (byteArray) => {
+  if (byteArray.length === 2) {
+    return byteArray[1] * 128 + byteArray[0];
+  } else if (byteArray.length === 3) {
+    return byteArray[2] * 16384 + byteArray[1] * 128 + byteArray[0];
+  } else {
+    return (
+      byteArray[3] * 2097152 +
+      byteArray[2] * 16384 +
+      byteArray[1] * 128 +
+      byteArray[0]
+    );
+  }
+};
+
