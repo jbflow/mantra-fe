@@ -1,6 +1,6 @@
 const config = require("./test_data.js")
 
-const IntentDetection = require("./IntentDetection.js")
+const IntentDetection = require("../IntentDetection.js")
 
 
 
