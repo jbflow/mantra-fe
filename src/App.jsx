@@ -28,6 +28,7 @@ import useTransferingConfig from "./hooks/useTransferingConfig";
 import { detectWakeWord } from "./intent_detection/WakeWord";
 import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
+import useWebSocket from "./hooks/useWebsocket";
 
 
 
@@ -51,6 +52,8 @@ function App({ signOut }) {
   const { speak, speaking } = useSpeechSynthesis()
 
   const { sysex } = useMIDIOutput(mainOutput)
+
+  const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1:5558');
   const [connectionStatus, setConnectionStatus] = useState("Disconnected")
 
 
@@ -147,29 +150,29 @@ function App({ signOut }) {
 
 
 
-  const handleMidiMessage = (message) => {
+  const handleSocketMessage = (message) => {
     /*/
     MIDI Entry Point
    /*/
 
     if (message) {
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
-      if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
+      if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
         sessionStorage.setItem("config", JSON.stringify(emptyConfig))
         sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
       }
       else {
-        if (message.data[6] === 0) { // If config update
+        if (message[6] === 0) { // If config update
           setConfigTimer(0)
           let currentConfig = JSON.parse(sessionStorage.getItem("config"))
-          let updatedConfig = MidiToJson(message.data, currentConfig)
+          let updatedConfig = MidiToJson(message, currentConfig)
           sessionStorage.setItem("config", JSON.stringify(updatedConfig))
           if (!dawLink) {
             setDawLink(true)
           }
         }
         else if (message.data[6] === 96) { // If confirmation
-          let data = Array.from(message.data)
+          let data = Array.from(message)
           data.splice(message.data.length - 2, 1)
           setConfirmation(data)
           startTimer()
@@ -178,18 +181,25 @@ function App({ signOut }) {
     }
   }
 
-  useMIDIMessage(mainInput, handleMidiMessage)
+  useEffect(() => {
+    if (Array.isArray(messages) && messages.length > 0) {
+      for (let msg of messages) {
+        console.log(msg)
+        handleSocketMessage(msg)
+      }
+    }
+  }, [messages]);
 
 
 
 
   useEffect(() => {
     // Send Sysex Handshake
-    if (sysex) {
-      sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+    if (isConnected) {
+      sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
       sessionStorage.setItem("config", JSON.stringify(emptyConfig))
     }
-  }, [sysex])
+  }, [isConnected])
 
 
 
