@@ -137,7 +137,6 @@ function App({ signOut }) {
   }, [actions])
 
   useEffect(() => {
-    // console.log(configState)
     if (awaitConfirmation && confirmation && actions && !configState) {
       if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
         setActions(actions.slice(1))
@@ -156,6 +155,7 @@ function App({ signOut }) {
    /*/
 
     if (message) {
+      console.log("MIDI Recieved in Socket: ", message)
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
       if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
         sessionStorage.setItem("config", JSON.stringify(emptyConfig))
@@ -171,9 +171,10 @@ function App({ signOut }) {
             setDawLink(true)
           }
         }
-        else if (message.data[6] === 96) { // If confirmation
+        else if (message[6] === 96) { // If confirmation
+          console.log("Confirmation message received")
           let data = Array.from(message)
-          data.splice(message.data.length - 2, 1)
+          data.splice(message.length - 2, 1)
           setConfirmation(data)
           startTimer()
         }
