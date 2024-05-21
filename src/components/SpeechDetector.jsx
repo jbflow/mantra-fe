@@ -51,8 +51,11 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
     }
 
     const handleSpeechRecognitionResult = (result) => {
+        console.log("RESULT", result?.results[result.resultIndex][0])
+        if(result && result.results[result.resultIndex][0].transcript.length === 0 ){return}
         setAlternatives(result)
         if (!voicePreferences.continuous || voicePreferences.feedback) {
+            console.log("hello")
             recognition.current.stop()
             handleSetListening(false)
         }
