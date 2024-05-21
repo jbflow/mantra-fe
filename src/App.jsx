@@ -235,7 +235,7 @@ function App({ signOut }) {
 
         </div>
 
-        <StatusBar dawLink={dawLink} transcript={transcript} />
+        <StatusBar dawLink={dawLink} isConnected={isConnected} />
       </div >
 
     </>
