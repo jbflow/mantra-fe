@@ -7,7 +7,7 @@
 .options-panel {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: start;
 
   width: 396px;
   height: calc(100vh - 60px);

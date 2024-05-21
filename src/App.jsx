@@ -28,6 +28,7 @@ import useTransferingConfig from "./hooks/useTransferingConfig";
 import { detectWakeWord } from "./intent_detection/WakeWord";
 import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
+import useWebSocket from "./hooks/useWebsocket";
 
 
 
@@ -40,18 +41,17 @@ function App({ signOut }) {
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
   const [dawLink, setDawLink] = useState(false)
-  const [midiIn, setMidiIn] = useState(false)
-  const [midiOut, setMidiOut] = useState(false)
   const [actions, setActions] = useState(false)
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
   const { commands } = useContext(CommandsContext)
-  const { mainOutput, mainInput } = useContext(MidiContext)
   const { speak, speaking } = useSpeechSynthesis()
 
-  const { sysex } = useMIDIOutput(mainOutput)
-  const [connectionStatus, setConnectionStatus] = useState("Disconnected")
+
+
+  const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1:5558');
+  
 
 
   if (!localStorage.getItem("preferences")) {
@@ -73,7 +73,7 @@ function App({ signOut }) {
         const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
         console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
         if (intentDetectionResult) {
-          sysex(intentDetectionResult)
+          sendMessage(intentDetectionResult)
         } else {
           speak({ text: "Sorry, I didn't detect a valid command" })
         }
@@ -95,37 +95,23 @@ function App({ signOut }) {
     return false;
   }
 
-  useEffect(() => {
-
-    if (mainInput) {
-      if (mainInput.connection === "open") { setMidiIn(true) }
-      mainInput.onstatechange = (event) => {
-        if (event.currentTarget.connection === "open") {
-          setMidiIn(true)
-        }
-
-      }
-    }
-    if (mainOutput) {
-      if (mainOutput.connection === "open") { setMidiOut(true) }
-      mainOutput.onstatechange = (event) => {
-        if (event.currentTarget.connection === "open") {
-          setMidiOut(true)
-        }
-      }
-    }
-
-  }, [mainInput, mainOutput])
+  
 
   useEffect(() => {
     if (actions && actions.length !== 0 && actions[0].type === "voice") {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(actions[0].data), config)
-      let confirmationMsg = Array.from(midiBytes)
-      confirmationMsg.splice(confirmationMsg.length - 2, 1)
-      confirmationMsg[6] = 96
-      setAwaitConfirmation(confirmationMsg)
-      sysex(midiBytes)
+      if (midiBytes) {
+        let confirmationMsg = Array.from(midiBytes)
+        confirmationMsg.splice(confirmationMsg.length - 2, 1)
+        confirmationMsg[6] = 96
+        setAwaitConfirmation(confirmationMsg)
+        sendMessage(midiBytes)
+      }
+      else {
+        setActions(actions.slice(1))
+        
+      }
     }
     else if (actions.length === 0) {
       speak({ text: "Executed Macro" })
@@ -134,7 +120,6 @@ function App({ signOut }) {
   }, [actions])
 
   useEffect(() => {
-    // console.log(configState)
     if (awaitConfirmation && confirmation && actions && !configState) {
       if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
         setActions(actions.slice(1))
@@ -147,30 +132,32 @@ function App({ signOut }) {
 
 
 
-  const handleMidiMessage = (message) => {
+  const handleSocketMessage = (message) => {
     /*/
     MIDI Entry Point
    /*/
 
     if (message) {
+      console.log("MIDI Recieved in Socket: ", message)
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
-      if (arraysEqual(init, Array.from(message.data))) { // If Live Remote Script sends Init SysEx handshake
+      if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
         sessionStorage.setItem("config", JSON.stringify(emptyConfig))
-        sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+        sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
       }
       else {
-        if (message.data[6] === 0) { // If config update
+        if (message[6] === 0) { // If config update
           setConfigTimer(0)
           let currentConfig = JSON.parse(sessionStorage.getItem("config"))
-          let updatedConfig = MidiToJson(message.data, currentConfig)
+          let updatedConfig = MidiToJson(message, currentConfig)
           sessionStorage.setItem("config", JSON.stringify(updatedConfig))
           if (!dawLink) {
             setDawLink(true)
           }
         }
-        else if (message.data[6] === 96) { // If confirmation
-          let data = Array.from(message.data)
-          data.splice(message.data.length - 2, 1)
+        else if (message[6] === 96) { // If confirmation
+          console.log("Confirmation message received")
+          let data = Array.from(message)
+          data.splice(message.length - 2, 1)
           setConfirmation(data)
           startTimer()
         }
@@ -178,18 +165,25 @@ function App({ signOut }) {
     }
   }
 
-  useMIDIMessage(mainInput, handleMidiMessage)
+  useEffect(() => {
+    if (Array.isArray(messages) && messages.length > 0) {
+      for (let msg of messages) {
+        console.log(msg)
+        handleSocketMessage(msg)
+      }
+    }
+  }, [messages]);
 
 
 
 
   useEffect(() => {
     // Send Sysex Handshake
-    if (sysex) {
-      sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+    if (isConnected) {
+      sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
       sessionStorage.setItem("config", JSON.stringify(emptyConfig))
     }
-  }, [sysex])
+  }, [isConnected])
 
 
 
@@ -226,7 +220,7 @@ function App({ signOut }) {
           <Routes>
             <Route
               path="/voice-control"
-              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
+              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
             />
             <Route
               path="/preferences"
@@ -247,7 +241,7 @@ function App({ signOut }) {
 
         </div>
 
-        <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} />
+        <StatusBar dawLink={dawLink} isConnected={isConnected} />
       </div >
 
     </>
