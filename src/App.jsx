@@ -41,20 +41,17 @@ function App({ signOut }) {
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
   const [dawLink, setDawLink] = useState(false)
-  const [midiIn, setMidiIn] = useState(false)
-  const [midiOut, setMidiOut] = useState(false)
   const [actions, setActions] = useState(false)
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
   const [configState, startTimer, setConfigTimer] = useTransferingConfig()
   const { commands } = useContext(CommandsContext)
-  const { mainOutput, mainInput } = useContext(MidiContext)
   const { speak, speaking } = useSpeechSynthesis()
 
-  const { sysex } = useMIDIOutput(mainOutput)
+
 
   const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1:5558');
-  const [connectionStatus, setConnectionStatus] = useState("Disconnected")
+  
 
 
   if (!localStorage.getItem("preferences")) {
@@ -98,27 +95,7 @@ function App({ signOut }) {
     return false;
   }
 
-  useEffect(() => {
-
-    if (mainInput) {
-      if (mainInput.connection === "open") { setMidiIn(true) }
-      mainInput.onstatechange = (event) => {
-        if (event.currentTarget.connection === "open") {
-          setMidiIn(true)
-        }
-
-      }
-    }
-    if (mainOutput) {
-      if (mainOutput.connection === "open") { setMidiOut(true) }
-      mainOutput.onstatechange = (event) => {
-        if (event.currentTarget.connection === "open") {
-          setMidiOut(true)
-        }
-      }
-    }
-
-  }, [mainInput, mainOutput])
+  
 
   useEffect(() => {
     if (actions && actions.length !== 0 && actions[0].type === "voice") {
@@ -237,7 +214,7 @@ function App({ signOut }) {
           <Routes>
             <Route
               path="/voice-control"
-              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} connectionStatus={connectionStatus} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
+              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
             />
             <Route
               path="/preferences"
@@ -258,7 +235,7 @@ function App({ signOut }) {
 
         </div>
 
-        <StatusBar connectionStatus={connectionStatus} midiIn={midiIn} midiOut={midiOut} dawLink={dawLink} transcript={transcript} />
+        <StatusBar dawLink={dawLink} transcript={transcript} />
       </div >
 
     </>

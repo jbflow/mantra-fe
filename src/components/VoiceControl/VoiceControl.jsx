@@ -2,14 +2,13 @@ import { useEffect, useState, useContext, useRef } from "react";
 import SpeechDetector from "../SpeechDetector";
 import React from 'react'
 import OptionsPanel from "./OptionsPanel";
-import useMIDIMessage from "../../hooks/useMIDIMessage";
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
 import { midiDataToNames } from "../../utils/utils";
-import PhoneConnect from "../PhoneConnect";
 
 
-export default function VoiceControl({ transcript, setAlternatives, connectionStatus, confirmation, setConfirmation, speak, speaking, actions }) {
+
+export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions }) {
   
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput } = useContext(MidiContext)
@@ -71,7 +70,7 @@ export default function VoiceControl({ transcript, setAlternatives, connectionSt
         <OptionsPanel />
       </div>
       <div className="voice-btn-container">
-        <p className="h1">{connectionStatus === "Disconnected" ? listening ? "tlkbck is listening!" : "Press to speak" : "Tethered"}</p>
+        <p className="h1">{listening ? "tlkbck is listening!" : "Press to speak"}</p>
         <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} />
         <div className="map-btn-container">
             <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>

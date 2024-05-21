@@ -47,7 +47,7 @@ export default function OptionsPanel() {
     <>
       <div className="options-panel d-flex flex-column">
         <div className="options-box">
-          <p className="h5 px-4 pt-2">Voice Settings</p>
+          <p className="h5 px-4 pt-2">Settings</p>
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
             <p className="p-3 text-secondary m-0">Voice feedback</p>
             <button onClick={handleVoiceFeedbackPressed} className={`btn ${voiceFeedback ? "btn-primary" : "btn-secondary"} m-0 w-25 text-center`}>   {voiceFeedback ? "On" : "Off"}</button>
@@ -69,13 +69,8 @@ export default function OptionsPanel() {
               <option value="en-IN">English (India)</option>
             </select>
           </div>
-
-        </div>
-
-        <div className='options-box'>
-          <p className="h5 px-4 pt-2">MIDI Settings</p>
-
           <div className="d-flex p-3 flex-row align-items-center justify-content-between">
+
             <p className="p-3 text-secondary m-0">Mic Port</p>
             <select className="form-select" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midiSettings?.micInput}>
               {midiInputs?.map((input) => (
@@ -84,12 +79,13 @@ export default function OptionsPanel() {
             </select>
           </div>
 
-          <MidiPreferences />
+
 
 
         </div>
-        
       </div>
+
+
 
     </>
   )
