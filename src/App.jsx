@@ -108,6 +108,10 @@ function App({ signOut }) {
         setAwaitConfirmation(confirmationMsg)
         sendMessage(midiBytes)
       }
+      else {
+        setActions(actions.slice(1))
+        
+      }
     }
     else if (actions.length === 0) {
       speak({ text: "Executed Macro" })
