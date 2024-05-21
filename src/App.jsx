@@ -76,7 +76,7 @@ function App({ signOut }) {
         const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
         console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
         if (intentDetectionResult) {
-          sysex(intentDetectionResult)
+          sendMessage(intentDetectionResult)
         } else {
           speak({ text: "Sorry, I didn't detect a valid command" })
         }
@@ -128,7 +128,7 @@ function App({ signOut }) {
       confirmationMsg.splice(confirmationMsg.length - 2, 1)
       confirmationMsg[6] = 96
       setAwaitConfirmation(confirmationMsg)
-      sysex(midiBytes)
+      sendMessage(midiBytes)
     }
     else if (actions.length === 0) {
       speak({ text: "Executed Macro" })
@@ -159,7 +159,7 @@ function App({ signOut }) {
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
       if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
         sessionStorage.setItem("config", JSON.stringify(emptyConfig))
-        sysex([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+        sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
       }
       else {
         if (message[6] === 0) { // If config update
