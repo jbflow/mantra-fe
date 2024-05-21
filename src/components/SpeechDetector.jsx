@@ -5,11 +5,12 @@ import "../styles/SpeechDetector.css"
 
 const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetListening }) => {
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
-    const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
+    
     const recognition = useRef()
 
 
     const initSpeechRecognition = () => {
+        const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
         if (typeof window === 'undefined') return;
         window.SpeechRecognition =
             window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -51,7 +52,8 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
     }
 
     const handleSpeechRecognitionResult = (result) => {
-        console.log("RESULT", result?.results[result.resultIndex][0])
+
+        const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
         if(result && result.results[result.resultIndex][0].transcript.length === 0 ){return}
         setAlternatives(result)
         if (!voicePreferences.continuous || voicePreferences.feedback) {
@@ -65,6 +67,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
 
 
     useEffect(() => {
+        const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
         if (!tlkbckSpeaking && voicePreferences.continuous && userInitiatedSpeech) {
             try {
                 recognition.current.start()

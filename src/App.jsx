@@ -101,11 +101,13 @@ function App({ signOut }) {
     if (actions && actions.length !== 0 && actions[0].type === "voice") {
       const config = JSON.parse(sessionStorage.getItem("config"))
       const midiBytes = intentDetection.runDetection(String(actions[0].data), config)
-      let confirmationMsg = Array.from(midiBytes)
-      confirmationMsg.splice(confirmationMsg.length - 2, 1)
-      confirmationMsg[6] = 96
-      setAwaitConfirmation(confirmationMsg)
-      sendMessage(midiBytes)
+      if (midiBytes) {
+        let confirmationMsg = Array.from(midiBytes)
+        confirmationMsg.splice(confirmationMsg.length - 2, 1)
+        confirmationMsg[6] = 96
+        setAwaitConfirmation(confirmationMsg)
+        sendMessage(midiBytes)
+      }
     }
     else if (actions.length === 0) {
       speak({ text: "Executed Macro" })
