@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 
 import "./styles/App.css";
 import "./styles/AppNext.css";
@@ -10,10 +10,6 @@ import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import StatusBar from "./components/StatusBar";
-import DesktopRTC from "./components/DesktopRTC";
-import { MidiContext } from "./contexts/MidiContext";
-import useMIDIMessage from "./hooks/useMIDIMessage";
-import { useMIDIOutput } from "./hooks/useMIDIOutput";
 import { STATUS_BYTES } from "./utils/MidiConstants";
 import { MANUFACTURER_ID } from "./intent_detection/constants";
 import { emptyConfig } from "./utils/MidiConstants";
@@ -22,7 +18,6 @@ import { MidiToJson } from "./utils/MidiToJson";
 import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./intent_detection/TranscriptParser";
-import * as spdCompact from "sdp-compact";
 import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
 import { detectWakeWord } from "./intent_detection/WakeWord";
@@ -32,7 +27,6 @@ import useWebSocket from "./hooks/useWebsocket";
 
 
 
-const options = { compress: true };
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
 
@@ -44,7 +38,8 @@ function App({ signOut }) {
   const [actions, setActions] = useState(false)
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
-  const [configState, startTimer, setConfigTimer] = useTransferingConfig()
+  const configRef = useRef()
+  const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
   const { commands } = useContext(CommandsContext)
   const { speak, speaking } = useSpeechSynthesis()
 
@@ -87,7 +82,7 @@ function App({ signOut }) {
   }
 
   const checkCommands = (transcript) => {
-    for (let i = 0; i < commands.length; i++) {
+    for (let i = 0; i < commands?.length; i++) {
       if (commands[i].command === transcript) {
         return commands[i].actions;
       }
@@ -138,18 +133,18 @@ function App({ signOut }) {
    /*/
 
     if (message) {
-      console.log("MIDI Recieved in Socket: ", message)
+      
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
       if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
-        sessionStorage.setItem("config", JSON.stringify(emptyConfig))
-        sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+        configRef.current = { ...emptyConfig }
+        startTimer()
+        
       }
       else {
         if (message[6] === 0) { // If config update
           setConfigTimer(0)
-          let currentConfig = JSON.parse(sessionStorage.getItem("config"))
-          let updatedConfig = MidiToJson(message, currentConfig)
-          sessionStorage.setItem("config", JSON.stringify(updatedConfig))
+          let updatedConfig = MidiToJson(message, configRef.current)
+          configRef.current = updatedConfig
           if (!dawLink) {
             setDawLink(true)
           }
@@ -168,7 +163,6 @@ function App({ signOut }) {
   useEffect(() => {
     if (Array.isArray(messages) && messages.length > 0) {
       for (let msg of messages) {
-        console.log(msg)
         handleSocketMessage(msg)
       }
     }
@@ -189,7 +183,7 @@ function App({ signOut }) {
 
   useEffect(() => {
     if (alternatives.length !== 0) {
-      const macroCommands = commands.map(cmd => cmd.command)
+      const macroCommands = commands?.map(cmd => cmd.command)
       const finalTranscript = transcriptParser.cleanupTranscript(alternatives, macroCommands);
       handleIntentDetection(finalTranscript)
       console.log("FINAL ", finalTranscript)
