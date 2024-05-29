@@ -1,14 +1,16 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import pako from 'pako';
 
-const useWebSocket = (url, retryInterval = 10000) => {
+const useWebSocket = (baseUrl, startPort = 39031, endPort = 39038, retryInterval = 10000) => {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const retryTimeout = useRef(null);
+  const [currentPort, setCurrentPort] = useState(startPort);
 
   const connectWebSocket = useCallback(() => {
+    const url = `${baseUrl}:${currentPort}`;
     console.log(`Attempting to connect to WebSocket at ${url}`);
     const websocket = new WebSocket(url);
     websocket.binaryType = 'arraybuffer';  // Set binary type to handle binary data
@@ -41,12 +43,17 @@ const useWebSocket = (url, retryInterval = 10000) => {
     websocket.onclose = (event) => {
       console.log('WebSocket connection closed:', event);
       setIsConnected(false);
+      if (currentPort < endPort) {
+        setCurrentPort(currentPort + 1);
+      } else {
+        setCurrentPort(startPort);
+      }
       retryConnection();
     };
 
     setWs(websocket);
     wsRef.current = websocket;
-  }, [url]);
+  }, [baseUrl, currentPort, endPort, startPort]);
 
   const retryConnection = useCallback(() => {
     if (!retryTimeout.current) {

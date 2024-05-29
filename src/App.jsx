@@ -45,7 +45,7 @@ function App({ signOut }) {
 
 
 
-  const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1:5558');
+  const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
   
 
 
