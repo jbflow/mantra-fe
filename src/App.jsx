@@ -42,16 +42,11 @@ function App({ signOut }) {
   const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
   const { commands } = useContext(CommandsContext)
   const { speak, speaking } = useSpeechSynthesis()
-
-
-
   const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
-  
 
 
-  if (!localStorage.getItem("preferences")) {
-    localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: false, continuous: false, language: "en-UK" } }))
-  }
+
+
 
   const handleIntentDetection = (finalTranscript) => {
 
@@ -90,7 +85,7 @@ function App({ signOut }) {
     return false;
   }
 
-  
+
 
   useEffect(() => {
     if (actions && actions.length !== 0 && actions[0].type === "voice") {
@@ -105,7 +100,7 @@ function App({ signOut }) {
       }
       else {
         setActions(actions.slice(1))
-        
+
       }
     }
     else if (actions.length === 0) {
@@ -133,12 +128,12 @@ function App({ signOut }) {
    /*/
 
     if (message) {
-      
+
       const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
       if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
         configRef.current = { ...emptyConfig }
         startTimer()
-        
+
       }
       else {
         if (message[6] === 0) { // If config update
@@ -190,6 +185,7 @@ function App({ signOut }) {
       setTranscript(finalTranscript)
     }
   }, [alternatives])
+
 
 
 
