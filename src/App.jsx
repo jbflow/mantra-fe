@@ -33,9 +33,9 @@ bumblebee.setSensitivity(0.5);
 
 bumblebee.setWorkersPath('bumblebee-workers');
 
-bumblebee.addHotword('computer');
+bumblebee.addHotword('jarvis');
 
-bumblebee.setHotword('computer');
+bumblebee.setHotword('jarvis');
 
 
 
@@ -59,11 +59,7 @@ function App({ signOut }) {
   const { speak, speaking } = useSpeechSynthesis()
   const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
 
-  bumblebee.start()
-  bumblebee.on("hotword", () => {
-    document.getElementById("tlkbck-btn").click()
 
-  })
 
   const handleIntentDetection = (finalTranscript) => {
 
@@ -202,6 +198,17 @@ function App({ signOut }) {
       setTranscript(finalTranscript)
     }
   }, [alternatives])
+
+
+  useEffect(() => {
+
+    bumblebee.start()
+    bumblebee.on("hotword", () => {
+      console.log("Hotword detected")
+      document.getElementById("tlkbck-btn").click()
+
+    })
+  }, [])
 
 
 
