@@ -25,10 +25,25 @@ import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 import useWebSocket from "./hooks/useWebsocket";
 
+import BumbleBee from "bumblebee-hotword"
+
+const bumblebee = new BumbleBee();
+
+bumblebee.setSensitivity(0.5);
+
+bumblebee.setWorkersPath('bumblebee-workers');
+
+bumblebee.addHotword('computer');
+
+bumblebee.setHotword('computer');
+
+
+
 
 
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
+
 
 
 function App({ signOut }) {
@@ -44,9 +59,11 @@ function App({ signOut }) {
   const { speak, speaking } = useSpeechSynthesis()
   const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
 
+  bumblebee.start()
+  bumblebee.on("hotword", () => {
+    document.getElementById("tlkbck-btn").click()
 
-
-
+  })
 
   const handleIntentDetection = (finalTranscript) => {
 
