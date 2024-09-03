@@ -18,7 +18,8 @@
     "react-router-dom": "^6.22.3",
     "react-speech-recognition": "^3.10.0",
     "regenerator-runtime": "^0.14.1",
-    "sdp-compact": "0.0.6"
+    "sdp-compact": "0.0.6",
+    "vite-plugin-node-polyfills": "^0.22.0"
   },
   "scripts": {
     "start": "vite",
