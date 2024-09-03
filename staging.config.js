@@ -6,6 +6,9 @@ export default defineConfig(() => {
   return {
     build: {
       outDir: 'build',
+      rollupOptions: {
+        assetsInlineLimit: 0,
+      },
       
     },
     plugins: [react()],
