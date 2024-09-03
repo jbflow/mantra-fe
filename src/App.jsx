@@ -41,6 +41,8 @@ bumblebee.setHotword('jarvis');
 
 
 
+
+
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
 
@@ -62,10 +64,6 @@ function App({ signOut }) {
 
 
   const handleIntentDetection = (finalTranscript) => {
-
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && !detectWakeWord(finalTranscript) || finalTranscript === "") {
-      return
-    }
     const macroActions = checkCommands(finalTranscript)
     if (macroActions) {
       setActions(macroActions)
@@ -204,9 +202,7 @@ function App({ signOut }) {
 
     bumblebee.start()
     bumblebee.on("hotword", () => {
-      console.log("Hotword detected")
       document.getElementById("tlkbck-btn").click()
-
     })
   }, [])
 
