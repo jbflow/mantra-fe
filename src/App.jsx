@@ -25,10 +25,27 @@ import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 import useWebSocket from "./hooks/useWebsocket";
 
+import BumbleBee from "bumblebee-hotword"
+
+const bumblebee = new BumbleBee();
+
+bumblebee.setSensitivity(0.5);
+
+bumblebee.setWorkersPath('bumblebee-workers');
+
+bumblebee.addHotword('jarvis');
+
+bumblebee.setHotword('jarvis');
+
+
+
+
+
 
 
 const intentDetection = new IntentDetection()
 const transcriptParser = new TranscriptParser()
+
 
 
 function App({ signOut }) {
@@ -46,13 +63,7 @@ function App({ signOut }) {
 
 
 
-
-
   const handleIntentDetection = (finalTranscript) => {
-
-    if (JSON.parse(localStorage.getItem("preferences")).voice.wakeWord && !detectWakeWord(finalTranscript) || finalTranscript === "") {
-      return
-    }
     const macroActions = checkCommands(finalTranscript)
     if (macroActions) {
       setActions(macroActions)
@@ -185,6 +196,15 @@ function App({ signOut }) {
       setTranscript(finalTranscript)
     }
   }, [alternatives])
+
+
+  useEffect(() => {
+
+    bumblebee.start()
+    bumblebee.on("hotword", () => {
+      document.getElementById("tlkbck-btn").click()
+    })
+  }, [])
 
 
 
