@@ -166,6 +166,11 @@ function App({ signOut }) {
     }
   }
 
+  const initConfig = () => {
+    sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
+    sessionStorage.setItem("config", JSON.stringify(emptyConfig))
+  }
+
   useEffect(() => {
     if (Array.isArray(messages) && messages.length > 0) {
       for (let msg of messages) {
@@ -178,10 +183,9 @@ function App({ signOut }) {
 
 
   useEffect(() => {
-    // Send Sysex Handshake
+    // When the web socket connects, init the config transfer by sending sysex handshake
     if (isConnected) {
-      sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
-      sessionStorage.setItem("config", JSON.stringify(emptyConfig))
+      initConfig()
     }
   }, [isConnected])
 
