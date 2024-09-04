@@ -492,8 +492,8 @@ var PorcupineModule = (function () {
 				return String.prototype.startsWith ? filename.startsWith(dataURIPrefix) : filename.indexOf(dataURIPrefix) === 0
 			}
 
-			var wasmBinaryFile = "pv_porcupine.wasm" ? import.meta.env.VITE_MODE === "dev" : "https://s3.eu-west-2.amazonaws.com/tlkbck.com/pv_porcupine.wasm"
-
+			var wasmBinaryFile = "pv_porcupine.wasm";
+			
 			if (!isDataURI(wasmBinaryFile)) {
 				wasmBinaryFile = locateFile(wasmBinaryFile)
 			}
