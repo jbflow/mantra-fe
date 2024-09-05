@@ -53,16 +53,22 @@ export const midiDataToNames = ([statusByte, dataByte]) => {
 
 export const convertBytes = (byteArray) => {
   if (byteArray.length === 2) {
-    return byteArray[1] * 128 + byteArray[0];
+    // Convert 2-byte MSB LSB to a single integer
+    return (byteArray[0] & 0x7F) | ((byteArray[1] & 0x7F) << 7);
   } else if (byteArray.length === 3) {
-    return byteArray[2] * 16384 + byteArray[1] * 128 + byteArray[0];
-  } else {
+    // Convert 3-byte MSB LSB to a single integer
+    return (byteArray[0] & 0x7F) | ((byteArray[1] & 0x7F) << 7) | ((byteArray[2] & 0x7F) << 14);
+  } else if (byteArray.length === 4) {
+    // Convert 4-byte MSB LSB to a single integer
     return (
-      byteArray[3] * 2097152 +
-      byteArray[2] * 16384 +
-      byteArray[1] * 128 +
-      byteArray[0]
+      (byteArray[0] & 0x7F) |
+      ((byteArray[1] & 0x7F) << 7) |
+      ((byteArray[2] & 0x7F) << 14) |
+      ((byteArray[3] & 0x7F) << 21)
     );
+  } else {
+    throw new Error('Invalid byte array length');
   }
 };
+
 

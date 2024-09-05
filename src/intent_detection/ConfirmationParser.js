@@ -16,19 +16,19 @@ export class ConfirmationParser {
 
         if ([VERBS.increase, VERBS.decrease, VERBS.set].includes(verbByte)) {
             console.log("INCREMENTAL CONFIRMATION")
-            // Increamental confirmation
+            this.finalStr = this.createIncremental(confirmationBytes)
 
         }
         else if (
             [VERBS.select, VERBS.rename, VERBS.delete, VERBS.duplicate, VERBS.mute, VERBS.unmute, VERBS.arm, VERBS.unarm, VERBS.solo, VERBS.unsolo].includes(verbByte)
         ) {
             // Mutatable confirmation
+            this.finalStr = "Command confirmed"
         } else if (verbByte === VERBS.load) {
-            console.log("LOADABLE CONFIRMATION")
             this.finalStr = this.createLoadable(confirmationBytes)
         }
         else if (verbByte === VERBS.launch) {
-            // launchable confirmation
+            this.finalStr = "Scene launched"
             
         }
         return this.finalStr
@@ -43,17 +43,40 @@ export class ConfirmationParser {
     }
 
     createLoadable(confirmationBytes) {
-        const deviceNum = convertBytes(confirmationBytes.slice(12, 14)) - 1
-        const device = this.config[NOUN_MAP[confirmationBytes[11]]][deviceNum]
-        const trackNum = convertBytes(confirmationBytes.slice(9, 11))
-        const track = this.config["track"][trackNum - 1]
-        const confirmationStr = `${device} loaded on track number ${trackNum} named: ${track}`
+        let confirmationStr = ""
+        if (confirmationBytes[7] == 2) {
+            const deviceNum = convertBytes(confirmationBytes.slice(12, 14)) - 1
+            const device = this.config[NOUN_MAP[confirmationBytes[11]]][deviceNum]
+            const trackNum = convertBytes(confirmationBytes.slice(9, 11))
+            const track = this.config["track"][trackNum - 1]
+            confirmationStr = `${device} loaded on track ${trackNum}`
+        }
+        else if(confirmationBytes[8] === 3){
+            const trackBytes = convertBytes(confirmationBytes.slice(9, 11))
+            let trackType = "";
+            switch (trackBytes - 1) {
+                case 16126:
+                    trackType = "an audio"
+                    break
+                case 16382:
+                    trackType = "a midi"
+                    break
+                case 16254:
+                    trackType = "a return" 
+                    break
+            }
+
+            confirmationStr = `created ${trackType} track`
+        
+        }
         return confirmationStr
         
 
     }
 
     createIncremental(confirmationBytes) {
+
+
 
     }
 
