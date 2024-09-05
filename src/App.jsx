@@ -20,7 +20,7 @@ import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./intent_detection/TranscriptParser";
 import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
-import { detectWakeWord } from "./intent_detection/WakeWord";
+
 import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 import useWebSocket from "./hooks/useWebsocket";
