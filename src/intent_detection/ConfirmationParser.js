@@ -74,7 +74,7 @@ export class ConfirmationParser {
                 break;
 
             default:
-                this.finalStr = "Unknown command";
+                this.finalStr = "Unknown command.";
                 break;
         }
 
@@ -82,68 +82,55 @@ export class ConfirmationParser {
     }
 
     parseIncrease(confirmationBytes) {
-        // Parse confirmation string for 'increase' action
-        return "Confirmation: parameter increased";
+        return "Parameter increased.";
     }
 
     parseDecrease(confirmationBytes) {
-        // Parse confirmation string for 'decrease' action
-        return "Confirmation: parameter decreased";
+        return "Parameter decreased.";
     }
 
     parseSet(confirmationBytes) {
-        // Parse confirmation string for 'set' action
-        return "Confirmation: parameter set";
+        return "Parameter set.";
     }
 
     parseSelect(confirmationBytes) {
-        // Parse confirmation string for 'select' action
-        return "Confirmation: item selected";
+        return "Item selected.";
     }
 
     parseRename(confirmationBytes) {
-        // Parse confirmation string for 'rename' action
-        return "Confirmation: item renamed";
+        return "Item renamed.";
     }
 
     parseDelete(confirmationBytes) {
-        // Parse confirmation string for 'delete' action
-        return "Confirmation: item deleted";
+        return "Item deleted.";
     }
 
     parseDuplicate(confirmationBytes) {
-        // Parse confirmation string for 'duplicate' action
-        return "Confirmation: item duplicated";
+        return "Item duplicated.";
     }
 
     parseMute(confirmationBytes) {
-        // Parse confirmation string for 'mute' action
-        return "Confirmation: item muted";
+        return "Muted.";
     }
 
     parseUnmute(confirmationBytes) {
-        // Parse confirmation string for 'unmute' action
-        return "Confirmation: item unmuted";
+        return "Unmuted.";
     }
 
     parseArm(confirmationBytes) {
-        // Parse confirmation string for 'arm' action
-        return "Confirmation: item armed";
+        return "Armed.";
     }
 
     parseUnarm(confirmationBytes) {
-        // Parse confirmation string for 'unarm' action
-        return "Confirmation: item unarmed";
+        return "Unarmed.";
     }
 
     parseSolo(confirmationBytes) {
-        // Parse confirmation string for 'solo' action
-        return "Confirmation: item soloed";
+        return "Soloed.";
     }
 
     parseUnsolo(confirmationBytes) {
-        // Parse confirmation string for 'unsolo' action
-        return "Confirmation: item unsoloed";
+        return "Unsoloed.";
     }
 
     parseLoad(confirmationBytes) {
@@ -153,7 +140,7 @@ export class ConfirmationParser {
             const device = this.config[NOUN_MAP[confirmationBytes[11]]][deviceNum];
             const trackNum = convertBytes(confirmationBytes.slice(9, 11));
             const track = this.config["track"][trackNum - 1];
-            confirmationStr = `Confirmation: ${device} loaded on track ${trackNum}`;
+            confirmationStr = `${device} loaded on track ${trackNum}.`;
         } else if (confirmationBytes[8] === 3) {
             const trackBytes = convertBytes(confirmationBytes.slice(9, 11));
             let trackType = "";
@@ -162,7 +149,7 @@ export class ConfirmationParser {
                     trackType = "an audio";
                     break;
                 case 16382:
-                    trackType = "a midi";
+                    trackType = "a MIDI";
                     break;
                 case 16254:
                     trackType = "a return";
@@ -172,14 +159,13 @@ export class ConfirmationParser {
                     break;
             }
 
-            confirmationStr = `Confirmation: created ${trackType} track`;
+            confirmationStr = `Created ${trackType} track.`;
         }
         return confirmationStr;
     }
 
     parseLaunch(confirmationBytes) {
-        // Parse confirmation string for 'launch' action
-        return "Confirmation: item launched";
+        return "Launched.";
     }
 
     buildNounAdj(bytes) {
