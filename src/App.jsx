@@ -27,6 +27,8 @@ import useWebSocket from "./hooks/useWebsocket";
 
 import BumbleBee from "bumblebee-hotword"
 
+import { confirmationPhrases } from "./utils/speechConstants";
+
 const bumblebee = new BumbleBee();
 
 bumblebee.setSensitivity(0.5);
@@ -61,7 +63,10 @@ function App({ signOut }) {
   const { speak, speaking } = useSpeechSynthesis()
   const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
 
-
+  const getRandomResponse = () => {
+    const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
+    return confirmationPhrases[randomIndex];
+  }
 
   const handleIntentDetection = (finalTranscript) => {
     const macroActions = checkCommands(finalTranscript)
@@ -76,16 +81,20 @@ function App({ signOut }) {
         if (intentDetectionResult) {
           sendMessage(intentDetectionResult)
         } else {
-          speak({ text: "Sorry, I didn't detect a valid command" })
+          speak({ text: getRandomResponse() })
         }
       }
       catch (err) {
         console.log(err)
-        speak({ text: "I'm sorry, somethings gone wrong. Please try again" })
-
+        speak({ text: "I'm sorry, an unexepected error has occured in the talk back system, please restart talk back and try again - it might also help to reload the MIDI Remote Script in Live." })
       }
     }
   }
+
+
+
+
+
 
   const checkCommands = (transcript) => {
     for (let i = 0; i < commands?.length; i++) {

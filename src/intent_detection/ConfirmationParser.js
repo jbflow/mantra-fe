@@ -74,7 +74,7 @@ export class ConfirmationParser {
                 break;
 
             default:
-                this.finalStr = "Unknown command.";
+                this.finalStr = "OK, that's done";
                 break;
         }
 
@@ -153,9 +153,6 @@ export class ConfirmationParser {
                     break;
                 case 16254:
                     trackType = "a return";
-                    break;
-                default:
-                    trackType = "an unknown";
                     break;
             }
 
