@@ -96,6 +96,8 @@ export class IntentDetectionBase {
         if (token.split('').some(t => /\d/.test(t)) || this.EXCLUDED.includes(token)) {
             return;
         }
+        console.log("TOKEN SENT TO LEVI:", token)
+        console.log("WORD_LIST: ", word_list)
         const result = fuzz.extract(token, word_list)[0];
         console.log("LEVI RESULT: ", result)
         console.log("LEVI THRESHOLD SET: ", threshold)

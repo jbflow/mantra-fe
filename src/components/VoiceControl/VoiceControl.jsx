@@ -5,6 +5,9 @@ import OptionsPanel from "./OptionsPanel";
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
 import { midiDataToNames } from "../../utils/utils";
+import { ConfirmationParser } from "../../intent_detection/ConfirmationParser";
+
+const confirmationParser = new ConfirmationParser()
 
 
 
@@ -56,8 +59,10 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
   useEffect(() => {
     
     if (confirmation && !actions) {
-
-      speak({ text: "Command confirmed" })
+      console.log("CONFIRMATION: ", confirmation)
+      const confirmationStr = confirmationParser.buildConfirmationStr(confirmation)
+      console.log(confirmationStr)
+      speak({ text: confirmationStr })
       setConfirmation(false)
     }
   }, [confirmation])
