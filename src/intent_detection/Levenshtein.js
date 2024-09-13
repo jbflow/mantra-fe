@@ -1,4 +1,4 @@
-levenshteinDistance(a, b) {
+export function levenshteinDistance(a, b) {
     const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
 
     for (let i = 0; i <= a.length; i++) matrix[i][0] = i;

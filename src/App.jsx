@@ -91,11 +91,6 @@ function App({ signOut }) {
     }
   }
 
-
-
-
-
-
   const checkCommands = (transcript) => {
     for (let i = 0; i < commands?.length; i++) {
       if (commands[i].command === transcript) {
@@ -204,15 +199,20 @@ function App({ signOut }) {
     if (alternatives.length !== 0) {
       const macroCommands = commands?.map(cmd => cmd.command)
       const finalTranscript = transcriptParser.cleanupTranscript(alternatives, macroCommands);
-      handleIntentDetection(finalTranscript)
-      console.log("FINAL ", finalTranscript)
-      setTranscript(finalTranscript)
+      if (finalTranscript.includes("stop listening")) {
+        document.getElementById("tlkbck-btn").click()
+      }
+      else {
+        handleIntentDetection(finalTranscript)
+        console.log("FINAL ", finalTranscript)
+
+        setTranscript(finalTranscript)
+      }
     }
   }, [alternatives])
 
 
   useEffect(() => {
-
     bumblebee.start()
     bumblebee.on("hotword", () => {
       document.getElementById("tlkbck-btn").click()

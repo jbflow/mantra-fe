@@ -43,7 +43,6 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
                 setUserInitiatedSpeech(true)
             }
             catch (err) {
-                console.error(err)
                 handleSetListening(false)
                 setUserInitiatedSpeech(false)
                 recognition.current.abort()

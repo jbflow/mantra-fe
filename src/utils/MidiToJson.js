@@ -58,10 +58,10 @@ const rename_item = (noun_adj, noun, value, config) => {
   // Try overwriting first, otherwise insert.
   
   try {
-    path[index] = value.toLowerCase();
+    path[index] = value;
   } catch (error) {
     console.log(path)
-    path.splice(index, 0, value.toLowerCase());
+    path.splice(index, 0, value);
   }
 };
 
@@ -121,7 +121,7 @@ const updateConfig = (midiArray, config) => {
     verb === 1 || verb === 2
       ? midiArray
           .slice(quantity * 3 + 2)
-          .reduce((acc, cur) => acc + String.fromCharCode(cur), "") // conver the adverb bytes into a string
+          .reduce((acc, cur) => acc + String.fromCharCode(cur), "").toLowerCase() // conver the adverb bytes into a string
       : convert_bytes(midiArray.slice(quantity * 3 + 2)) - 1; // convert the bytes to a single int
   VERB_MAP[verb](noun_adj, noun, adverb, config); // Call the functions with verb map
   return config;
