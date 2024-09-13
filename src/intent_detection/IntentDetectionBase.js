@@ -93,7 +93,7 @@ export class IntentDetectionBase {
 
     leviSearch(token, word_list, threshold) {
         // Check if token should be processed
-        if (token.split('').some(t => /\d/.test(t)) || this.EXCLUDED.includes(token)) {
+        if (this.EXCLUDED.includes(token)) {
             return;
         }
 
