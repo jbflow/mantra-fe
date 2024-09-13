@@ -1,7 +1,6 @@
 
-import * as fuzz from "fuzzball"
-
 import * as constants from "./constants"
+import { levenshteinDistance } from "./Levenshtein";
 
 export class IntentDetectionBase {
     constructor() {
@@ -68,16 +67,16 @@ export class IntentDetectionBase {
     findAllIndexes(arr, value) {
         const indexes = [];
         for (let i = 0; i < arr.length; i++) {
-          if (arr[i] === value) {
-            indexes.push(i);
-          }
+            if (arr[i] === value) {
+                indexes.push(i);
+            }
         }
         console.log("INDEXES", indexes)
         return indexes;
-      }
+    }
 
     integerSearch(token, cue) {
-                const number = token.match(`${cue} (\\d+)`);
+        const number = token.match(`${cue} (\\d+)`);
         if (number) {
             return parseInt(number[1]);
         } else {
@@ -93,19 +92,47 @@ export class IntentDetectionBase {
     }
 
     leviSearch(token, word_list, threshold) {
+        // Check if token should be processed
         if (token.split('').some(t => /\d/.test(t)) || this.EXCLUDED.includes(token)) {
             return;
         }
-        console.log("TOKEN SENT TO LEVI:", token)
-        console.log("WORD_LIST: ", word_list)
-        const result = fuzz.extract(token, word_list)[0];
-        console.log("LEVI RESULT: ", result)
-        console.log("LEVI THRESHOLD SET: ", threshold)
-        if (result && result[1] >= threshold) {
-            console.log("FUZZ RESULT: ", result)
-            this.threshold = result[1];
-            const name = result[0];
-            return this.findAllIndexes(word_list, name)
+
+        console.log("TOKEN SENT TO LEVI:", token);
+        console.log("WORD_LIST: ", word_list);
+
+        let closestMatch = null;
+        let bestScore = Infinity; // Lower is better for Levenshtein distance
+
+        word_list.forEach((word, index) => {
+            const score = levenshteinDistance(token, word);
+            if (score < bestScore) {
+                bestScore = score;
+                closestMatch = { word, index, score };
+            }
+        });
+
+        // Ensure closestMatch is found
+        if (!closestMatch) {
+            console.warn("No match found");
+            return null;
+        }
+
+        console.log("LEVI RESULT: ", closestMatch);
+        console.log("LEVI THRESHOLD SET: ", threshold);
+
+        // Convert Levenshtein distance score to a percentage-based similarity
+        const maxLength = Math.max(token.length, closestMatch.word.length);
+        const similarity = ((maxLength - bestScore) / maxLength) * 100;
+
+        // Check against threshold
+        if (similarity >= threshold) {
+            console.log("BEST MATCH FOUND: ", closestMatch);
+            this.threshold = similarity;
+            return this.findAllIndexes(word_list, closestMatch.word);
+        } else {
+            console.warn("No match meets the threshold");
+            return null;
         }
     }
+
 }

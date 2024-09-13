@@ -58,10 +58,10 @@ const rename_item = (noun_adj, noun, value, config) => {
   // Try overwriting first, otherwise insert.
   
   try {
-    path[index] = value;
+    path[index] = value.toLowerCase();
   } catch (error) {
     console.log(path)
-    path.splice(index, 0, value);
+    path.splice(index, 0, value.toLowerCase());
   }
 };
 
