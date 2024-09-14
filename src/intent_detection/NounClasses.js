@@ -46,7 +46,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             devices.push(...this.getNounAdj("device", config.device[t], tokenizedInput, [['track', t]]));
             // console.log("DEVICES", devices)
             // check for mixer params as well
-            const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['send']), tokenizedInput, [['track', t]]);
+            const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['return track']), tokenizedInput, [['track', t]]);
             parameters.push(...mixerParams);
 
             for (let device of devices) {

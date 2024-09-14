@@ -8,6 +8,9 @@ export default defineConfig(() => {
   return {
     build: {
       outDir: 'build',
+      rollupOptions: {
+        external: ['bumblebee-hotword'], // Mark the module as external
+      },
     },
     plugins: [react()],
     define: {

@@ -2,14 +2,18 @@
 import { useEffect, useRef, useState } from 'react';
 import "../styles/SpeechDetector.css"
 
+const start_sound = new Audio("/sounds/start_sound.mp3")
+const stop_sound = new Audio("/sounds/stop_sound.mp3")
+
 
 const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetListening }) => {
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
-    const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
+    
     const recognition = useRef()
 
 
     const initSpeechRecognition = () => {
+        const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
         if (typeof window === 'undefined') return;
         window.SpeechRecognition =
             window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -19,28 +23,30 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
             recognition.current.lang = voicePreferences.language
             recognition.current.interimResults = false
             recognition.current.maxAlternatives = 100
-            recognition.current.continuous = voicePreferences.continuous
+            recognition.current.continuous = false
             recognition.current.onresult = handleSpeechRecognitionResult
+            recognition.current.onend = () => {
+                stop_sound.play()
+                handleSetListening(false)
+            }
+            recognition.current.onstart = () => {
+                start_sound.play()
+            }
         }
 
     }
     const handleSpeechRecognitionToggle = () => {
-        console.log("LISTENING", listening)
         if (!listening) {
-            console.log(recognition.current)
             try {
                 recognition.current.start()
                 handleSetListening(true)
                 setUserInitiatedSpeech(true)
-
             }
             catch (err) {
-                console.log("ERRROR", err)
                 handleSetListening(false)
                 setUserInitiatedSpeech(false)
                 recognition.current.abort()
                 initSpeechRecognition()
-
             }
         }
         else {
@@ -51,6 +57,9 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
     }
 
     const handleSpeechRecognitionResult = (result) => {
+
+        const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
+        if(result && result.results[result.resultIndex][0].transcript.length === 0 ){return}
         setAlternatives(result)
         if (!voicePreferences.continuous || voicePreferences.feedback) {
             recognition.current.stop()
@@ -62,7 +71,8 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
 
 
     useEffect(() => {
-        if (!tlkbckSpeaking && voicePreferences.continuous && userInitiatedSpeech) {
+        const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
+        if (!tlkbckSpeaking && userInitiatedSpeech) {
             try {
                 recognition.current.start()
             }
