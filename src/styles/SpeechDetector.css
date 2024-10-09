@@ -19,8 +19,8 @@
 }
 
 .mic-outline {
-    width: 100px;
-    height: 100px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     border: 8px solid #B5A4A4;
     animation: pulse 3s;
@@ -32,8 +32,8 @@
 .mic-btn {
     display: flex;
     align-items: center;
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: #7A7E83;
     box-shadow: 0px 0px 80px #7A7E83;

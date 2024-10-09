@@ -29,15 +29,7 @@ import BumbleBee from "bumblebee-hotword"
 
 import { confirmationPhrases } from "./utils/speechConstants";
 
-const bumblebee = new BumbleBee();
 
-bumblebee.setSensitivity(0.5);
-
-bumblebee.setWorkersPath('bumblebee-workers');
-
-bumblebee.addHotword('jarvis');
-
-bumblebee.setHotword('jarvis');
 
 
 
@@ -62,6 +54,17 @@ function App({ signOut }) {
   const { commands } = useContext(CommandsContext)
   const { speak, speaking } = useSpeechSynthesis()
   const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
+
+  const bumblebee = new BumbleBee();
+
+  bumblebee.setSensitivity(0.5);
+
+  bumblebee.setWorkersPath('bumblebee-workers');
+
+  bumblebee.addHotword('jarvis');
+  bumblebee.addHotword('computer');
+
+  bumblebee.setHotword('jarvis');
 
   const getRandomResponse = () => {
     const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
@@ -220,46 +223,19 @@ function App({ signOut }) {
   }, [])
 
 
-
-
-
-
-
-
-
   return (
     <>
 
       <div>
         <TopBar signOut={signOut} />
-        <NavBar />
+        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />
         <div
           style={{
             paddingTop: 54,
             paddingLeft: 210,
           }}
         >
-
-          <Routes>
-            <Route
-              path="/voice-control"
-              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
-            />
-            <Route
-              path="/preferences"
-              element={<Preferences />}
-            />
-
-            <Route
-              path="/commands"
-              element={<CommandBuilder />}
-            />
-            <Route
-              path="/help-and-support"
-              element={<CommandTesting />}
-            />
-          </Routes>
-
+          <CommandBuilder />
 
 
         </div>

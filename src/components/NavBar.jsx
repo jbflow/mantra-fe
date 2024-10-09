@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 import "./NavBar.css";
+import VoiceControl from "./VoiceControl/VoiceControl";
 
 const styles = {
   mainbar: {
@@ -21,7 +22,7 @@ const styles = {
   },
 };
 
-export default function NavBar({ signOut }) {
+export default function NavBar({ signOut, setAlternatives, transcript, confirmation, setConfirmation, speak, speaking, actions }) {
   return (
     <div>
       <Navbar
@@ -33,23 +34,9 @@ export default function NavBar({ signOut }) {
         <Navbar.Toggle aria-controls="navigation" />
         <Navbar.Collapse id="navigation" style={styles.forceColumn}>
           <Nav className="mr-auto" style={styles.forceColumn}>
-            <Link className="nav-link nav-link-sidebar" to="/voice-control">
-              Voice Control
-              <img
-                style={{ ...styles.icon, width: "35px", paddingLeft: "11px" }}
-                alt="Command Builder nav logo"
-                src="./images/menu-icons/mic-fill.svg"
-              />
-            </Link>
-            <Link className="nav-link nav-link-sidebar" to="/commands">
-               Macros (Beta)
-              <img
-                style={{ ...styles.icon, width: "22px" }}
-                alt="Command Builder nav logo"
-                src="./images/menu-icons/command.svg"
-              />
-            </Link>
+            {/* Put navigation stuff here later if needed */}
 
+            <VoiceControl setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />
           </Nav>
         </Navbar.Collapse>
       </Navbar>

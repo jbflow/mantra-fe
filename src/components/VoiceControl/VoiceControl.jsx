@@ -12,10 +12,48 @@ const confirmationParser = new ConfirmationParser()
 
 
 export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions }) {
-  
+
   const [listening, setListening] = useState(false)
-  const { dispatch, midiSettings, micInput } = useContext(MidiContext)
+  const { dispatch, midiSettings, micInput, midiInputs } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
+
+
+
+  const preferences = JSON.parse(localStorage.getItem("preferences"))
+  const [voiceFeedback, setVoiceFeedback] = useState(preferences.voice.feedback)
+  const [continuous, setContinuous] = useState(preferences.voice.continuous)
+  const [language, setLanguage] = useState(preferences.voice.language)
+
+
+
+
+  const handleVoiceFeedbackPressed = () => {
+    setVoiceFeedback(!voiceFeedback)
+    preferences.voice.feedback = !voiceFeedback
+    localStorage.setItem("preferences", JSON.stringify(preferences))
+
+
+  }
+  const handleContinuousPressed = () => {
+    setContinuous(!continuous)
+    preferences.voice.continuous = !continuous
+    localStorage.setItem("preferences", JSON.stringify(preferences))
+  }
+
+  const handleSelectWakeword = (ww) => {
+    preferences.voice.wakeWord = ww
+    localStorage.setItem("preferences", JSON.stringify(preferences))
+  }
+
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value)
+    preferences.voice.language = e.target.value
+    localStorage.setItem("preferences", JSON.stringify(preferences))
+  }
+
+  const handleMidiPortChanged = (event) => {
+    dispatch({ type: "SAVE_MIC_INPUT", payload: event.target.value })
+  }
 
 
 
@@ -31,11 +69,11 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
 
   useEffect(() => {
-    if(micInput){
+    if (micInput) {
       micInput.onmidimessage = handleMidiMessage
     }
   }, [micInput, mapping])
-  
+
 
 
   const isMappable = (statusByte) => {
@@ -57,7 +95,7 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
 
   useEffect(() => {
-    
+
     if (confirmation && !actions) {
       console.log("CONFIRMATION: ", confirmation)
       const confirmationStr = confirmationParser.buildConfirmationStr(confirmation)
@@ -71,19 +109,46 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
   return <>
     <div className="voice-control-container">
-      <div>
-        <OptionsPanel />
-      </div>
       <div className="voice-btn-container">
-        <p className="h1">{listening ? "tlkbck is listening!" : "Press to speak"}</p>
-        <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} />
-        <div className="map-btn-container">
-            <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
-            <p>{midiDataToNames(midiSettings.micMapping)}</p>
+
+        
+
+
+
+        <div className="my-4">
+          <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} />
         </div>
-        <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p> 
+
+        <select className="form-select my-3" aria-label="select wake word" onChange={handleSelectWakeword} defaultvalue="computer">
+          <option value="computer">Computer</option>
+          <option value="jarvis">Jarvis</option>
+        </select>
+
+        
+        <select className="form-select my-3" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midiSettings?.micInput}>
+          {midiInputs?.map((input) => (
+            <option value={input.id} key={input.id}>{input.name}</option>
+          ))}
+        </select>
+
+        <div className="map-btn-container my-3">
+          <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
+          <p className="text-white">{midiDataToNames(midiSettings.micMapping)}</p>
+        </div>
+
+        <select className="form-select my-3" aria-label="Select Language" onChange={handleLanguageChange} defaultValue={language}>
+          <option value="en-GB">English (UK)</option>
+          <option value="en-US">English (USA)</option>
+          <option value="en-CA">English (CA)</option>
+          <option value="en-NZ">English (NZ)</option>
+          <option value="en-AU">English (AUS)</option>
+          <option value="en-ZA">English (SA)</option>
+          <option value="en-IN">English (India)</option>
+        </select>
+
+        
+
       </div>
     </div>
   </>
-
 }
