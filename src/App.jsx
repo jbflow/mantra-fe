@@ -73,7 +73,6 @@ function App({ signOut }) {
   const handleIntentDetection = (finalTranscript) => {
     const macroActions = checkCommands(finalTranscript)
     if (macroActions) {
-      f
       setActions(macroActions)
     }
     else {
