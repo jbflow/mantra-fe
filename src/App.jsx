@@ -15,7 +15,6 @@ import { MANUFACTURER_ID } from "./intent_detection/constants";
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
 import { MidiToJson } from "./utils/MidiToJson";
-import VoiceControl from "./components/VoiceControl/VoiceControl";
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./intent_detection/TranscriptParser";
 import { CommandsContext } from "./contexts/CommandsContext";
@@ -74,6 +73,7 @@ function App({ signOut }) {
   const handleIntentDetection = (finalTranscript) => {
     const macroActions = checkCommands(finalTranscript)
     if (macroActions) {
+      f
       setActions(macroActions)
     }
     else {
@@ -97,6 +97,8 @@ function App({ signOut }) {
   const checkCommands = (transcript) => {
     for (let i = 0; i < commands?.length; i++) {
       if (commands[i].command === transcript) {
+        speak({ text: `running workflow: ${commands[i].command}` })
+
         return commands[i].actions;
       }
     }
@@ -122,7 +124,7 @@ function App({ signOut }) {
       }
     }
     else if (actions.length === 0) {
-      speak({ text: "Executed Macro" })
+      speak({ text: "workflow finished" })
       setActions(false)
     }
   }, [actions])
@@ -145,23 +147,18 @@ function App({ signOut }) {
     MIDI Entry Point
    /*/
 
+
+    console.log("I AM MESSAGE:", message)
+
     if (message) {
+      if (Array.isArray(message)) {
+        const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
+        if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
+          configRef.current = { ...emptyConfig }
+          startTimer()
 
-      const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
-      if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
-        configRef.current = { ...emptyConfig }
-        startTimer()
-
-      }
-      else {
-        if (message[6] === 0) { // If config update
-          setConfigTimer(0)
-          let updatedConfig = MidiToJson(message, configRef.current)
-          configRef.current = updatedConfig
-          if (!dawLink) {
-            setDawLink(true)
-          }
         }
+
         else if (message[6] === 96) { // If confirmation
           console.log("Confirmation message received")
           let data = Array.from(message)
@@ -169,13 +166,30 @@ function App({ signOut }) {
           setConfirmation(data)
           startTimer()
         }
+
+
       }
+      else {
+        setConfigTimer(0)
+        let existingConfig = JSON.parse(sessionStorage.getItem("config"))
+        let updatedConfig = {
+          ...existingConfig,
+          ...message
+        }
+        configRef.current = updatedConfig
+        sessionStorage.setItem("config", JSON.stringify(updatedConfig))
+        if (!dawLink) {
+          setDawLink(true)
+        }
+      }
+
     }
   }
 
+
   const initConfig = () => {
+    
     sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
-    sessionStorage.setItem("config", JSON.stringify(emptyConfig))
   }
 
   useEffect(() => {

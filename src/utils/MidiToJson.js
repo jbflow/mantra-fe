@@ -47,9 +47,9 @@ const select_item = (noun_adj, noun, value, config) => {
 const move_item = (noun_adj, noun, value, config) => {
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
   sub_paths.forEach((sub_path) => {
-    sub_path.splice(value, 0, sub_path.splice(index, 1)[0]);
+    sub_path?.splice(value, 0, sub_path.splice(index, 1)[0]);
   });
-  path.splice(value, 0, path.splice(index, 1)[0]);
+  path?.splice(value, 0, path.splice(index, 1)[0]);
 };
 
 const rename_item = (noun_adj, noun, value, config) => {
@@ -61,7 +61,7 @@ const rename_item = (noun_adj, noun, value, config) => {
     path[index] = value;
   } catch (error) {
     console.log(path)
-    path.splice(index, 0, value);
+    path?.splice(index, 0, value);
   }
 };
 
@@ -69,18 +69,18 @@ const load_item = (noun_adj, noun, value, config) => {
   // Handles loading an item
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
   for (var i = 0; i < sub_paths.length; i++) {
-    if (sub_paths[i]) sub_paths[i].splice(index, 0, []);
+    if (sub_paths[i]) sub_paths[i]?.splice(index, 0, []);
   }
-  path.splice(index, 0, value);
+  path?.splice(index, 0, value);
 };
 
 const delete_item = (noun_adj, noun, value, config) => {
   // Handles deleting an item
   const { path, sub_paths, index } = get_all_paths(noun_adj, noun, config);
   for (var i = 0; i < sub_paths.length; i++) {
-    sub_paths[i].splice(index, 1);
+    sub_paths[i]?.splice(index, 1);
   }
-  path.splice(index, 1);
+  path?.splice(index, 1);
 };
 
 const VERB_MAP = {};

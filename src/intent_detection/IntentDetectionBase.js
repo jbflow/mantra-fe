@@ -103,7 +103,7 @@ export class IntentDetectionBase {
         let closestMatch = null;
         let bestScore = Infinity; // Lower is better for Levenshtein distance
 
-        word_list.forEach((word, index) => {
+        word_list?.forEach((word, index) => {
             const score = levenshteinDistance(token, word);
             if (score < bestScore) {
                 bestScore = score;
