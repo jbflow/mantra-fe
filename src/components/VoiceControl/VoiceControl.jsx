@@ -11,7 +11,7 @@ const confirmationParser = new ConfirmationParser()
 
 
 
-export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions }) {
+export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow }) {
 
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput, midiInputs } = useContext(MidiContext)
@@ -97,9 +97,7 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
   useEffect(() => {
 
     if (confirmation && !actions) {
-      console.log("CONFIRMATION: ", confirmation)
       const confirmationStr = confirmationParser.buildConfirmationStr(confirmation)
-      console.log(confirmationStr)
       speak({ text: confirmationStr })
       setConfirmation(false)
     }
@@ -116,7 +114,7 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
 
         <div className="my-4">
-          <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} />
+          <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} runningWorkflow={runningWorkflow} />
         </div>
 
         <select className="form-select my-3" aria-label="select wake word" onChange={handleSelectWakeword} defaultvalue="computer">

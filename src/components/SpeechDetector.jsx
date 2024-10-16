@@ -6,7 +6,7 @@ const start_sound = new Audio("/sounds/start_sound.mp3")
 const stop_sound = new Audio("/sounds/stop_sound.mp3")
 
 
-const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetListening }) => {
+const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetListening, runningWorkflow }) => {
     const [userInitiatedSpeech, setUserInitiatedSpeech] = useState(false)
     
     const recognition = useRef()
@@ -71,8 +71,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
 
 
     useEffect(() => {
-        const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
-        if (!tlkbckSpeaking && userInitiatedSpeech) {
+        if (!tlkbckSpeaking && userInitiatedSpeech && !runningWorkflow) {
             try {
                 recognition.current.start()
             }

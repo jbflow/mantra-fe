@@ -71,7 +71,7 @@ export class IntentDetectionBase {
                 indexes.push(i);
             }
         }
-        console.log("INDEXES", indexes)
+        // console.log("INDEXES", indexes)
         return indexes;
     }
 
@@ -97,8 +97,8 @@ export class IntentDetectionBase {
             return;
         }
 
-        console.log("TOKEN SENT TO LEVI:", token);
-        console.log("WORD_LIST: ", word_list);
+        // console.log("TOKEN SENT TO LEVI:", token);
+        // console.log("WORD_LIST: ", word_list);
 
         let closestMatch = null;
         let bestScore = Infinity; // Lower is better for Levenshtein distance
@@ -113,12 +113,12 @@ export class IntentDetectionBase {
 
         // Ensure closestMatch is found
         if (!closestMatch) {
-            console.warn("No match found");
+            // console.warn("No match found");
             return null;
         }
 
-        console.log("LEVI RESULT: ", closestMatch);
-        console.log("LEVI THRESHOLD SET: ", threshold);
+        // console.log("LEVI RESULT: ", closestMatch);
+        // console.log("LEVI THRESHOLD SET: ", threshold);
 
         // Convert Levenshtein distance score to a percentage-based similarity
         const maxLength = Math.max(token.length, closestMatch.word.length);
@@ -126,11 +126,11 @@ export class IntentDetectionBase {
 
         // Check against threshold
         if (similarity >= threshold) {
-            console.log("BEST MATCH FOUND: ", closestMatch);
+            // console.log("BEST MATCH FOUND: ", closestMatch);
             this.threshold = similarity;
             return this.findAllIndexes(word_list, closestMatch.word);
         } else {
-            console.warn("No match meets the threshold");
+            // console.warn("No match meets the threshold");
             return null;
         }
     }

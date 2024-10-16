@@ -6,7 +6,7 @@ import "./styles/Transitions.css";
 import { Route, Routes } from "react-router-dom";
 // import Peer from "simple-peer"
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
-import CommandTesting from "./components/CommandTesting";
+
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import StatusBar from "./components/StatusBar";
@@ -14,13 +14,11 @@ import { STATUS_BYTES } from "./utils/MidiConstants";
 import { MANUFACTURER_ID } from "./intent_detection/constants";
 import { emptyConfig } from "./utils/MidiConstants";
 import { arraysEqual } from "./utils/utils";
-import { MidiToJson } from "./utils/MidiToJson";
+
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./intent_detection/TranscriptParser";
 import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
-
-import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 import useWebSocket from "./hooks/useWebsocket";
 
@@ -46,6 +44,7 @@ function App({ signOut }) {
   const [transcript, setTranscript] = useState("")
   const [dawLink, setDawLink] = useState(false)
   const [actions, setActions] = useState(false)
+  const [runningWorkflow, setRunningWorkflow] = useState(false)
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
   const configRef = useRef()
@@ -97,6 +96,7 @@ function App({ signOut }) {
     for (let i = 0; i < commands?.length; i++) {
       if (commands[i].command === transcript) {
         speak({ text: `running workflow: ${commands[i].command}` })
+        setRunningWorkflow(true)
 
         return commands[i].actions;
       }
@@ -124,18 +124,28 @@ function App({ signOut }) {
     }
     else if (actions.length === 0) {
       speak({ text: "workflow finished" })
+      setRunningWorkflow(false)
       setActions(false)
     }
   }, [actions])
 
   useEffect(() => {
     if (awaitConfirmation && confirmation && actions && !configState) {
-      if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
-        setActions(actions.slice(1))
+      // Create shallow copies of the arrays
+      const confirmationCopy = Array.from(confirmation);
+      const awaitConfirmationCopy = Array.from(awaitConfirmation);
+  
+      // Remove second-to-last item from both arrays (if arrays have at least 2 elements)
+      if (confirmationCopy.length >= 2) confirmationCopy.splice(-2, 1);
+      if (awaitConfirmationCopy.length >= 2) awaitConfirmationCopy.splice(-2, 1);
+  
+      // Compare the arrays and update the state accordingly
+      if (arraysEqual(confirmationCopy, awaitConfirmationCopy) && actions.length !== 0) {
+        setActions(actions.slice(1));
       }
     }
-  }, [configState])
-
+  }, [configState, awaitConfirmation, confirmation, actions]);
+  
 
 
 
@@ -146,8 +156,6 @@ function App({ signOut }) {
     MIDI Entry Point
    /*/
 
-
-    console.log("I AM MESSAGE:", message)
 
     if (message) {
       if (Array.isArray(message)) {
@@ -161,8 +169,13 @@ function App({ signOut }) {
         else if (message[6] === 96) { // If confirmation
           console.log("Confirmation message received")
           let data = Array.from(message)
-          data.splice(message.length - 2, 1)
-          setConfirmation(data)
+          if (message[message.length - 2] === 0 && !runningWorkflow) {
+            speak({ text: getRandomResponse() })
+          }
+          else {
+            data.splice(message.length - 2, 1)
+            setConfirmation(data)
+          }
           startTimer()
         }
 
@@ -187,7 +200,7 @@ function App({ signOut }) {
 
 
   const initConfig = () => {
-    
+
     sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
   }
 
@@ -241,7 +254,7 @@ function App({ signOut }) {
 
       <div>
         <TopBar signOut={signOut} />
-        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />
+        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow} />
         <div
           style={{
             paddingTop: 54,
