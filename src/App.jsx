@@ -123,11 +123,16 @@ function App({ signOut }) {
       }
     }
     else if (actions.length === 0) {
-      speak({ text: "workflow finished" })
-      setRunningWorkflow(false)
-      setActions(false)
+      setRunningWorkflow(false);
+      const timer = setTimeout(() => {
+        speak({ text: "workflow finished" });
+        
+        setActions(false);
+    }, 1000); // 1000ms delay
     }
   }, [actions])
+
+  
 
   useEffect(() => {
     if (awaitConfirmation && confirmation && actions && !configState) {
@@ -153,12 +158,13 @@ function App({ signOut }) {
 
   const handleSocketMessage = (message) => {
     /*/
-    MIDI Entry Point
+    Websocket Entry Point - messages from Ableton Live Python come in here
    /*/
 
 
     if (message) {
       if (Array.isArray(message)) {
+        // If the message is an array - then it is a command
         const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
         if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
           configRef.current = { ...emptyConfig }
@@ -182,6 +188,7 @@ function App({ signOut }) {
 
       }
       else {
+        // Otherwise it's a dictionary config message
         setConfigTimer(0)
         let existingConfig = JSON.parse(sessionStorage.getItem("config"))
         let updatedConfig = {

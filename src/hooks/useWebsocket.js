@@ -43,6 +43,7 @@ const useWebSocket = (baseUrl, startPort = 39031, endPort = 39038, retryInterval
     websocket.onclose = (event) => {
       console.log('WebSocket connection closed:', event);
       setIsConnected(false);
+      sessionStorage.removeItem("config")
       if (currentPort < endPort) {
         setCurrentPort(currentPort + 1);
       } else {

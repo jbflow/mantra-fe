@@ -36,7 +36,7 @@ const SpeechDetector = ({ setAlternatives, tlkbckSpeaking, listening, handleSetL
 
     }
     const handleSpeechRecognitionToggle = () => {
-        if (!listening) {
+        if (!listening && !tlkbckSpeaking) {
             try {
                 recognition.current.start()
                 handleSetListening(true)
