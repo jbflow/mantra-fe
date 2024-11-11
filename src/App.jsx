@@ -62,7 +62,12 @@ function App({ signOut }) {
   bumblebee.addHotword('jarvis');
   bumblebee.addHotword('computer');
 
-  bumblebee.setHotword('jarvis');
+  
+
+  const handleChangeWakeWord = (wakeWord) => { 
+    console.log(wakeWord)
+    bumblebee.setHotword(wakeWord);
+  }
 
   const getRandomResponse = () => {
     const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
@@ -253,6 +258,7 @@ function App({ signOut }) {
     bumblebee.on("hotword", () => {
       document.getElementById("tlkbck-btn").click()
     })
+   
   }, [])
 
 
@@ -261,7 +267,7 @@ function App({ signOut }) {
 
       <div>
         <TopBar signOut={signOut} />
-        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow} />
+        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow} handleChangeWakeWord={handleChangeWakeWord} />
         <div
           style={{
             paddingTop: 54,
