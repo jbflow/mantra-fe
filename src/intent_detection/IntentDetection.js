@@ -13,12 +13,12 @@ export class IntentDetection extends IntentDetectionBase {
     }
 
     runDetection(textInput = "", config = emptyConfig) {
-        console.log("RUNNING DETECTION")
+        // console.log("RUNNING DETECTION")
         this.textInput = textInput;
         this.config = config
         // console.log("CONFIG", config)
         this.tokenizedInput = this.parseInput(textInput, 5)
-        console.log(this.tokenizedInput)
+        // console.log(this.tokenizedInput)
         if (textInput.split(" ").length === 1 && Object.keys(this.SINGLE_WORD).includes(textInput)) {
             return this.SINGLE_WORD[textInput]
         }
@@ -26,12 +26,12 @@ export class IntentDetection extends IntentDetectionBase {
         const verb = this.getVerb();
         this.nounSearcher = new NounSearchEngine()
         const nounAdj = this.nounSearcher.search(verb, this.tokenizedInput, this.config)
-        console.log("verb: ", verb)
-        console.log("potential nouns found: ", nounAdj)
+        // console.log("verb: ", verb)
+        // console.log("potential nouns found: ", nounAdj)
         const adverb = this.getAdverb(verb);
-        console.log("adverb: ", adverb)
+        // console.log("adverb: ", adverb)
         const units = this.getUnits();
-        console.log("units: ", units)
+        // console.log("units: ", units)
         if (verb || nounAdj) {
             const modifiedVerb = this.VERBS['select'] && nounAdj && !verb ? this.VERBS['select'] : verb;
             return this.encodeMidi(nounAdj, modifiedVerb, adverb, units)

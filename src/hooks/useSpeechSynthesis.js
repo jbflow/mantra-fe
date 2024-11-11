@@ -8,6 +8,7 @@ const useSpeechSynthesis = (props = {}) => {
   const [supported, setSupported] = useState(false);
 
   const processVoices = (voiceOptions) => {
+    console.log(voiceOptions)
     setVoices(voiceOptions);
   };
 
@@ -42,7 +43,7 @@ const useSpeechSynthesis = (props = {}) => {
     setSpeaking(true);
     const utterance = new window.SpeechSynthesisUtterance();
     utterance.text = text;
-    utterance.voice = voices[160];
+    utterance.voice = voices[193];
     utterance.onend = handleEnd;
     utterance.rate = rate;
     utterance.pitch = pitch;

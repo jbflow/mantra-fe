@@ -53,7 +53,8 @@ const replace = {
     "wave table": "wavetable",
     "analogue": "analog",
     "raw": "roar",
-    "attention": "a tension"
+    "attention": "a tension",
+    "dry wet": "dry/wet"
 
 };
 
@@ -77,6 +78,7 @@ export class TranscriptParser {
         }
 
         filteredResults = filteredResults.startsWith(' ') ? filteredResults.trimStart() : filteredResults;
+        console.log("FILTERED RESULTS", filteredResults)
         return this.replaceWordsWithNumbers(filteredResults)
     }
 

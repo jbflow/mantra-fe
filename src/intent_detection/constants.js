@@ -122,12 +122,12 @@ const THRESH = {
   'cue point': 85,
   device: 90,
   clip: 80,
-  parameter: 60,
+  parameter: 70,
   instrument: 80,
   audioDevice: 100,
   midiDevice: 100,
   browserClip: 60,
-  favorites: 60,
+  favorites: 80,
 };
 
 const UNITS = {
