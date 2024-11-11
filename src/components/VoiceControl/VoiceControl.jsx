@@ -11,7 +11,7 @@ const confirmationParser = new ConfirmationParser()
 
 
 
-export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow }) {
+export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow, handleChangeWakeWord}) {
 
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput, midiInputs } = useContext(MidiContext)
@@ -27,32 +27,21 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
 
 
-  const handleVoiceFeedbackPressed = () => {
-    setVoiceFeedback(!voiceFeedback)
-    preferences.voice.feedback = !voiceFeedback
-    localStorage.setItem("preferences", JSON.stringify(preferences))
+ 
 
-
-  }
-  const handleContinuousPressed = () => {
-    setContinuous(!continuous)
-    preferences.voice.continuous = !continuous
+  const handleSelectWakeword = (e) => {
+    preferences.voice.wakeWord = e.nativeEvent.target.value
     localStorage.setItem("preferences", JSON.stringify(preferences))
-  }
-
-  const handleSelectWakeword = (ww) => {
-    preferences.voice.wakeWord = ww
-    localStorage.setItem("preferences", JSON.stringify(preferences))
+    handleChangeWakeWord(e.nativeEvent.target.value)
   }
 
   const handleLanguageChange = (e) => {
-    setLanguage(e.target.value)
-    preferences.voice.language = e.target.value
+    preferences.voice.language = e.nativeEvent.target.value
     localStorage.setItem("preferences", JSON.stringify(preferences))
   }
 
-  const handleMidiPortChanged = (event) => {
-    dispatch({ type: "SAVE_MIC_INPUT", payload: event.target.value })
+  const handleMidiPortChanged = (e) => {
+    dispatch({ type: "SAVE_MIC_INPUT", payload: e.nativeEvent.target.value })
   }
 
 

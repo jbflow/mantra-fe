@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import Main from './Main';
 
 if (!localStorage.getItem("preferences")) {
-    localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: false, continuous: false, language: "en-UK" } }))
+    localStorage.setItem("preferences", JSON.stringify({ voice: { wakeWord: "computer", language: "en-UK" } }))
   }
 
 
