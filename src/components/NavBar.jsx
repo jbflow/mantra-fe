@@ -22,7 +22,7 @@ const styles = {
   },
 };
 
-export default function NavBar({ signOut, setAlternatives, transcript, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow}) {
+export default function NavBar({setAlternatives, transcript, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow}) {
   return (
     <div>
       <Navbar

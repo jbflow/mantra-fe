@@ -3,17 +3,15 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
-import { Route, Routes } from "react-router-dom";
-// import Peer from "simple-peer"
-import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 
+
+import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import StatusBar from "./components/StatusBar";
-import { STATUS_BYTES } from "./utils/MidiConstants";
-import { MANUFACTURER_ID } from "./intent_detection/constants";
-import { emptyConfig } from "./utils/MidiConstants";
-import { arraysEqual } from "./utils/utils";
+
+
+import { arraysEqual, getRandomResponse } from "./utils/utils";
 
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./intent_detection/TranscriptParser";
@@ -41,29 +39,26 @@ const transcriptParser = new TranscriptParser()
 
 
 function App({ signOut }) {
+
+  // Create State
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
   const [dawLink, setDawLink] = useState(false)
   const [actions, setActions] = useState(false)
-  
   const [confirmation, setConfirmation] = useState()
-  const configRef = useRef()
   const { commands } = useContext(CommandsContext)
-
-
   const [runningWorkflow, setRunningWorkflow] = useState(false)
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
+  const configRef = useRef()
+
+
+
+
   const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
   const [bumblebee] = useWakeWord()
   const { speak, speaking } = useSpeechSynthesis()
-  const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
+  const { sendMessage, isConnected } = useWebSocket('ws://127.0.0.1', startTimer, setConfirmation, setConfigTimer,  configRef, dawLink, setDawLink);
 
-
-  
-  const getRandomResponse = () => {
-    const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
-    return confirmationPhrases[randomIndex];
-  }
 
   const handleIntentDetection = (finalTranscript) => {
     const macroActions = checkCommands(finalTranscript)
@@ -152,80 +147,10 @@ function App({ signOut }) {
 
 
 
-  const handleSocketMessage = (message) => {
-    /*/
-    Websocket Entry Point - messages from Ableton Live Python come in here
-   /*/
-
-
-    if (message) {
-      if (Array.isArray(message)) {
-        // If the message is an array - then it is a command
-        const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
-        if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
-          configRef.current = { ...emptyConfig }
-          startTimer()
-
-        }
-
-        else if (message[6] === 96) { // If confirmation
-          console.log("Confirmation message received")
-          let data = Array.from(message)
-          if (message[message.length - 2] === 0 && !runningWorkflow) {
-            speak(getRandomResponse())
-          }
-          else {
-            data.splice(message.length - 2, 1)
-            setConfirmation(data)
-          }
-          startTimer()
-        }
-
-
-      }
-      else {
-        // Otherwise it's a dictionary config message
-        setConfigTimer(0)
-        let existingConfig = JSON.parse(sessionStorage.getItem("config"))
-        let updatedConfig = {
-          ...existingConfig,
-          ...message
-        }
-        configRef.current = updatedConfig
-        sessionStorage.setItem("config", JSON.stringify(updatedConfig))
-        if (!dawLink) {
-          setDawLink(true)
-        }
-      }
-
-    }
-  }
-
-
-  const initConfig = () => {
-
-    sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
-  }
-
-  useEffect(() => {
-    if (Array.isArray(messages) && messages.length > 0) {
-      for (let msg of messages) {
-        handleSocketMessage(msg)
-      }
-    }
-
-  }, [messages]);
 
 
 
-
-  useEffect(() => {
-    // When the web socket connects, init the config transfer by sending sysex handshake
-    if (isConnected) {
-      initConfig()
-    }
-  }, [isConnected])
-
+ 
 
 
   useEffect(() => {

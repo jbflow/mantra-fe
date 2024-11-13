@@ -72,3 +72,10 @@ export const convertBytes = (byteArray) => {
 };
 
 
+  
+export const getRandomResponse = () => {
+  const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
+  return confirmationPhrases[randomIndex];
+}
+
+
