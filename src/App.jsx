@@ -21,8 +21,9 @@ import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 import useWebSocket from "./hooks/useWebsocket";
+import useWakeWord from "./hooks/useWakeWord";
 
-import BumbleBee from "bumblebee-hotword"
+
 
 import { confirmationPhrases } from "./utils/speechConstants";
 
@@ -44,25 +45,21 @@ function App({ signOut }) {
   const [transcript, setTranscript] = useState("")
   const [dawLink, setDawLink] = useState(false)
   const [actions, setActions] = useState(false)
-  const [runningWorkflow, setRunningWorkflow] = useState(false)
-  const [awaitConfirmation, setAwaitConfirmation] = useState(false)
+  
   const [confirmation, setConfirmation] = useState()
   const configRef = useRef()
-  const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
   const { commands } = useContext(CommandsContext)
+
+
+  const [runningWorkflow, setRunningWorkflow] = useState(false)
+  const [awaitConfirmation, setAwaitConfirmation] = useState(false)
+  const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
+  const [bumblebee] = useWakeWord()
   const { speak, speaking } = useSpeechSynthesis()
   const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
 
-  const bumblebee = new BumbleBee();
 
-  bumblebee.setSensitivity(0.5);
-
-  bumblebee.setWorkersPath('bumblebee-workers');
-
-  bumblebee.addHotword('jarvis');
-
-  bumblebee.setHotword('jarvis')
-
+  
   const getRandomResponse = () => {
     const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
     return confirmationPhrases[randomIndex];
