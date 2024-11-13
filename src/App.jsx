@@ -60,14 +60,8 @@ function App({ signOut }) {
   bumblebee.setWorkersPath('bumblebee-workers');
 
   bumblebee.addHotword('jarvis');
-  bumblebee.addHotword('computer');
 
-  
-
-  const handleChangeWakeWord = (wakeWord) => { 
-    console.log(wakeWord)
-    bumblebee.setHotword(wakeWord);
-  }
+  bumblebee.setHotword('jarvis')
 
   const getRandomResponse = () => {
     const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
@@ -87,12 +81,12 @@ function App({ signOut }) {
         if (intentDetectionResult) {
           sendMessage(intentDetectionResult)
         } else {
-          speak({ text: getRandomResponse() })
+          speak(getRandomResponse())
         }
       }
       catch (err) {
         console.log(err)
-        speak({ text: "I'm sorry, an unexepected error has occured in the talk back system, please restart talk back and try again - it might also help to reload the MIDI Remote Script in Live." })
+        speak("I'm sorry, an unexepected error has occured in the talk back system, please restart talk back and try again - it might also help to reload the MIDI Remote Script in Live.")
       }
     }
   }
@@ -100,7 +94,7 @@ function App({ signOut }) {
   const checkCommands = (transcript) => {
     for (let i = 0; i < commands?.length; i++) {
       if (commands[i].command === transcript) {
-        speak({ text: `running workflow: ${commands[i].command}` })
+        speak(`running workflow: ${commands[i].command}` })
         setRunningWorkflow(true)
 
         return commands[i].actions;
@@ -130,32 +124,32 @@ function App({ signOut }) {
     else if (actions.length === 0) {
       setRunningWorkflow(false);
       const timer = setTimeout(() => {
-        speak({ text: "workflow finished" });
-        
+        speak("workflow finished");
+
         setActions(false);
-    }, 1000); // 1000ms delay
+      }, 1000); // 1000ms delay
     }
   }, [actions])
 
-  
+
 
   useEffect(() => {
     if (awaitConfirmation && confirmation && actions && !configState) {
       // Create shallow copies of the arrays
       const confirmationCopy = Array.from(confirmation);
       const awaitConfirmationCopy = Array.from(awaitConfirmation);
-  
+
       // Remove second-to-last item from both arrays (if arrays have at least 2 elements)
       if (confirmationCopy.length >= 2) confirmationCopy.splice(-2, 1);
       if (awaitConfirmationCopy.length >= 2) awaitConfirmationCopy.splice(-2, 1);
-  
+
       // Compare the arrays and update the state accordingly
       if (arraysEqual(confirmationCopy, awaitConfirmationCopy) && actions.length !== 0) {
         setActions(actions.slice(1));
       }
     }
   }, [configState, awaitConfirmation, confirmation, actions]);
-  
+
 
 
 
@@ -181,7 +175,7 @@ function App({ signOut }) {
           console.log("Confirmation message received")
           let data = Array.from(message)
           if (message[message.length - 2] === 0 && !runningWorkflow) {
-            speak({ text: getRandomResponse() })
+            speak(getRandomResponse())
           }
           else {
             data.splice(message.length - 2, 1)
@@ -222,6 +216,7 @@ function App({ signOut }) {
         handleSocketMessage(msg)
       }
     }
+
   }, [messages]);
 
 
@@ -258,7 +253,7 @@ function App({ signOut }) {
     bumblebee.on("hotword", () => {
       document.getElementById("tlkbck-btn").click()
     })
-   
+
   }, [])
 
 
@@ -267,7 +262,7 @@ function App({ signOut }) {
 
       <div>
         <TopBar signOut={signOut} />
-        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow} handleChangeWakeWord={handleChangeWakeWord} />
+        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow} />
         <div
           style={{
             paddingTop: 54,

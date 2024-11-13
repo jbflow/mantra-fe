@@ -11,7 +11,7 @@ const confirmationParser = new ConfirmationParser()
 
 
 
-export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow, handleChangeWakeWord}) {
+export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow}) {
 
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput, midiInputs } = useContext(MidiContext)
@@ -28,12 +28,6 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
 
  
-
-  const handleSelectWakeword = (e) => {
-    preferences.voice.wakeWord = e.nativeEvent.target.value
-    localStorage.setItem("preferences", JSON.stringify(preferences))
-    handleChangeWakeWord(e.nativeEvent.target.value)
-  }
 
   const handleLanguageChange = (e) => {
     preferences.voice.language = e.nativeEvent.target.value
@@ -87,7 +81,7 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
     if (confirmation && !actions) {
       const confirmationStr = confirmationParser.buildConfirmationStr(confirmation)
-      speak({ text: confirmationStr })
+      speak(confirmationStr)
       setConfirmation(false)
     }
   }, [confirmation])
@@ -106,10 +100,7 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
           <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} runningWorkflow={runningWorkflow} />
         </div>
 
-        <select className="form-select my-3" aria-label="select wake word" onChange={handleSelectWakeword} defaultvalue="computer">
-          <option value="computer">Computer</option>
-          <option value="jarvis">Jarvis</option>
-        </select>
+
 
         
         <select className="form-select my-3" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midiSettings?.micInput}>

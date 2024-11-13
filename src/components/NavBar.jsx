@@ -22,7 +22,7 @@ const styles = {
   },
 };
 
-export default function NavBar({ signOut, setAlternatives, transcript, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow, handleChangeWakeWord}) {
+export default function NavBar({ signOut, setAlternatives, transcript, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow}) {
   return (
     <div>
       <Navbar
@@ -36,7 +36,7 @@ export default function NavBar({ signOut, setAlternatives, transcript, confirmat
           <Nav className="mr-auto" style={styles.forceColumn}>
             {/* Put navigation stuff here later if needed */}
 
-            <VoiceControl setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow} handleChangeWakeWord={handleChangeWakeWord}/>
+            <VoiceControl setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow}/>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
