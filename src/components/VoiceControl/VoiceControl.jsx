@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import SpeechDetector from "../SpeechDetector";
 import React from 'react'
-import OptionsPanel from "./OptionsPanel";
+import "../../styles/VoiceControl.css"
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
 import { midiDataToNames } from "../../utils/utils";

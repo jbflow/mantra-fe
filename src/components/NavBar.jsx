@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
-import "../styles/Navbar.css";
+import "./NavBar.css";
 import VoiceControl from "./VoiceControl/VoiceControl";
 
 const styles = {
