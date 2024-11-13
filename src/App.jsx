@@ -94,7 +94,7 @@ function App({ signOut }) {
   const checkCommands = (transcript) => {
     for (let i = 0; i < commands?.length; i++) {
       if (commands[i].command === transcript) {
-        speak(`running workflow: ${commands[i].command}` })
+        speak(`running workflow: ${commands[i].command}`)
         setRunningWorkflow(true)
 
         return commands[i].actions;
