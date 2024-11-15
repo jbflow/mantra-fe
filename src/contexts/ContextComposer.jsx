@@ -2,16 +2,18 @@ import React from "react";
 import CommandsProvider from "./CommandsContext";
 import UserProvider from "./UserContext";
 import MidiProvider from "./MidiContext";
+import { VoiceProvider } from "./VoiceContext";
 
 
 export default function ContextComposer({ children, user, isMobile, paymentData }) {
-  console.log(user)
   if (!isMobile) {
     return (
       <UserProvider user={user} paymentData={paymentData} >
         <MidiProvider>
           <CommandsProvider url={`/commands?userId=${user.userId}`}>
-            {children}
+            <VoiceProvider>
+              {children}
+            </VoiceProvider>
           </CommandsProvider>
         </MidiProvider>
       </UserProvider>
@@ -20,9 +22,11 @@ export default function ContextComposer({ children, user, isMobile, paymentData 
   else {
     return (
       <UserProvider user={user} paymentData={paymentData}>
-          <CommandsProvider url={`/commands?userId=${user.userId}`}>
+        <CommandsProvider url={`/commands?userId=${user.userId}`}>
+          <VoiceProvider>
             {children}
-          </CommandsProvider>
+          </VoiceProvider>
+        </CommandsProvider>
       </UserProvider>
     )
   }

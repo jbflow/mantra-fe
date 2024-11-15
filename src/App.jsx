@@ -46,10 +46,13 @@ function App({ signOut }) {
   const [dawLink, setDawLink] = useState(false)
   const [actions, setActions] = useState(false)
   const [confirmation, setConfirmation] = useState()
-  const { commands } = useContext(CommandsContext)
-  const [runningWorkflow, setRunningWorkflow] = useState(false)
   const [awaitConfirmation, setAwaitConfirmation] = useState(false)
+  
+  const [runningWorkflow, setRunningWorkflow] = useState(false)
+
   const configRef = useRef()
+
+  const { commands } = useContext(CommandsContext)
 
 
 
