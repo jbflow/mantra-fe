@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import SpeechDetector from "../SpeechDetector";
 import React from 'react'
-import OptionsPanel from "./OptionsPanel";
+import "../../styles/VoiceControl.css"
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
 import { midiDataToNames } from "../../utils/utils";
@@ -11,27 +11,18 @@ const confirmationParser = new ConfirmationParser()
 
 
 
-export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow}) {
+export default function VoiceControl({setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow}) {
 
   const [listening, setListening] = useState(false)
   const { dispatch, midiSettings, micInput, midiInputs } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
-
-
-
   const preferences = JSON.parse(localStorage.getItem("preferences"))
-  const [voiceFeedback, setVoiceFeedback] = useState(preferences.voice.feedback)
-  const [continuous, setContinuous] = useState(preferences.voice.continuous)
   const [language, setLanguage] = useState(preferences.voice.language)
-
-
-
-
- 
 
   const handleLanguageChange = (e) => {
     preferences.voice.language = e.nativeEvent.target.value
     localStorage.setItem("preferences", JSON.stringify(preferences))
+    setLanguage(e.nativeEvent.target.value)
   }
 
   const handleMidiPortChanged = (e) => {
