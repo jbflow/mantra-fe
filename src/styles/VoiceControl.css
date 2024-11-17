@@ -1,56 +1,26 @@
 .voice-control-container {
-  height: calc(100vh - 60px);
-  
+  height: 100%;
   display: flex;
-}
-
-.options-panel {
-  display: flex;
-  align-items: center;
-  justify-content: start;
-
-  width: 396px;
-  height: calc(100vh - 60px);
-  overflow-x: hidden;
-  overflow-y: visible;
-  border-top: 1px solid #e4e4e4;
-  border-right: 1px solid #e4e4e4;
-}
-.options-box {
-  background: #f7f7f7;
-  border: 1px solid #002775;
-  border-radius: 20px;
-  margin: 15px;
-  width: 280px;
-  box-shadow: 0px 6px 12px #00000029;
-  
-  
-}
-
-.phone-connect{
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  flex-direction: column;
 }
 
 .voice-btn-container {
-  background: #f7f7f7;
-  border-top: 1px solid #e4e4e4;
-  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
   flex-direction: column;
-  position: relative;
+  justify-content: center;
+  gap: 1rem; 
+  padding: 1.2rem;
+  width: 100%; 
 }
 
-
-
-.midi-map-btn{
+.midi-map-btn {
   border: 1px solid gray;
   background-color: white;
+  padding: 0.5rem 1rem;
 }
-.midi-map-btn:focused{
+
+.midi-map-btn:focus {
   border: 1px solid gray;
   background-color: white;
 }

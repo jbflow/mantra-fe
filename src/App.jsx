@@ -3,41 +3,29 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import "./styles/App.css";
 import "./styles/AppNext.css";
 import "./styles/Transitions.css";
-import { Route, Routes } from "react-router-dom";
-// import Peer from "simple-peer"
+
+
 import CommandBuilder from "./components/CommandBuilder/CommandBuilder";
-import CommandTesting from "./components/CommandTesting";
 import NavBar from "./components/NavBar";
 import TopBar from "./components/TopBar";
 import StatusBar from "./components/StatusBar";
-import { STATUS_BYTES } from "./utils/MidiConstants";
-import { MANUFACTURER_ID } from "./intent_detection/constants";
-import { emptyConfig } from "./utils/MidiConstants";
-import { arraysEqual } from "./utils/utils";
-import { MidiToJson } from "./utils/MidiToJson";
-import VoiceControl from "./components/VoiceControl/VoiceControl";
+
+
+import { arraysEqual, getRandomResponse } from "./utils/utils";
+
 import { IntentDetection } from "./intent_detection/IntentDetection";
 import { TranscriptParser } from "./intent_detection/TranscriptParser";
 import { CommandsContext } from "./contexts/CommandsContext";
 import useTransferingConfig from "./hooks/useTransferingConfig";
-
-import Preferences from "./components/Preferences/PreferencesPage";
 import useSpeechSynthesis from "./hooks/useSpeechSynthesis";
 import useWebSocket from "./hooks/useWebsocket";
+import useWakeWord from "./hooks/useWakeWord";
 
-import BumbleBee from "bumblebee-hotword"
+
 
 import { confirmationPhrases } from "./utils/speechConstants";
 
-const bumblebee = new BumbleBee();
 
-bumblebee.setSensitivity(0.5);
-
-bumblebee.setWorkersPath('bumblebee-workers');
-
-bumblebee.addHotword('jarvis');
-
-bumblebee.setHotword('jarvis');
 
 
 
@@ -51,22 +39,29 @@ const transcriptParser = new TranscriptParser()
 
 
 function App({ signOut }) {
+
+  // Create State
   const [alternatives, setAlternatives] = useState([])
   const [transcript, setTranscript] = useState("")
   const [dawLink, setDawLink] = useState(false)
   const [actions, setActions] = useState(false)
-  const [awaitConfirmation, setAwaitConfirmation] = useState(false)
   const [confirmation, setConfirmation] = useState()
-  const configRef = useRef()
-  const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
-  const { commands } = useContext(CommandsContext)
-  const { speak, speaking } = useSpeechSynthesis()
-  const { messages, sendMessage, isConnected, manualConnect } = useWebSocket('ws://127.0.0.1');
+  const [awaitConfirmation, setAwaitConfirmation] = useState(false)
+  
+  const [runningWorkflow, setRunningWorkflow] = useState(false)
 
-  const getRandomResponse = () => {
-    const randomIndex = Math.floor(Math.random() * confirmationPhrases.length);
-    return confirmationPhrases[randomIndex];
-  }
+  const configRef = useRef()
+
+  const { commands } = useContext(CommandsContext)
+
+
+
+
+  const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
+  const [bumblebee] = useWakeWord()
+  const { speak, speaking } = useSpeechSynthesis()
+  const { sendMessage, isConnected } = useWebSocket('ws://127.0.0.1', startTimer, setConfirmation, setConfigTimer,  configRef, dawLink, setDawLink);
+
 
   const handleIntentDetection = (finalTranscript) => {
     const macroActions = checkCommands(finalTranscript)
@@ -81,12 +76,12 @@ function App({ signOut }) {
         if (intentDetectionResult) {
           sendMessage(intentDetectionResult)
         } else {
-          speak({ text: getRandomResponse() })
+          speak(getRandomResponse())
         }
       }
       catch (err) {
         console.log(err)
-        speak({ text: "I'm sorry, an unexepected error has occured in the talk back system, please restart talk back and try again - it might also help to reload the MIDI Remote Script in Live." })
+        speak("I'm sorry, an unexepected error has occured in the talk back system, please restart talk back and try again - it might also help to reload the MIDI Remote Script in Live.")
       }
     }
   }
@@ -94,6 +89,9 @@ function App({ signOut }) {
   const checkCommands = (transcript) => {
     for (let i = 0; i < commands?.length; i++) {
       if (commands[i].command === transcript) {
+        speak(`running workflow: ${commands[i].command}`)
+        setRunningWorkflow(true)
+
         return commands[i].actions;
       }
     }
@@ -119,80 +117,43 @@ function App({ signOut }) {
       }
     }
     else if (actions.length === 0) {
-      speak({ text: "Executed Macro" })
-      setActions(false)
+      setRunningWorkflow(false);
+      const timer = setTimeout(() => {
+        speak("workflow finished");
+
+        setActions(false);
+      }, 1000); // 1000ms delay
     }
   }, [actions])
 
+
+
   useEffect(() => {
     if (awaitConfirmation && confirmation && actions && !configState) {
-      if (arraysEqual(Array.from(confirmation), awaitConfirmation) && actions.length !== 0) {
-        setActions(actions.slice(1))
+      // Create shallow copies of the arrays
+      const confirmationCopy = Array.from(confirmation);
+      const awaitConfirmationCopy = Array.from(awaitConfirmation);
+
+      // Remove second-to-last item from both arrays (if arrays have at least 2 elements)
+      if (confirmationCopy.length >= 2) confirmationCopy.splice(-2, 1);
+      if (awaitConfirmationCopy.length >= 2) awaitConfirmationCopy.splice(-2, 1);
+
+      // Compare the arrays and update the state accordingly
+      if (arraysEqual(confirmationCopy, awaitConfirmationCopy) && actions.length !== 0) {
+        setActions(actions.slice(1));
       }
     }
-  }, [configState])
+  }, [configState, awaitConfirmation, confirmation, actions]);
 
 
 
 
 
 
-  const handleSocketMessage = (message) => {
-    /*/
-    MIDI Entry Point
-   /*/
-
-    if (message) {
-
-      const init = [STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 127, STATUS_BYTES.sysex_end];
-      if (arraysEqual(init, Array.from(message))) { // If Live Remote Script sends Init SysEx handshake
-        configRef.current = { ...emptyConfig }
-        startTimer()
-
-      }
-      else {
-        if (message[6] === 0) { // If config update
-          setConfigTimer(0)
-          let updatedConfig = MidiToJson(message, configRef.current)
-          configRef.current = updatedConfig
-          if (!dawLink) {
-            setDawLink(true)
-          }
-        }
-        else if (message[6] === 96) { // If confirmation
-          console.log("Confirmation message received")
-          let data = Array.from(message)
-          data.splice(message.length - 2, 1)
-          setConfirmation(data)
-          startTimer()
-        }
-      }
-    }
-  }
-
-  const initConfig = () => {
-    sendMessage([STATUS_BYTES.sysex_start, ...MANUFACTURER_ID, 1, STATUS_BYTES.sysex_end])
-    sessionStorage.setItem("config", JSON.stringify(emptyConfig))
-  }
-
-  useEffect(() => {
-    if (Array.isArray(messages) && messages.length > 0) {
-      for (let msg of messages) {
-        handleSocketMessage(msg)
-      }
-    }
-  }, [messages]);
 
 
 
-
-  useEffect(() => {
-    // When the web socket connects, init the config transfer by sending sysex handshake
-    if (isConnected) {
-      initConfig()
-    }
-  }, [isConnected])
-
+ 
 
 
   useEffect(() => {
@@ -217,14 +178,8 @@ function App({ signOut }) {
     bumblebee.on("hotword", () => {
       document.getElementById("tlkbck-btn").click()
     })
+
   }, [])
-
-
-
-
-
-
-
 
 
   return (
@@ -232,34 +187,14 @@ function App({ signOut }) {
 
       <div>
         <TopBar signOut={signOut} />
-        <NavBar />
+        <NavBar setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} runningWorkflow={runningWorkflow} />
         <div
           style={{
             paddingTop: 54,
             paddingLeft: 210,
           }}
         >
-
-          <Routes>
-            <Route
-              path="/voice-control"
-              element={<VoiceControl setAlternatives={setAlternatives} transcript={transcript} confirmation={confirmation} setConfirmation={setConfirmation} speak={speak} speaking={speaking} actions={actions} />}
-            />
-            <Route
-              path="/preferences"
-              element={<Preferences />}
-            />
-
-            <Route
-              path="/commands"
-              element={<CommandBuilder />}
-            />
-            <Route
-              path="/help-and-support"
-              element={<CommandTesting />}
-            />
-          </Routes>
-
+          <CommandBuilder />
 
 
         </div>

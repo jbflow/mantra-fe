@@ -1,68 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useVoiceContext } from '../contexts/VoiceContext';
 
-const useSpeechSynthesis = (props = {}) => {
-  const voicePreferences = JSON.parse(localStorage.getItem("preferences")).voice
-  const { onEnd = () => { } } = props;
-  const [voices, setVoices] = useState([]);
+const useSpeechSynthesis = () => {
   const [speaking, setSpeaking] = useState(false);
-  const [supported, setSupported] = useState(false);
+  const { defaultVoice } = useVoiceContext();
 
-  const processVoices = (voiceOptions) => {
-    setVoices(voiceOptions);
-  };
+  const speak = useCallback((text) => {
+    if (!text || speaking) return;
 
-  const getVoices = () => {
-    let voiceOptions = window.speechSynthesis.getVoices();
-    if (voiceOptions.length > 0) {
-      processVoices(voiceOptions);
-      return;
-    }
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    utterance.voice = defaultVoice;
+    utterance.onstart = () => setSpeaking(true);
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
 
-    window.speechSynthesis.onvoiceschanged = (event) => {
-      voiceOptions = event.target.getVoices();
-      processVoices(voiceOptions);
-    };
-  };
-
-  const handleEnd = () => {
-    setSpeaking(false);
-    onEnd();
-  };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      setSupported(true);
-      getVoices();
-    }
-  }, []);
-
-  const speak = (args = {}) => {
-    const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
-    if (!supported) return;
-    setSpeaking(true);
-    const utterance = new window.SpeechSynthesisUtterance();
-    utterance.text = text;
-    utterance.voice = voices[160];
-    utterance.onend = handleEnd;
-    utterance.rate = rate;
-    utterance.pitch = pitch;
-    utterance.volume = volume;
     window.speechSynthesis.speak(utterance);
-  };
+  }, [speaking, defaultVoice]);
 
-  const cancel = () => {
-    if (!supported) return;
-    setSpeaking(false);
-    window.speechSynthesis.cancel();
-  };
+  const cancel = useCallback(() => {
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+    }
+  }, [speaking]);
 
-  return {
-    supported,
-    speak,
-    speaking,
-    cancel,
-    voices,
-  };
+  return { speak, speaking, cancel };
 };
 
 export default useSpeechSynthesis;

@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import SpeechDetector from "../SpeechDetector";
 import React from 'react'
-import OptionsPanel from "./OptionsPanel";
+import "../../styles/VoiceControl.css"
 import { MidiContext } from "../../contexts/MidiContext";
 import { arraysEqual } from "../../utils/utils";
 import { midiDataToNames } from "../../utils/utils";
@@ -11,11 +11,23 @@ const confirmationParser = new ConfirmationParser()
 
 
 
-export default function VoiceControl({ transcript, setAlternatives, confirmation, setConfirmation, speak, speaking, actions }) {
-  
+export default function VoiceControl({setAlternatives, confirmation, setConfirmation, speak, speaking, actions, runningWorkflow}) {
+
   const [listening, setListening] = useState(false)
-  const { dispatch, midiSettings, micInput } = useContext(MidiContext)
+  const { dispatch, midiSettings, micInput, midiInputs } = useContext(MidiContext)
   const [mapping, setMapping] = useState(false) // button state
+  const preferences = JSON.parse(localStorage.getItem("preferences"))
+  const [language, setLanguage] = useState(preferences.voice.language)
+
+  const handleLanguageChange = (e) => {
+    preferences.voice.language = e.nativeEvent.target.value
+    localStorage.setItem("preferences", JSON.stringify(preferences))
+    setLanguage(e.nativeEvent.target.value)
+  }
+
+  const handleMidiPortChanged = (e) => {
+    dispatch({ type: "SAVE_MIC_INPUT", payload: e.nativeEvent.target.value })
+  }
 
 
 
@@ -31,11 +43,11 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
 
   useEffect(() => {
-    if(micInput){
+    if (micInput) {
       micInput.onmidimessage = handleMidiMessage
     }
   }, [micInput, mapping])
-  
+
 
 
   const isMappable = (statusByte) => {
@@ -57,12 +69,10 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
 
   useEffect(() => {
-    
+
     if (confirmation && !actions) {
-      console.log("CONFIRMATION: ", confirmation)
       const confirmationStr = confirmationParser.buildConfirmationStr(confirmation)
-      console.log(confirmationStr)
-      speak({ text: confirmationStr })
+      speak(confirmationStr)
       setConfirmation(false)
     }
   }, [confirmation])
@@ -71,19 +81,43 @@ export default function VoiceControl({ transcript, setAlternatives, confirmation
 
   return <>
     <div className="voice-control-container">
-      <div>
-        <OptionsPanel />
-      </div>
       <div className="voice-btn-container">
-        <p className="h1">{listening ? "tlkbck is listening!" : "Press to speak"}</p>
-        <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} />
-        <div className="map-btn-container">
-            <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
-            <p>{midiDataToNames(midiSettings.micMapping)}</p>
+
+        
+
+
+
+        <div className="my-4">
+          <SpeechDetector setAlternatives={setAlternatives} tlkbckSpeaking={speaking} listening={listening} handleSetListening={handleSetListening} runningWorkflow={runningWorkflow} />
         </div>
-        <p className="pt-5 px-3 mt-5 h3 font-italic">{transcript ? `"${transcript}"` : "..."}</p> 
+
+
+
+        
+        <select className="form-select my-3" aria-label="wake word midi port" onChange={handleMidiPortChanged} value={midiSettings?.micInput}>
+          {midiInputs?.map((input) => (
+            <option value={input.id} key={input.id}>{input.name}</option>
+          ))}
+        </select>
+
+        <div className="map-btn-container my-3">
+          <button disabled={mapping} style={{ width: "7rem" }} className="midi-map-btn" onClick={handleMapMic}>{mapping ? "Mapping..." : "Map"}</button>
+          <p className="text-white">{midiDataToNames(midiSettings.micMapping)}</p>
+        </div>
+
+        <select className="form-select my-3" aria-label="Select Language" onChange={handleLanguageChange} defaultValue={language}>
+          <option value="en-GB">English (UK)</option>
+          <option value="en-US">English (USA)</option>
+          <option value="en-CA">English (CA)</option>
+          <option value="en-NZ">English (NZ)</option>
+          <option value="en-AU">English (AUS)</option>
+          <option value="en-ZA">English (SA)</option>
+          <option value="en-IN">English (India)</option>
+        </select>
+
+        
+
       </div>
     </div>
   </>
-
 }
