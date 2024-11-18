@@ -6,6 +6,7 @@ import { BsPencil } from "react-icons/bs";
 
 export default function UserModal({ showAccountModal, handleAccountModalClose }) {
     const { email, paymentData } = useContext(UserContext)
+    console.log(email)
     const [showPasswordChange, setShowPasswordChange] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const handlePasswordChangedAlert = (value) => {
@@ -25,13 +26,13 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
                     handleAccountModalClose(false);
                 }}
             >
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <Modal.Title>Manage Account</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
 
                     <div className="row">
-                        <p className="col" >Email <a href="">(not verified)</a> ❌ :</p>
+                        <p className="col" >Email: {email}</p>
                         <div className='col'>
                             <div className="row justify-content-between">
                                 <p>{email}</p>

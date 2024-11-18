@@ -8,7 +8,7 @@ import { VoiceProvider } from "./VoiceContext";
 export default function ContextComposer({ children, user, isMobile, paymentData }) {
   if (!isMobile) {
     return (
-      <UserProvider user={user} paymentData={paymentData} >
+      <UserProvider user={user} url={`/user?userId=${user.userId}`} >
         <MidiProvider>
           <CommandsProvider url={`/commands?userId=${user.userId}`}>
             <VoiceProvider>

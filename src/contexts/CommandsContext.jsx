@@ -42,7 +42,7 @@ export default function CommandsProvider({ children, url }) {
   const { postLoading } = usePostToApi(commands, url);
 
   useEffect(() => {
-    dispatch({ type: "INIT", payload: data });
+    dispatch({ type: "INIT", payload: JSON.parse(data) });
   }, [data]);
 
   return (
