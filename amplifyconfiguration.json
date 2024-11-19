@@ -2,8 +2,8 @@
   "Auth": {
     "Cognito": {
       "region": "eu-west-2",
-      "userPoolId": "eu-west-2_3etL69rvD",
-      "userPoolClientId": "78tnvmprug8h9nm6a6kp4meqj5",
+      "userPoolId": "eu-west-2_1WMVfrhCa",
+      "userPoolClientId": "3jpbigjtrguphvrddjvalsfbgj",
       "loginWith": {
         "oauth": {
           "domain": "tlkbck.auth.eu-west-2.amazoncognito.com",
