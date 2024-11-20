@@ -1,4 +1,5 @@
 import { post } from "aws-amplify/api";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { useState, useEffect, useRef } from "react";
 
 export function usePostToApi(state, url) {
@@ -9,10 +10,11 @@ export function usePostToApi(state, url) {
   useEffect(() => {
     const postData = async () => {
       try {
+        const session = await fetchAuthSession();
+        const idToken = session.tokens?.idToken?.toString()
         setPostLoading(true);
-        const postRequest = await post({ apiName: "backend", path: url, options: { body: state } })
+        const postRequest = await post({ apiName: "backend", path: url, options: { body: state }, headers: {Authorization: idToken} })
         const response = await postRequest.response
-        response.body.json().then(console.log)
       } catch ({ message }) {
         setPostError(message);
       } finally {
