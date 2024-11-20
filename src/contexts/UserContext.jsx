@@ -1,20 +1,30 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import { useGetFromApi } from "../hooks/useGetFromApi";
 
 
 export const UserContext = React.createContext(null);
 
-export default function UserProvider({ children, user, url }) {
-  const {data} = useGetFromApi(url)
-  const userId = user.attributes?.sub;
-  const email = user.attributes?.email;
+export default function UserProvider({ children, url }) {
+  const {data, loading} = useGetFromApi(url)
+
+
+  const reducer = (state, action) => {
+    if (loading) return state;
+    switch (action.type) {
+      case "INIT":
+        return action.payload
+      
+    }
+  };
+
+  const [user, dispatch] = useReducer(reducer, null);
 
   useEffect(() => {
-    console.log("DATA:", data)
+    dispatch({ type: "INIT", payload: data });
   }, [data]);
   
   return (
-    <UserContext.Provider value={{ userId, email, data }}>
+    <UserContext.Provider value={{ user }}>
       {children}
     </UserContext.Provider>
   );

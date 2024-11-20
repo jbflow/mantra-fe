@@ -13,7 +13,6 @@ export const useGetFromApi = (url) => {
     const getData = async () => {
       const session = await fetchAuthSession();
       const idToken = session.tokens?.idToken?.toString()
-      console.log("ID: ", idToken)
       try {
         setLoading(true);
         const getRequest = await get({apiName: "backend", path: url, headers: {Authorization: idToken}})
