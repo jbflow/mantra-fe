@@ -28,7 +28,7 @@
   "API": {
     "REST": {
       "backend": {
-        "endpoint": "https://zd7ji2hy2k.execute-api.eu-west-2.amazonaws.com/dev",
+        "endpoint": "https://b0v3r1rgoc.execute-api.eu-west-2.amazonaws.com/dev",
         "region": "eu-west-2"
       }
     }
