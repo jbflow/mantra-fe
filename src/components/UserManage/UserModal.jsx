@@ -23,6 +23,25 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
             >
                 <Modal.Header>
                     <Modal.Title>Manage Account</Modal.Title>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        aria-label="Close"
+                        onClick={() => {
+                            setShowPasswordChange(false);
+                            handleAccountModalClose(false);
+                        }}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '1.5rem',
+                            position: 'absolute',
+                            top: '0.5rem',
+                            right: '1rem',
+                        }}
+                    >
+                        ×
+                    </button>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="mb-3" style={{ padding: '10px 15px' }}>
@@ -50,8 +69,8 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
                     </div>
 
                     {showPasswordChange && (
-                        <PasswordChange 
-                            handleShowPasswordChange={handleShowPasswordChange} 
+                        <PasswordChange
+                            handleShowPasswordChange={handleShowPasswordChange}
                         />
                     )}
                 </Modal.Body>

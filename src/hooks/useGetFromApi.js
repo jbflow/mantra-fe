@@ -6,16 +6,17 @@ export const useGetFromApi = (url) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
-    
+
     if (!url) return;
     const getData = async () => {
       const session = await fetchAuthSession();
       const idToken = session.tokens?.idToken?.toString()
+      console.log(idToken)
       try {
         setLoading(true);
-        const getRequest = await get({apiName: "backend", path: url, headers: {Authorization: idToken}})
+        const getRequest = await get({ apiName: "backend", path: url, options: { headers: { Authorization: `Bearer ${idToken}` } } })
         const response = await getRequest.response
         response.body.json().then(setData)
       } catch ({ message }) {
