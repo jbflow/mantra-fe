@@ -1,28 +1,23 @@
-import React, { useContext, useState } from 'react'
-import { Alert, Modal } from 'react-bootstrap'
+import React, { useContext, useState } from 'react';
+import { Modal, Button } from 'react-bootstrap';
 import PasswordChange from './PasswordChange';
 import { UserContext } from '../../contexts/UserContext';
-import { BsPencil } from "react-icons/bs";
 
 export default function UserModal({ showAccountModal, handleAccountModalClose }) {
-    const { email, paymentData } = useContext(UserContext)
-    console.log(email)
-    const [showPasswordChange, setShowPasswordChange] = useState(false)
-    const [showAlert, setShowAlert] = useState(false)
-    const handlePasswordChangedAlert = (value) => {
-        setShowAlert(value)
-        handleShowPasswordChange(false)
-    }
+    const { user } = useContext(UserContext);
+    const email = user?.email;
+    const [showPasswordChange, setShowPasswordChange] = useState(false);
 
     const handleShowPasswordChange = (value) => {
-        setShowPasswordChange(value)
-    }
+        setShowPasswordChange(value);
+    };
+
     return (
         <>
             <Modal
                 show={showAccountModal}
                 onHide={() => {
-                    setShowPasswordChange(false)
+                    setShowPasswordChange(false);
                     handleAccountModalClose(false);
                 }}
             >
@@ -30,49 +25,37 @@ export default function UserModal({ showAccountModal, handleAccountModalClose })
                     <Modal.Title>Manage Account</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
-                    <div className="row">
-                        <p className="col" >Email: {email}</p>
-                        <div className='col'>
-                            <div className="row justify-content-between">
-                                <p>{email}</p>
-                            </div>
-                        </div>
+                    <div className="mb-3" style={{ padding: '10px 15px' }}>
+                        <p style={{ margin: 0, padding: '8px', backgroundColor: '#f9f9f9', borderRadius: '5px' }}>
+                            <strong>Email:</strong> {email}
+                        </p>
                     </div>
 
-                    <div className="row">
-                        <p className="col" >Password:</p>
-                        <div className='col'>
-                            <div className="row">
-                                <p className='mt-2 pr-3'>***********************</p>
-                                <div style={{ cursor: "pointer" }}>
-                                    <BsPencil onClick={() => { handleShowPasswordChange(true) }} />
-                                </div>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <Button
+                            variant="primary"
+                            onClick={() => handleShowPasswordChange(!showPasswordChange)}
+                        >
+                            Change Password
+                        </Button>
 
-                            </div>
-                        </div>
-
+                        <Button
+                            variant="secondary"
+                            href={`https://app.gumroad.com/subscriptions/${user?.subscription_id}/manage`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Manage Subscription
+                        </Button>
                     </div>
 
-                    {showPasswordChange ? <PasswordChange handleShowPasswordChange={handleShowPasswordChange} handlePasswordChangedAlert={handlePasswordChangedAlert} /> : null}
-                    {showAlert ? (
-                        <Alert variant="success" dismissable={true}>
-                            Password successfully changed.
-                        </Alert>
-                    ) : null}
-              
-                        <div className="row pt-3">
-                            <p className="col"> Payment due: 01/04/2024:</p>
-                            <div className="col">
-                                <a href={`https://app.gumroad.com/subscriptions/${paymentData?.subscription_id}/manage`} target="_blank" className="row">Manage on gumroad</a>
-                            </div>
-                        </div>
-           
+                    {showPasswordChange && (
+                        <PasswordChange 
+                            handleShowPasswordChange={handleShowPasswordChange} 
+                        />
+                    )}
                 </Modal.Body>
-
             </Modal>
-
-
         </>
-    )
+    );
 }
