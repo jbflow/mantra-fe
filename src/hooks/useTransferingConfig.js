@@ -8,14 +8,13 @@ export default function useTransferingConfig(configRef) {
 
   useEffect(() => {
     // Effect for the config timer, if the timer has started, and there hasn't been a config message for 100 ms
-    console.log("CONFIG TIMER: ", configTimer)
     if (configTimer >= 1000) {
       clearInterval(interval.current); // stop the interval
       interval.current = false; // and set it to false
       setConfigState(false)
       setConfigTimer(0); // now reset the timer reset the timer
       sessionStorage.setItem("config", JSON.stringify(configRef.current))
-      console.log("config updated in less than", configTimer)
+      // console.log("config updated in less than", configTimer)
       
     }
   }, [configTimer, interval]);
