@@ -60,7 +60,7 @@ function App({ signOut }) {
   const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
   const [bumblebee] = useWakeWord()
   const { speak, speaking } = useSpeechSynthesis()
-  const { sendMessage, isConnected } = useWebSocket('ws://127.0.0.1', startTimer, setConfirmation, setConfigTimer,  configRef, dawLink, setDawLink, runningWorkflow);
+  const { sendMessage, isConnected } = useWebSocket('ws://127.0.0.1', startTimer, setConfirmation, setConfigTimer,  configRef, dawLink, setDawLink, runningWorkflow, speak);
 
 
   const handleIntentDetection = (finalTranscript) => {
@@ -76,6 +76,7 @@ function App({ signOut }) {
         if (intentDetectionResult) {
           sendMessage(intentDetectionResult)
         } else {
+          console.log("NOTHING FOUND")
           speak(getRandomResponse())
         }
       }

@@ -8,6 +8,7 @@ export default function useTransferingConfig(configRef) {
 
   useEffect(() => {
     // Effect for the config timer, if the timer has started, and there hasn't been a config message for 100 ms
+    console.log("CONFIG TIMER: ", configTimer)
     if (configTimer >= 1000) {
       clearInterval(interval.current); // stop the interval
       interval.current = false; // and set it to false
@@ -24,6 +25,7 @@ export default function useTransferingConfig(configRef) {
     setConfigState(true)
     interval.current = setInterval(() => {
       setConfigTimer((prevTime) => prevTime + 50);
+      
     }, 50);
 
   }

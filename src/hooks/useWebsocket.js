@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import pako from 'pako';
 
-import useSpeechSynthesis from './useSpeechSynthesis';
+
 
 import { arraysEqual, getRandomResponse } from '../utils/utils';
 import { STATUS_BYTES, emptyConfig } from "../utils/MidiConstants";
 import { MANUFACTURER_ID } from "../intent_detection/constants";
 
-const useWebSocket = (baseUrl, startTimer, setConfirmation, setConfigTimer, configRef, dawLink, setDawLink, runningWorkflow, startPort = 39031, endPort = 39038, retryInterval = 10000) => {
+const useWebSocket = (baseUrl, startTimer, setConfirmation, setConfigTimer, configRef, dawLink, setDawLink, runningWorkflow, speak, startPort = 39031, endPort = 39038, retryInterval = 10000) => {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -17,7 +17,6 @@ const useWebSocket = (baseUrl, startTimer, setConfirmation, setConfigTimer, conf
   const wsRef = useRef(null);
   const retryTimeout = useRef(null);
 
-  const { speak } = useSpeechSynthesis()
 
   const handleSocketMessage = (message) => {
     /*/
@@ -39,6 +38,7 @@ const useWebSocket = (baseUrl, startTimer, setConfirmation, setConfigTimer, conf
           console.log("Confirmation message received")
           let data = Array.from(message)
           if (message[message.length - 2] === 0 && !runningWorkflow) {
+            console.log("CONFIRMATION NOT POSSIBLE")
             speak(getRandomResponse())
           }
           else {
