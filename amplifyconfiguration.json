@@ -28,7 +28,7 @@
   "API": {
     "REST": {
       "backend": {
-        "endpoint": "https://b0v3r1rgoc.execute-api.eu-west-2.amazonaws.com/dev",
+        "endpoint": "http://localhost:3000/dev",
         "region": "eu-west-2"
       }
     }

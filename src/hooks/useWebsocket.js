@@ -3,11 +3,11 @@ import pako from 'pako';
 
 import useSpeechSynthesis from './useSpeechSynthesis';
 
-import { arraysEqual } from '../utils/utils';
+import { arraysEqual, getRandomResponse } from '../utils/utils';
 import { STATUS_BYTES, emptyConfig } from "../utils/MidiConstants";
 import { MANUFACTURER_ID } from "../intent_detection/constants";
 
-const useWebSocket = (baseUrl, startTimer, setConfirmation, setConfigTimer, configRef, dawLink, setDawLink, startPort = 39031, endPort = 39038, retryInterval = 10000) => {
+const useWebSocket = (baseUrl, startTimer, setConfirmation, setConfigTimer, configRef, dawLink, setDawLink, runningWorkflow, startPort = 39031, endPort = 39038, retryInterval = 10000) => {
   const [messages, setMessages] = useState([]);
   const [ws, setWs] = useState(null);
   const [isConnected, setIsConnected] = useState(false);

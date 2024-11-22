@@ -23,7 +23,7 @@ import useWakeWord from "./hooks/useWakeWord";
 
 
 
-import { confirmationPhrases } from "./utils/speechConstants";
+
 
 
 
@@ -60,7 +60,7 @@ function App({ signOut }) {
   const [configState, startTimer, setConfigTimer] = useTransferingConfig(configRef)
   const [bumblebee] = useWakeWord()
   const { speak, speaking } = useSpeechSynthesis()
-  const { sendMessage, isConnected } = useWebSocket('ws://127.0.0.1', startTimer, setConfirmation, setConfigTimer,  configRef, dawLink, setDawLink);
+  const { sendMessage, isConnected } = useWebSocket('ws://127.0.0.1', startTimer, setConfirmation, setConfigTimer,  configRef, dawLink, setDawLink, runningWorkflow);
 
 
   const handleIntentDetection = (finalTranscript) => {
