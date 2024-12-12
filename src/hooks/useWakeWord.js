@@ -1,4 +1,3 @@
-import React from 'react'
 import BumbleBee from "bumblebee-hotword"
 
 export default function useWakeWord() {
@@ -9,9 +8,9 @@ export default function useWakeWord() {
 
     bumblebee.setWorkersPath('bumblebee-workers');
 
-    bumblebee.addHotword('jarvis');
+    bumblebee.addHotword('computer');
 
-    bumblebee.setHotword('jarvis')
+    bumblebee.setHotword('computer')
 
     return [bumblebee]
 }

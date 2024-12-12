@@ -72,16 +72,14 @@ function App({ signOut }) {
       try {
         const config = JSON.parse(sessionStorage.getItem("config"))
         const intentDetectionResult = intentDetection.runDetection(String(finalTranscript), config)
-        console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
+        // console.log("INTENT DETECTION RESULT: ", intentDetectionResult)
         if (intentDetectionResult) {
           sendMessage(intentDetectionResult)
         } else {
-          console.log("NOTHING FOUND")
           speak(getRandomResponse())
         }
       }
       catch (err) {
-        console.log(err)
         speak("I'm sorry, an unexepected error has occured in the talk back system, please restart talk back and try again - it might also help to reload the MIDI Remote Script in Live.")
       }
     }

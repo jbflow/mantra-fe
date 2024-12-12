@@ -52,7 +52,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             for (let device of devices) {
                 const d = device.index
                 // then check the devices to see if its parameters are mentioned
-                console.log("CHECKING DEVICE FOR PARAMS")
+                // console.log("CHECKING DEVICE FOR PARAMS")
                 parameters.push(...this.getNounAdj("parameter", config.parameter[t][d], tokenizedInput, [['track', t], ['device', d]]));
 
             }
@@ -60,7 +60,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
 
         if (parameters.length === 0) {
-            console.log("CHECKING SEL TRACK AND SEL DEVICE FOR PARAMS")
+            // console.log("CHECKING SEL TRACK AND SEL DEVICE FOR PARAMS")
             // If haven't found a parameter yet, try the selected track and device
             const mixerParams = this.getNounAdj("mixer", ['volume', 'pan'].concat(config['return track']), tokenizedInput, [['track', config.sel_track]]);
             parameters.push(...mixerParams)
@@ -113,7 +113,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             loadable.push(...this.getNounAdj("browserClip", config.browserClip, tokenizedInput, [['track', config.sel_track]]))
             loadable.push(...this.getNounAdj("favorites", config.favorites, tokenizedInput, [['track', config.sel_track]]))
         }
-        console.log("loadable", loadable)
+        // console.log("loadable", loadable)
 
         return loadable
     }
@@ -137,7 +137,6 @@ export class NounSearchEngine extends IntentDetectionBase {
     }
 
     toCamelCase(str) {
-        console.log("STR", str)
         return str.toLowerCase().split(' ').map((word, index) => {
           if (index === 0) {
             return word;
@@ -154,7 +153,7 @@ export class NounSearchEngine extends IntentDetectionBase {
             subject: `${this.toCamelCase(noun)}_${index}`,
             path: parents.map(parent => parent.join('_')).join('_'),
         }
-        console.log("GENERATED NOUN ADJ", nounAdj)
+        // console.log("GENERATED NOUN ADJ", nounAdj)
         return nounAdj
 
     }
@@ -192,16 +191,16 @@ export class NounSearchEngine extends IntentDetectionBase {
     }
 
     getNounAdj(noun, list, tokenizedInput, parents = []) {
-        console.log("NOUN: ", noun)
-        console.log("list: ", list)
-        console.log("tokenizedInput: ", tokenizedInput)
-        console.log("parents: ", parents)
+        // console.log("NOUN: ", noun)
+        // console.log("list: ", list)
+        // console.log("tokenizedInput: ", tokenizedInput)
+        // console.log("parents: ", parents)
         const threshold = this.THRESH[noun]
         const nounAdj = [];
         for (const token of tokenizedInput) {
             const integer = this.integerSearch(token, noun);
             const levi = this.leviSearch(token, list, threshold);
-            console.log("I AM LEVI RESULT", levi)
+            // console.log("I AM LEVI RESULT", levi)
             if (integer) {
                 nounAdj.push({
                     token: token,
@@ -224,7 +223,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
             }
         }
-        console.log("nounAdj: ", nounAdj)
+        // console.log("nounAdj: ", nounAdj)
         return nounAdj;
     }
     removeDuplicateResults(nounAdjArray) {
@@ -268,7 +267,7 @@ export class NounSearchEngine extends IntentDetectionBase {
 
 
     makeBytesFromFullPath(fullPath) {
-        console.log("I AM PATH: ", fullPath)
+        // console.log("I AM PATH: ", fullPath)
         const pattern = /([a-zA-Z]+_\d+)/g;
         const matches = fullPath.match(pattern);
         let bytes = []
@@ -290,7 +289,7 @@ export class NounSearchEngine extends IntentDetectionBase {
                 }
             })
         }
-        console.log("bytes: ", bytes)
+        // console.log("bytes: ", bytes)
         return bytes.length > 0 ? bytes : null
 
 

@@ -30,6 +30,7 @@ const replace = {
     "igloo compressor": "glue compressor",
     autofilter: "auto filter",
     eq8: "EQ Eight",
+    "EQ 8": "EQ Eight",
     eq3: "EQ Three",
     tuna: "tuner",
     cord: "chord",
@@ -75,6 +76,7 @@ export class TranscriptParser {
         
         for (let item in replace) {
             filteredResults = this.directReplace(filteredResults, item, replace[item]);
+            console.log("FILTERED RESULTS", filteredResults)
         }
 
         filteredResults = filteredResults.startsWith(' ') ? filteredResults.trimStart() : filteredResults;
