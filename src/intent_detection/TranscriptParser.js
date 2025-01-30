@@ -89,11 +89,10 @@ export class TranscriptParser {
     checkPhrases(results, macroCommands) {
         let config = JSON.parse(sessionStorage.getItem("config"))
         phrases = phrases.concat(macroCommands)
-        phrases = phrases.concat(config.track)
-        phrases = phrases.concat(config.audioDevice)
-        phrases = phrases.concat(config.instrument)
-        phrases = phrases.concat(config.midiDevice)
-        console.log("SPEECH RECOGNITION RESULTS: ", results)
+        phrases = phrases.concat(config?.track)
+        phrases = phrases.concat(config?.audioDevice)
+        phrases = phrases.concat(config?.instrument)
+        phrases = phrases.concat(config?.midiDevice)
 
         for (let result of results) {
             if (new RegExp(phrases.join("|").toLowerCase()).test(result.transcript.toLowerCase())) {
