@@ -1,51 +1,27 @@
 {
   "name": "tlkbck-fe",
-  "type": "module",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@aws-amplify/ui-react": "^6.1.6",
-    "aws-amplify": "^6.0.27",
-    "bumblebee-hotword": "^0.2.1",
-    "fuzzball": "^2.1.2",
-    "pako": "^2.1.0",
-    "react": "^18.2.0",
-    "react-beautiful-dnd": "^13.1.1",
-    "react-bootstrap": "^2.10.2",
-    "react-dom": "^18.2.0",
-    "react-icons": "^5.0.1",
-    "react-qr-code": "^2.0.12",
-    "react-router-dom": "^6.22.3",
-    "react-speech-recognition": "^3.10.0",
-    "regenerator-runtime": "^0.14.1",
-    "sdp-compact": "0.0.6",
-    "vite-plugin-node-polyfills": "^0.22.0"
-  },
   "scripts": {
-    "start": "vite",
-    "build": "vite build --config staging.config.js",
-    "serve": "vite preview"
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next": "15.3.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.2.8",
-    "vitest": "^1.6.0"
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.5",
+    "@eslint/eslintrc": "^3"
   }
 }
