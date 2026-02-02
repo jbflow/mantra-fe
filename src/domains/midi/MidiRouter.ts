@@ -1,4 +1,4 @@
-import mitt, { Emitter } from 'mitt';
+import { TinyEmitter } from '@/domains/shared/TinyEmitter';
 
 type MidiEvents = {
   connected: { port: string };
@@ -10,7 +10,7 @@ type MidiEvents = {
 /** Thin wrapper around the Web MIDI API */
 export class MidiRouter {
   private access?: MIDIAccess;
-  private emitter: Emitter<MidiEvents> = mitt<MidiEvents>();
+  private emitter = new TinyEmitter<MidiEvents>();
   private input?: MIDIInput;
   private output?: MIDIOutput;
 

@@ -1,5 +1,3 @@
-/* Minimal Web MIDI typings (enough for MidiRouter & tests) */
-
 declare interface MIDIMessageEvent extends Event {
   readonly data: Uint8Array;
 }

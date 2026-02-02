@@ -1,4 +1,4 @@
-import mitt, { Emitter } from 'mitt';
+import { TinyEmitter } from '@/domains/shared/TinyEmitter';
 
 /* ------------------------------------------------------------------ *
  *  Event map
@@ -31,11 +31,11 @@ function getSpeechRecCtor(): SpeechRecCtor | undefined {
  * ------------------------------------------------------------------ */
 /**
  * Thin wrapper around the Web Speech API that emits `"partial"` and `"final"`
- * transcript events via `mitt`.
+ * transcript events via a tiny emitter.
  */
 export class RecognitionService {
   private rec: SpeechRecognition;
-  private emitter: Emitter<RecEvents> = mitt<RecEvents>();
+  private emitter = new TinyEmitter<RecEvents>();
 
   constructor(opts: { lang?: string; continuous?: boolean } = {}) {
     const RecCtor = getSpeechRecCtor();

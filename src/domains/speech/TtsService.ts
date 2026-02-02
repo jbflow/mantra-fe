@@ -1,4 +1,4 @@
-import mitt, { Emitter } from 'mitt';
+import { TinyEmitter } from '@/domains/shared/TinyEmitter';
 
 type TtsEvents = {
   start: undefined;
@@ -11,7 +11,7 @@ type TtsEvents = {
  */
 export class TtsService {
   private synth = window.speechSynthesis;
-  private emitter: Emitter<TtsEvents> = mitt<TtsEvents>();
+  private emitter = new TinyEmitter<TtsEvents>();
   constructor(){
     
   }

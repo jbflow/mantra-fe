@@ -1,4 +1,4 @@
-import mitt, { Emitter } from "mitt";
+import { TinyEmitter } from "@/domains/shared/TinyEmitter";
 import { DawCommand, DawMessage } from "./MessageTypes";
 
 /**
@@ -13,12 +13,12 @@ type Events = {
 
 /**
  * DawSocket manages a resilient WebSocket connection that automatically rotates ports
- * between a defined range and emits structured events using `mitt`.
+ * between a defined range and emits structured events using a tiny emitter.
  */
 export class DawSocket {
   private ws?: WebSocket;
   private port: number;
-  private emitter: Emitter<Events> = mitt<Events>();
+  private emitter = new TinyEmitter<Events>();
 
   /**
    * Create a new DawSocket instance.
