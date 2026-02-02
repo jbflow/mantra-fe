@@ -2,6 +2,23 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+if (typeof window === "undefined") {
+  const storage = (globalThis as typeof globalThis & {
+    localStorage?: Storage;
+  }).localStorage;
+
+  if (!storage || typeof storage.getItem !== "function") {
+    (globalThis as typeof globalThis & { localStorage: Storage }).localStorage = {
+      getItem: () => null,
+      setItem: () => undefined,
+      removeItem: () => undefined,
+      clear: () => undefined,
+      key: () => null,
+      length: 0,
+    } as Storage;
+  }
+}
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
