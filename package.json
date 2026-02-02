@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run src"
+    "test": "vitest run",
+    "demo:intent": "TS_NODE_COMPILER_OPTIONS=\"{\\\"module\\\":\\\"CommonJS\\\"}\" node -r ts-node/register/transpile-only src/domains/intent/demo.ts"
   },
   "dependencies": {
-    "mitt": "^3.0.1",
     "next": "15.3.5",
     "pako": "^2.1.0",
     "react": "^19.0.0",
@@ -27,6 +27,7 @@
     "eslint-config-next": "15.3.5",
     "jsdom": "^26.1.0",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5",
     "vitest": "^3.2.4"
   }
