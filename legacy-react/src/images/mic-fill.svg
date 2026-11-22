@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="14.781" height="23.649" viewBox="0 0 14.781 23.649">
-  <g id="mic-fill" transform="translate(7.39 11.825)">
-    <g id="mic-fill-2" data-name="mic-fill" transform="translate(-7.39 -11.825)">
-      <path id="Path_564" data-name="Path 564" d="M5,4.434a4.434,4.434,0,1,1,8.868,0v7.39a4.434,4.434,0,0,1-8.868,0Z" transform="translate(-2.044 0)" fill="#fff"/>
-      <path id="Path_565" data-name="Path 565" d="M3.739,6.5a.739.739,0,0,1,.739.739V8.717a5.912,5.912,0,0,0,11.825,0V7.239a.739.739,0,0,1,1.478,0V8.717a7.39,7.39,0,0,1-6.651,7.353v2.993h4.434a.739.739,0,0,1,0,1.478H5.217a.739.739,0,1,1,0-1.478H9.651V16.07A7.39,7.39,0,0,1,3,8.717V7.239A.739.739,0,0,1,3.739,6.5Z" transform="translate(-3 3.107)" fill="#fff" fill-rule="evenodd"/>
-    </g>
-  </g>
-</svg>
