@@ -5,6 +5,8 @@ import { DawSocket } from "./DawSocket";
  * Mock browser WebSocket
  * -------------------------------------------------- */
 
+type MockWebSocketEventData = Record<string, unknown>;
+
 /**
  * A test mock implementation of the native WebSocket class,
  * allowing manual triggering of events and inspection.
@@ -32,7 +34,7 @@ class MockWebSocket {
   }
 
   /** Simulate receiving a message. */
-  $msg(o: unknown) {
+  $msg(o: MockWebSocketEventData) {
     this.onmessage({ data: JSON.stringify(o) });
   }
 
