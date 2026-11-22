@@ -1,13 +1,14 @@
 # Mantra FE
 
-Mantra FE is a browser-based voice control UI for a DAW. This app wires wake-word detection, speech recognition, and intent parsing into a lightweight MVP interface.
+Mantra FE is a browser-based voice control UI for a DAW. It captures wake-word and speech input, manages workflows and MIDI controls, and sends commands to the Mantra Engine for intent parsing and DAW routing.
 
 ## What’s included
 
 - Wake-word detection and speech recognition via the Web Speech API
-- Intent parsing engine with tests and a local demo runner
-- MIDI and websocket domain plumbing
+- MIDI input and output plumbing
+- Mantra Engine integration over WebSocket
 - Minimal UI to start/stop listening and view transcripts
+- Workflow builder with text and MIDI actions
 
 ## MVP checklist (proposed)
 
@@ -42,11 +43,9 @@ Open http://localhost:3000
 - `npm run start` – start production server
 - `npm run lint` – lint
 - `npm run test` – run Vitest suite
-- `npm run demo:intent` – run the intent engine demo
 
 ## Structure (high level)
 
 - [src/components](src/components) – UI components
-- [src/domains](src/domains) – speech, intent, midi, websocket domains
-- [src/engine](src/engine) – app engine wiring
+- [src/domains](src/domains) – speech, MIDI, workflow, and shared UI domains
 - [tests](tests) – integration tests
