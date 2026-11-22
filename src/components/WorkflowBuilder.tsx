@@ -1,7 +1,6 @@
 "use client";
 
-import type { MidiActionPayload } from "mantra-engine";
-import type { Workflow, WorkflowAction } from "@/domains/workflows";
+import type { MidiWorkflowAction, Workflow, WorkflowAction } from "@/domains/workflows";
 
 type Props = {
   workflows: Workflow[];
@@ -22,7 +21,7 @@ type Props = {
   onMoveAction: (workflowId: string, index: number, offset: -1 | 1) => void;
 };
 
-const MIDI_MESSAGES: Array<{ value: MidiActionPayload["message"]; label: string }> = [
+const MIDI_MESSAGES: Array<{ value: MidiWorkflowAction["message"]; label: string }> = [
   { value: "note_on", label: "Note on" },
   { value: "note_off", label: "Note off" },
   { value: "control_change", label: "Control change" },
@@ -209,7 +208,7 @@ export default function WorkflowBuilder({
                               value={action.message}
                               onChange={(event) => onUpdateAction(selected.id, action.id, (current) =>
                                 current.type === "midi"
-                                  ? { ...current, message: event.target.value as MidiActionPayload["message"] }
+                                  ? { ...current, message: event.target.value as MidiWorkflowAction["message"] }
                                   : current
                               )}
                             >

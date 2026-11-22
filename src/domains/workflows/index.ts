@@ -1,14 +1,17 @@
-import type { MidiActionPayload } from "mantra-engine";
-
 export type TextWorkflowAction = {
 	id: string;
 	type: "text";
 	text: string;
 };
 
-export type MidiWorkflowAction = MidiActionPayload & {
+export type MidiWorkflowAction = {
 	id: string;
 	type: "midi";
+	port: string;
+	message: "note_on" | "note_off" | "control_change" | "program_change";
+	channel: number;
+	data: number;
+	value: number;
 };
 
 export type WorkflowAction = TextWorkflowAction | MidiWorkflowAction;
@@ -56,7 +59,7 @@ export const DEFAULT_WORKFLOWS: Workflow[] = [
 	}
 ];
 
-const isMidiMessage = (value: unknown): value is MidiActionPayload["message"] =>
+const isMidiMessage = (value: unknown): value is MidiWorkflowAction["message"] =>
 	value === "note_on" ||
 	value === "note_off" ||
 	value === "control_change" ||
