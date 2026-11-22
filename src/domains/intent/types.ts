@@ -143,5 +143,5 @@ export type LiveSetConfig = {
 export type DetectionInput = {
   transcript: string | string[];
   config: LiveSetConfig;
-  macros?: string[];
+  workflows?: string[];
 };

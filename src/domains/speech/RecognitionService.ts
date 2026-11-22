@@ -48,13 +48,15 @@ export class RecognitionService {
     this.rec.onresult = (e: SpeechRecognitionEvent) => {
       const last = e.results[e.results.length - 1];
       const text = last[0].transcript.trim();
-      last.isFinal
-        ? this.emitter.emit('final', text)
-        : this.emitter.emit('partial', text);
+      if (last.isFinal) {
+        this.emitter.emit('final', text);
+      } else {
+        this.emitter.emit('partial', text);
+      }
     };
 
     this.rec.onerror = (err) =>
-      this.emitter.emit('error', new Error((err as any).error || 'speech-error'));
+      this.emitter.emit('error', new Error(err.error || 'speech-error'));
   }
 
   /* ---------------- public API ---------------- */

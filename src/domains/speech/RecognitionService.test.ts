@@ -5,15 +5,17 @@ import { RecognitionService } from './RecognitionService';
 class MockRec {
   lang = '';
   continuous = false;
-  onresult: (e: any) => void = () => {};
-  onerror: (e: any) => void = () => {};
+  interimResults = false;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null = null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null = null;
+  onend: ((event: Event) => void) | null = null;
   start = vi.fn();
   stop = vi.fn();
 }
 
 /* attach to real window (provided by jsdom) */
 beforeEach(() => {
-  (window as any).SpeechRecognition = MockRec;
+  Object.defineProperty(window, 'SpeechRecognition', { configurable: true, value: MockRec });
 });
 
 describe('RecognitionService', () => {
@@ -22,16 +24,16 @@ describe('RecognitionService', () => {
 
   beforeEach(() => {
     svc = new RecognitionService({ continuous: true });
-    rec = svc['rec'] as any;
+    rec = (svc as unknown as { rec: MockRec }).rec;
   });
 
   it('emits final transcript', () => {
     const spy = vi.fn();
     svc.on('final', spy);
 
-    rec.onresult({
+    rec.onresult?.({
       results: [{ isFinal: true, 0: { transcript: 'hello' } }],
-    });
+    } as unknown as SpeechRecognitionEvent);
 
     expect(spy).toHaveBeenCalledWith('hello');
   });
@@ -40,9 +42,9 @@ describe('RecognitionService', () => {
     const spy = vi.fn();
     svc.on('partial', spy);
 
-    rec.onresult({
+    rec.onresult?.({
       results: [{ isFinal: false, 0: { transcript: 'hel' } }],
-    });
+    } as unknown as SpeechRecognitionEvent);
 
     expect(spy).toHaveBeenCalledWith('hel');
   });

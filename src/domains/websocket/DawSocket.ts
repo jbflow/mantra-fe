@@ -1,5 +1,5 @@
 import { TinyEmitter } from "@/domains/shared/TinyEmitter";
-import { DawCommand, DawMessage } from "./MessageTypes";
+import { DawMessage } from "./MessageTypes";
 
 /**
  * Event types emitted by DawSocket.

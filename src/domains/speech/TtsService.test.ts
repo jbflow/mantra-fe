@@ -1,6 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-let speakMock = vi.fn();
+let speakMock: ReturnType<typeof vi.fn>;
+
+class MockUtterance {
+	text: string;
+	onstart: ((event: SpeechSynthesisEvent) => void) | null = null;
+	onend: ((event: SpeechSynthesisEvent) => void) | null = null;
+	onerror: ((event: SpeechSynthesisErrorEvent) => void) | null = null;
+	constructor(text: string) { this.text = text; }
+}
 
 beforeEach(() => {
 	speakMock = vi.fn((utt: SpeechSynthesisUtterance) => {
@@ -8,18 +16,13 @@ beforeEach(() => {
 		utt.onend?.({} as SpeechSynthesisEvent);
 	});
 
-	(window as any).speechSynthesis = { speak: speakMock, cancel: vi.fn() };
+	Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { speak: speakMock, cancel: vi.fn() } });
 
 	if (!("SpeechSynthesisUtterance" in window)) {
-		(window as any).SpeechSynthesisUtterance = class {
-			public text: string;
-			public onstart?: (e: SpeechSynthesisEvent) => void;
-			public onend?: (e: SpeechSynthesisEvent) => void;
-			public onerror?: (e: SpeechSynthesisEvent) => void;
-			constructor(text: string) {
-				this.text = text;
-			}
-		};
+		Object.defineProperty(globalThis, "SpeechSynthesisUtterance", {
+			configurable: true,
+			value: MockUtterance as unknown as typeof SpeechSynthesisUtterance
+		});
 	}
 });
 

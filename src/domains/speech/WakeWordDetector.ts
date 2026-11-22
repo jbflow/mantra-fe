@@ -64,8 +64,8 @@ export class WakeWordDetector {
         }
       };
 
-      this.rec.onerror = (e) => {
-        const err = new Error((e as any).error || 'speech-error');
+      this.rec.onerror = (event) => {
+        const err = new Error(event.error || 'speech-error');
         this.emitter.emit('error', err);
       };
 

@@ -32,7 +32,7 @@ class MockWebSocket {
   }
 
   /** Simulate receiving a message. */
-  $msg(o: any) {
+  $msg(o: unknown) {
     this.onmessage({ data: JSON.stringify(o) });
   }
 
@@ -42,7 +42,7 @@ class MockWebSocket {
   }
 }
 
-globalThis.WebSocket = MockWebSocket as any;
+globalThis.WebSocket = MockWebSocket as unknown as typeof WebSocket;
 
 /* -------------------------------------------------- *
  * Tests

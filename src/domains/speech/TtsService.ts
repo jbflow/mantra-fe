@@ -24,7 +24,7 @@ export class TtsService {
     Object.assign(utt, opts);
     utt.onstart = () => this.emitter.emit('start', undefined);
     utt.onend   = () => this.emitter.emit('end', undefined);
-    utt.onerror = e => this.emitter.emit('error', e.error as any);
+    utt.onerror = (event) => this.emitter.emit('error', new Error(event.error));
     this.synth.speak(utt);
   }
 

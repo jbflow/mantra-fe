@@ -37,17 +37,17 @@ describe("intent integration", () => {
       {
         "cmd": {
           "args": {
-            "score": 1,
+            "confidence": 0.7,
+            "destination": {
+              "name": "Bass",
+              "type": "track",
+            },
+            "preposition": "on",
+            "source": undefined,
             "target": {
-              "id": 0,
               "name": "Glue Compressor",
               "path": undefined,
               "type": "audioDevice",
-            },
-            "track": {
-              "id": 1,
-              "name": "track 2",
-              "type": "track",
             },
             "transcript": "load glue compressor on track 2",
           },
@@ -55,22 +55,20 @@ describe("intent integration", () => {
           "verb": "load",
         },
         "intent": {
-          "score": 1,
-          "slots": {
-            "target": {
-              "id": 0,
-              "name": "Glue Compressor",
-              "path": undefined,
-              "type": "audioDevice",
-            },
-            "track": {
-              "id": 1,
-              "name": "track 2",
-              "type": "track",
-            },
+          "confidence": 0.7,
+          "destination": {
+            "name": "Bass",
+            "type": "track",
+          },
+          "intent": "load",
+          "preposition": "on",
+          "source": undefined,
+          "target": {
+            "name": "Glue Compressor",
+            "path": undefined,
+            "type": "audioDevice",
           },
           "transcript": "load glue compressor on track 2",
-          "verb": "load",
         },
         "transcript": "load glue compressor on track 2",
       }
@@ -90,11 +88,10 @@ describe("intent integration", () => {
       {
         "cmd": {
           "args": {
+            "confidence": 0.75,
             "name": "vox",
-            "score": 1,
             "target": {
-              "id": 0,
-              "name": "track 1",
+              "name": "Drums",
               "type": "track",
             },
             "transcript": "rename track 1 to vox",
@@ -103,17 +100,14 @@ describe("intent integration", () => {
           "verb": "rename",
         },
         "intent": {
-          "score": 1,
-          "slots": {
-            "name": "vox",
-            "target": {
-              "id": 0,
-              "name": "track 1",
-              "type": "track",
-            },
+          "confidence": 0.75,
+          "intent": "rename",
+          "name": "vox",
+          "target": {
+            "name": "Drums",
+            "type": "track",
           },
           "transcript": "rename track 1 to vox",
-          "verb": "rename",
         },
         "transcript": "rename track 1 to vox",
       }
@@ -133,54 +127,54 @@ describe("intent integration", () => {
       {
         "cmd": {
           "args": {
-            "score": 1,
+            "confidence": 0.75,
+            "scope": undefined,
             "target": {
-              "id": 0,
               "name": "Cutoff",
               "path": [
                 {
-                  "id": 1,
+                  "name": "Bass",
                   "type": "track",
                 },
                 {
-                  "id": 0,
+                  "name": "Auto Filter",
                   "type": "device",
                 },
               ],
               "type": "parameter",
             },
-            "track": undefined,
             "transcript": "increase cutoff to 1200 hz",
-            "unit": "hz",
-            "value": 1200,
+            "value": {
+              "amount": 1200,
+              "unit": "hz",
+            },
           },
           "id": "demo",
           "verb": "increase",
         },
         "intent": {
-          "score": 1,
-          "slots": {
-            "target": {
-              "id": 0,
-              "name": "Cutoff",
-              "path": [
-                {
-                  "id": 1,
-                  "type": "track",
-                },
-                {
-                  "id": 0,
-                  "type": "device",
-                },
-              ],
-              "type": "parameter",
-            },
-            "track": undefined,
-            "unit": "hz",
-            "value": 1200,
+          "confidence": 0.75,
+          "intent": "increase",
+          "scope": undefined,
+          "target": {
+            "name": "Cutoff",
+            "path": [
+              {
+                "name": "Bass",
+                "type": "track",
+              },
+              {
+                "name": "Auto Filter",
+                "type": "device",
+              },
+            ],
+            "type": "parameter",
           },
           "transcript": "increase cutoff to 1200 hz",
-          "verb": "increase",
+          "value": {
+            "amount": 1200,
+            "unit": "hz",
+          },
         },
         "transcript": "increase cutoff to 1200 hz",
       }
@@ -200,9 +194,8 @@ describe("intent integration", () => {
       {
         "cmd": {
           "args": {
-            "score": 1,
+            "confidence": 0.8,
             "target": {
-              "id": 2,
               "name": "clip slot 3",
               "type": "clipSlot",
             },
@@ -212,16 +205,13 @@ describe("intent integration", () => {
           "verb": "launch",
         },
         "intent": {
-          "score": 1,
-          "slots": {
-            "target": {
-              "id": 2,
-              "name": "clip slot 3",
-              "type": "clipSlot",
-            },
+          "confidence": 0.8,
+          "intent": "launch",
+          "target": {
+            "name": "clip slot 3",
+            "type": "clipSlot",
           },
           "transcript": "launch clip slot 3",
-          "verb": "launch",
         },
         "transcript": "launch clip slot 3",
       }
@@ -236,9 +226,8 @@ describe("intent integration", () => {
       {
         "cmd": {
           "args": {
-            "score": 1,
+            "confidence": 0.6,
             "target": {
-              "id": 1,
               "name": "Bass",
               "path": undefined,
               "type": "track",
@@ -249,17 +238,14 @@ describe("intent integration", () => {
           "verb": "mute",
         },
         "intent": {
-          "score": 1,
-          "slots": {
-            "target": {
-              "id": 1,
-              "name": "Bass",
-              "path": undefined,
-              "type": "track",
-            },
+          "confidence": 0.6,
+          "intent": "mute",
+          "target": {
+            "name": "Bass",
+            "path": undefined,
+            "type": "track",
           },
           "transcript": "mute bass",
-          "verb": "mute",
         },
         "transcript": "mute bass",
       }

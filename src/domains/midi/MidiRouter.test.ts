@@ -62,7 +62,7 @@ describe('MidiRouter', () => {
 
     midi.connectInput('IN');
     const port = access.inputs.get('IN')!;
-    port.onmidimessage!({ data: new Uint8Array([144, 60, 100]) } as any);
+    port.onmidimessage!({ data: new Uint8Array([144, 60, 100]) } as unknown as MIDIMessageEvent);
 
     expect(spy).toHaveBeenCalledWith({
       port: 'IN',
@@ -75,6 +75,6 @@ describe('MidiRouter', () => {
     midi.send([176, 1, 127]);
 
     const port = access.outputs.get('OUT')!;
-    expect((port as any).send).toHaveBeenCalledWith([176, 1, 127]);
+    expect(port.send).toHaveBeenCalledWith([176, 1, 127]);
   });
 });

@@ -109,8 +109,8 @@ export class IntentEngine {
     return best;
   }
 
-  getSpeechHints(config: LiveSetConfig, macros: string[] = []): string[] {
-    const hints = new Set<string>(macros.map(normalizeText));
+  getSpeechHints(config: LiveSetConfig, workflows: string[] = []): string[] {
+    const hints = new Set<string>(workflows.map(normalizeText));
     const index = this.getIndex(config);
     const types: EntityType[] = [
       "track",
