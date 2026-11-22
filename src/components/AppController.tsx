@@ -181,7 +181,19 @@ export default function AppController() {
         continue;
       }
       try {
-        engine.sendMidiAction({
+        const midiEngine = engine as unknown as {
+          sendMidiAction?: (payload: {
+            port: string;
+            message: "note_on" | "note_off" | "control_change" | "program_change";
+            channel: number;
+            data: number;
+            value: number;
+          }) => void;
+        };
+        if (!midiEngine.sendMidiAction) {
+          throw new Error("This Mantra Engine version does not support MIDI actions");
+        }
+        midiEngine.sendMidiAction({
           port: action.port,
           message: action.message,
           channel: action.channel,
