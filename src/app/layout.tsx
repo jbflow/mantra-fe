@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-if (typeof window === "undefined") {
+if (typeof window !== "undefined") {
   const storage = globalThis.localStorage as Partial<Storage> | undefined;
   if (!storage || typeof storage.getItem !== "function") {
     Object.defineProperty(globalThis, "localStorage", {

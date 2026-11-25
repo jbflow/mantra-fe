@@ -25,6 +25,17 @@ type ActivityItem = { id: string; label: string; time: string; kind: "sent" | "r
 const WAKE_PHRASES: WakePhrase[] = ["bumblebee", "computer", "jarvis"];
 const PREFERENCES_STORAGE_KEY = "mantra-fe-preferences";
 
+const getStorage = () => {
+  if (typeof window === "undefined" || !window.localStorage) {
+    return {
+      getItem: () => null,
+      setItem: () => undefined,
+      removeItem: () => undefined,
+    };
+  }
+  return window.localStorage;
+};
+
 const makeActivity = (label: string, kind: ActivityItem["kind"]): ActivityItem => ({
   id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
   label,
@@ -70,12 +81,13 @@ export default function AppController() {
   };
 
   useEffect(() => {
-    const storedWorkflows = parseWorkflows(window.localStorage.getItem(WORKFLOWS_STORAGE_KEY));
+    const storage = getStorage();
+    const storedWorkflows = parseWorkflows(storage.getItem(WORKFLOWS_STORAGE_KEY));
     setWorkflows(storedWorkflows);
     setSelectedWorkflowId(storedWorkflows[0]?.id ?? null);
 
     try {
-      const preferences = JSON.parse(window.localStorage.getItem(PREFERENCES_STORAGE_KEY) ?? "null") as {
+      const preferences = JSON.parse(storage.getItem(PREFERENCES_STORAGE_KEY) ?? "null") as {
         wakePhrase?: WakePhrase;
         language?: string;
         engineUrl?: string;
@@ -88,15 +100,16 @@ export default function AppController() {
       if (preferences?.engineUrl) setEngineUrl(preferences.engineUrl);
       if (typeof preferences?.midiNote === "number") setMidiNote(preferences.midiNote);
     } catch {
-      window.localStorage.removeItem(PREFERENCES_STORAGE_KEY);
+      storage.removeItem(PREFERENCES_STORAGE_KEY);
     }
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(WORKFLOWS_STORAGE_KEY, JSON.stringify(workflows));
-    window.localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify({ wakePhrase, language, engineUrl, midiNote }));
+    const storage = getStorage();
+    storage.setItem(WORKFLOWS_STORAGE_KEY, JSON.stringify(workflows));
+    storage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify({ wakePhrase, language, engineUrl, midiNote }));
   }, [engineUrl, hydrated, language, midiNote, wakePhrase, workflows]);
 
   useEffect(() => {
