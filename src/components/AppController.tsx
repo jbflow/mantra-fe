@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { MantraEngine } from "mantra-engine";
 import { MidiRouter } from "@/domains/midi/MidiRouter";
 import { RecognitionService } from "@/domains/speech/RecognitionService";
@@ -16,6 +17,8 @@ import {
   type WorkflowAction
 } from "@/domains/workflows";
 import WorkflowBuilder from "@/components/WorkflowBuilder";
+
+const WhisperPOC = dynamic(() => import("@/components/WhisperPOC"), { ssr: false });
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 type VoiceStatus = "idle" | "wake" | "recording" | "processing" | "error";
@@ -573,6 +576,8 @@ export default function AppController() {
               </div>
             </form>
           </section>
+
+          <WhisperPOC />
 
           <section className="control-section device-section" aria-labelledby="device-heading">
             <div className="section-title-row">
