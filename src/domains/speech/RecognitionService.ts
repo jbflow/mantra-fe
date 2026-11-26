@@ -2,6 +2,7 @@ import { TinyEmitter } from '@/domains/shared/TinyEmitter';
 import type { RecognitionEvents, SpeechRecognitionEngine } from '@/domains/speech/SpeechRecognitionEngine';
 import { parseTextToIntents } from 'mantra-engine';
 import { mipSchemaV0_1 } from 'musical-intent-protocol';
+import { musicalContextAnchor, musicalVocabulary, normalizeSpeechTranscript, startsMusicalCommand } from './musicalNormalization';
 
 type SpeechRecCtor = new () => SpeechRecognition;
 
@@ -9,12 +10,13 @@ const SILENCE_COMMIT_MS = 2500;
 const MAX_UNEXPECTED_ENDS = 5;
 
 const definitions = mipSchemaV0_1.definitions;
-const vocabulary = [
+const vocabulary = [...new Set([
   ...definitions.Role.enum,
   ...definitions.ScaleType.enum,
   ...definitions.TimbreAttribute.enum,
   ...definitions.Domain.enum,
-].map((term) => term.replace(/_/g, ' ')).sort((a, b) => b.length - a.length);
+  ...musicalVocabulary,
+].map((term) => term.replace(/_/g, ' ')))].sort((a, b) => b.length - a.length);
 
 const commandWords = new Set([
   ...definitions.TransportIntent.oneOf,
@@ -42,10 +44,18 @@ function vocabularyMatches(text: string): number {
 
 function contextScore(text: string): number {
   const firstWord = text.toLowerCase().match(/^\s*([a-z]+)/)?.[1];
-  if (!firstWord || !commandWords.has(firstWord)) return 0;
-  const result = parseTextToIntents(text);
-  if (!result.intents.length || result.errors?.length) return 0;
-  return 0.02 + Math.min(vocabularyMatches(text), 2) * 0.05;
+  const matches = vocabularyMatches(text);
+  const vocabularyScore = Math.min(matches, 2) * 0.05 + Math.min(Math.max(matches - 2, 0), 2) * 0.015;
+  if (firstWord && commandWords.has(firstWord)) {
+    const result = parseTextToIntents(text);
+    if (result.intents.length && !result.errors?.length) {
+      return 0.02 + vocabularyScore;
+    }
+  }
+  if (startsMusicalCommand(text) && matches >= 2 && musicalContextAnchor.test(text)) {
+    return 0.02 + vocabularyScore;
+  }
+  return 0;
 }
 
 function similarTranscripts(a: string, b: string): boolean {
@@ -85,37 +95,6 @@ function selectTranscript(result: SpeechRecognitionResult): string {
     }
   }
   return selected;
-}
-
-function correctTranscript(text: string): string {
-  let corrected = text;
-  const checks: Array<(intent: ReturnType<typeof parseTextToIntents>['intents'][number]) => boolean> = [];
-
-  if (/^quant(?:\s+eyes|ise)\b/i.test(corrected)) {
-    corrected = corrected.replace(/^quant(?:\s+eyes|ise)\b/i, 'quantize');
-    checks.push(({ domain, intent }) => domain === 'music' && intent.action === 'quantize');
-  }
-  if (/^(?:mute|unmute|solo|unsolo|arm|disarm|quantize)\s+(?:the\s+)?(?:high|hi)[ -]hat(?:\s+track)?[.!?]?\s*$/i.test(corrected)) {
-    corrected = corrected.replace(/\b(?:high|hi)[ -]hat\b/i, 'hihat');
-    checks.push(({ domain, intent }) =>
-      (domain === 'structure' || domain === 'music') &&
-      'target' in intent && intent.target?.role === 'hihat',
-    );
-  }
-  if (/^metro\s+gnome\s+(?:on|off)\b/i.test(corrected)) {
-    corrected = corrected.replace(/^metro\s+gnome\b/i, 'metronome');
-    checks.push(({ domain, intent }) =>
-      domain === 'transport' && (intent.action === 'metronome_on' || intent.action === 'metronome_off'),
-    );
-  }
-  if (/^cord\s+progression\s+/i.test(corrected)) {
-    corrected = corrected.replace(/^cord\b/i, 'chord');
-    checks.push(({ domain, intent }) => domain === 'harmony' && intent.action === 'set_chord_progression');
-  }
-
-  if (!checks.length) return text;
-  const result = parseTextToIntents(corrected);
-  return !result.errors?.length && checks.every((check) => result.intents.some(check)) ? corrected : text;
 }
 
 function getSpeechRecCtor(): SpeechRecCtor | undefined {
@@ -160,7 +139,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
         const result = e.results[i];
         if (!result.length) continue;
         const text = result.isFinal && /^en(?:-|$)/i.test(this.rec.lang)
-          ? correctTranscript(selectTranscript(result))
+          ? normalizeSpeechTranscript(selectTranscript(result))
           : result[0].transcript.trim();
         if (text) parts.push(text);
         hasFinal ||= result.isFinal;

@@ -124,7 +124,7 @@ describe('WhisperRecognitionService', () => {
       createScriptProcessor = () => processor as unknown as ScriptProcessorNode;
       close = vi.fn(async () => undefined);
     });
-    const transcribe = vi.fn(async () => ({ text: 'local command' }));
+    const transcribe = vi.fn(async () => ({ text: 'add a saw tooth oscillator to the synth' }));
     pipelineMock.mockResolvedValue(transcribe);
 
     const service = new WhisperRecognitionService({ model: 'Xenova/whisper-small.en' });
@@ -145,8 +145,8 @@ describe('WhisperRecognitionService', () => {
     emitAudio(new Float32Array(16000));
     await vi.advanceTimersByTimeAsync(2000);
 
-    expect(partials).toContain('local command');
-    expect(finals).toEqual(['local command']);
+    expect(partials).toContain('add a saw tooth oscillator to the synth');
+    expect(finals).toEqual(['add a sawtooth oscillator to the synth']);
     expect(transcribe).toHaveBeenCalledWith(expect.any(Float32Array), { chunk_length_s: 30 });
     service.dispose();
   });

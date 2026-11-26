@@ -5,6 +5,7 @@ import type {
   WhisperModelId,
 } from '@/domains/speech/SpeechRecognitionEngine';
 import { mipSchemaV0_1, type Intent } from 'musical-intent-protocol';
+import { normalizeSpeechTranscript } from './musicalNormalization';
 
 type Transcriber = (
   audio: Float32Array,
@@ -287,7 +288,7 @@ export class WhisperRecognitionService implements SpeechRecognitionEngine {
       }
       text = text.trim();
       if (commit) {
-        if (text) this.emitter.emit('final', text);
+        if (text) this.emitter.emit('final', normalizeSpeechTranscript(text));
         this.chunks = [];
         this.hasVoice = false;
       } else {

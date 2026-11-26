@@ -113,6 +113,19 @@ describe('RecognitionService', () => {
     expect(recognize([['the base is covered', 0.8], ['the bass is covered', 0.79]])).toBe('the base is covered');
   });
 
+  it('uses non-protocol musical vocabulary to rank similar command alternatives', () => {
+    expect(recognize([['add river to the track', 0.8], ['add reverb to the track', 0.77]])).toBe('add reverb to the track');
+    expect(recognize([['add river to the midi track', 0.8], ['add reverb to the midi track', 0.79]])).toBe('add reverb to the midi track');
+    expect(recognize([['adjust the lfo on the escalator', 0.8], ['adjust the lfo on the oscillator', 0.77]])).toBe('adjust the lfo on the oscillator');
+    expect(recognize([['add river to the track', 0.95], ['add reverb to the track', 0.6]])).toBe('add river to the track');
+    expect(recognize([['move the base', 0.8], ['move the bass', 0.79]])).toBe('move the base');
+  });
+
+  it('normalizes contextual musical terms only in final English results', () => {
+    expect(recognize([['add a saw tooth oscillator to the synth', 0.8]])).toBe('add a sawtooth oscillator to the synth');
+    expect(recognize([['add a saw tooth oscillator to the synth', 0.8]], false)).toBe('add a saw tooth oscillator to the synth');
+  });
+
   it('does not change numbers and uses recognizer order when confidence is missing', () => {
     expect(recognize([['set tempo to 120', 0.7], ['set tempo to 130', 0.9]])).toBe('set tempo to 120');
     expect(recognize([['transpose bass by -2', 0.7], ['transpose bass by 2', 0.9]])).toBe('transpose bass by -2');

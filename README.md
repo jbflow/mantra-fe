@@ -11,9 +11,14 @@ Mantra FE is a browser-based voice control UI for a DAW. It captures wake-word a
 - Workflow builder with text and MIDI actions
 
 For final English Web Speech results, Mantra compares similar recognition alternatives using
-engine intents and protocol vocabulary, with a limited bias that respects substantially higher
-recognizer confidence. A few command-specific corrections are applied only when the engine
-recognizes the corrected command. Interim results and other languages are unchanged.
+engine intents, protocol terms, and a separate musical vocabulary, with a limited bias that
+respects substantially higher recognizer confidence. Final English transcripts from Web Speech
+and Whisper use the same conservative corrections: protocol-specific corrections are validated
+against the engine, while additional musical corrections require command and production context.
+Names and ordinary speech are left alone. Interim results and other languages are unchanged.
+Musical terms and contextual correction rules can be extended in
+[musicalVocabulary.ts](src/domains/speech/musicalVocabulary.ts); they do not imply engine support
+for every command.
 
 ## MVP checklist (proposed)
 
