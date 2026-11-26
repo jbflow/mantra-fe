@@ -15,7 +15,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
-    exclude: ['node_modules', 'legacy-react', '.next/**'],
+    exclude: ['node_modules', '.next/**'],
     coverage: {
       provider: 'istanbul',         
       reporter: ['text', 'html'],
