@@ -1,23 +1,8 @@
 import { TinyEmitter } from '@/domains/shared/TinyEmitter';
+import type { RecognitionEvents, SpeechRecognitionEngine } from '@/domains/speech/SpeechRecognitionEngine';
 
-/* ------------------------------------------------------------------ *
- *  Event map
- * ------------------------------------------------------------------ */
-type RecEvents = {
-  partial: string;
-  final: string;
-  error: Error;
-};
-
-/* ------------------------------------------------------------------ *
- *  Helper: get SpeechRecognition constructor in a typed‑safe way
- * ------------------------------------------------------------------ */
 type SpeechRecCtor = new () => SpeechRecognition;
 
-/**
- * Returns the browser's SpeechRecognition constructor (vendor‑prefixed if necessary).
- * Casts `window` to include vendor properties so TypeScript is satisfied.
- */
 function getSpeechRecCtor(): SpeechRecCtor | undefined {
   const w = window as unknown as {
     SpeechRecognition?: SpeechRecCtor;
@@ -26,16 +11,10 @@ function getSpeechRecCtor(): SpeechRecCtor | undefined {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition;
 }
 
-/* ------------------------------------------------------------------ *
- *  RecognitionService
- * ------------------------------------------------------------------ */
-/**
- * Thin wrapper around the Web Speech API that emits `"partial"` and `"final"`
- * transcript events via a tiny emitter.
- */
-export class RecognitionService {
+export class RecognitionService implements SpeechRecognitionEngine {
   private rec: SpeechRecognition;
-  private emitter = new TinyEmitter<RecEvents>();
+  private emitter = new TinyEmitter<RecognitionEvents>();
+  private running = false;
 
   constructor(opts: { lang?: string; continuous?: boolean } = {}) {
     const RecCtor = getSpeechRecCtor();
@@ -44,6 +23,7 @@ export class RecognitionService {
     this.rec = new RecCtor();
     this.rec.lang = opts.lang ?? 'en-US';
     this.rec.continuous = !!opts.continuous;
+    this.rec.interimResults = true;
 
     this.rec.onresult = (e: SpeechRecognitionEvent) => {
       const last = e.results[e.results.length - 1];
@@ -55,14 +35,42 @@ export class RecognitionService {
       }
     };
 
-    this.rec.onerror = (err) =>
+    this.rec.onerror = (err) => {
+      this.running = false;
       this.emitter.emit('error', new Error(err.error || 'speech-error'));
+      this.emitter.emit('status', { state: 'error' });
+    };
+
+    this.rec.onend = () => {
+      this.running = false;
+      this.emitter.emit('status', { state: 'ready' });
+    };
   }
 
-  /* ---------------- public API ---------------- */
   on  = this.emitter.on;
   off = this.emitter.off;
 
-  start() { this.rec.start(); }
-  stop()  { this.rec.stop(); }
+  async initialize() {
+    this.emitter.emit('status', { state: 'ready' });
+  }
+
+  async start() {
+    this.rec.start();
+    this.running = true;
+    this.emitter.emit('status', { state: 'listening' });
+  }
+
+  stop() {
+    if (!this.running) return;
+    this.running = false;
+    this.rec.stop();
+    this.emitter.emit('status', { state: 'ready' });
+  }
+
+  dispose() {
+    this.stop();
+    this.rec.onresult = null;
+    this.rec.onerror = null;
+    this.rec.onend = null;
+  }
 }

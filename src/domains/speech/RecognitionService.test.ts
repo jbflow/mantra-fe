@@ -48,4 +48,8 @@ describe('RecognitionService', () => {
 
     expect(spy).toHaveBeenCalledWith('hel');
   });
+
+  it('enables interim results for responsive transcripts', () => {
+    expect(rec.interimResults).toBe(true);
+  });
 });
