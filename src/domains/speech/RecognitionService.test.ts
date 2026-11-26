@@ -6,6 +6,7 @@ class MockRec {
   lang = '';
   continuous = false;
   interimResults = false;
+  maxAlternatives = 1;
   onresult: ((event: SpeechRecognitionEvent) => void) | null = null;
   onerror: ((event: SpeechRecognitionErrorEvent) => void) | null = null;
   onend: ((event: Event) => void) | null = null;
@@ -51,5 +52,50 @@ describe('RecognitionService', () => {
 
   it('enables interim results for responsive transcripts', () => {
     expect(rec.interimResults).toBe(true);
+    expect(rec.maxAlternatives).toBeGreaterThan(1);
+  });
+
+  function recognize(alternatives: Array<[string, number]>, isFinal = true) {
+    const spy = vi.fn();
+    svc.on(isFinal ? 'final' : 'partial', spy);
+    const result = Object.assign(
+      alternatives.map(([transcript, confidence]) => ({ transcript, confidence })),
+      { isFinal },
+    );
+    rec.onresult?.({ results: [result] } as unknown as SpeechRecognitionEvent);
+    return spy.mock.calls[0][0];
+  }
+
+  it('prefers a similar actionable alternative with a protocol role', () => {
+    expect(recognize([['mute the base', 0.8], ['mute the bass', 0.76]])).toBe('mute the bass');
+  });
+
+  it('matches whole multi-word vocabulary terms without substring matches', () => {
+    expect(recognize([['mute electric guitar', 0.7], ['mute eclectic guitar', 0.7]])).toBe('mute electric guitar');
+    expect(recognize([['mute eclectic guitar', 0.7], ['mute electric guitar', 0.7]])).toBe('mute electric guitar');
+    expect(recognize([['the bassoon is loud', 0.7], ['the bass is loud', 0.7]])).toBe('the bassoon is loud');
+  });
+
+  it('respects a clear confidence advantage and does not change unrelated speech', () => {
+    expect(recognize([['mute the base', 0.95], ['mute the bass', 0.6]])).toBe('mute the base');
+    expect(recognize([['play outside', 0.8], ['play the drums', 0.79]])).toBe('play outside');
+    expect(recognize([['the base is covered', 0.8], ['the bass is covered', 0.79]])).toBe('the base is covered');
+  });
+
+  it('does not change numbers and uses recognizer order when confidence is missing', () => {
+    expect(recognize([['set tempo to 120', 0.7], ['set tempo to 130', 0.9]])).toBe('set tempo to 120');
+    expect(recognize([['hello world', 0], ['hello word', 0]])).toBe('hello world');
+    expect(recognize([['mute the base', 0], ['mute the bass', 0]])).toBe('mute the bass');
+  });
+
+  it('keeps interim and non-English transcripts unchanged', () => {
+    expect(recognize([['mute the base', 0.8], ['mute the bass', 0.79]], false)).toBe('mute the base');
+    const other = new RecognitionService({ lang: 'fr-FR' });
+    const otherRec = (other as unknown as { rec: MockRec }).rec;
+    const spy = vi.fn();
+    other.on('final', spy);
+    const result = Object.assign([{ transcript: 'mute the base', confidence: 0.8 }, { transcript: 'mute the bass', confidence: 0.79 }], { isFinal: true });
+    otherRec.onresult?.({ results: [result] } as unknown as SpeechRecognitionEvent);
+    expect(spy).toHaveBeenCalledWith('mute the base');
   });
 });
