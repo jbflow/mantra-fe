@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "bumblebee-hotword": "github:jaxcore/bumblebee-hotword",
     "mantra-engine": "git+https://github.com/jbflow/mantra-engine.git#main",
     "next": "^16.4.6",
     "pako": "^2.1.0",

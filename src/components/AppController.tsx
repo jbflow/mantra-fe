@@ -280,7 +280,7 @@ export default function AppController() {
 
   useEffect(() => {
     let recognition: RecognitionService;
-    const wake = new WakeWordDetector({ wakePhrase, lang: language });
+    const wake = new WakeWordDetector({ hotword: wakePhrase });
     try {
       recognition = new RecognitionService({ lang: language, continuous: false });
     } catch (cause) {
@@ -297,7 +297,7 @@ export default function AppController() {
       setIsRecording(false);
       void processTranscriptRef.current(text).finally(() => {
         if (wakeEnabled) {
-          wake.start();
+          wakeRef.current?.start();
           setVoiceStatus("wake");
         } else {
           setVoiceStatus("idle");

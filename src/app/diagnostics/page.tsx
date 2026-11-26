@@ -25,9 +25,9 @@ export default function Diagnostics() {
   const startWakeTest = () => {
     if (!wakeRef.current) {
       try {
-        const wake = new WakeWordDetector({ wakePhrase: 'bumblebee', lang: 'en-US' });
-        wake.on('wake', () => {
-          setWakeStatus('✅ WAKE WORD DETECTED: "bumblebee"');
+        const wake = new WakeWordDetector({ hotword: 'bumblebee' });
+        wake.on('wake', (hotword) => {
+          setWakeStatus(`✅ WAKE WORD DETECTED: "${hotword}"`);
         });
         wake.on('error', (err) => {
           setWakeStatus(`❌ Wake error: ${err.message}`);
