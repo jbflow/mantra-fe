@@ -4,17 +4,94 @@ import type {
   SpeechRecognitionEngine,
   WhisperModelId,
 } from '@/domains/speech/SpeechRecognitionEngine';
+import { mipSchemaV0_1, type Intent } from 'musical-intent-protocol';
 
 type Transcriber = (
   audio: Float32Array,
   options?: Record<string, unknown>
 ) => Promise<{ text: string } | { text: string }[]>;
 
+type PromptTranscriber = Transcriber & {
+  model?: {
+    config?: { model_type?: string | null };
+    generation_config?: {
+      is_multilingual?: boolean;
+      decoder_start_token_id?: number;
+      no_timestamps_token_id?: number;
+    } | null;
+  };
+  tokenizer?: {
+    all_special_ids: number[];
+    convert_tokens_to_ids(token: string): number;
+    encode(text: string, options: { add_special_tokens: boolean }): number[];
+    decode(tokens: number[]): string;
+  };
+};
+
 const SAMPLE_RATE = 16000;
 const VOICE_RMS = 0.01;
 const TICK_MS = 1000;
 const SILENCE_COMMIT_MS = 1200;
 const MAX_SEGMENT_S = 20;
+
+const definitions = mipSchemaV0_1.definitions;
+const roles = new Set<string>(definitions.Role.enum);
+const domainActions = {
+  transport: definitions.TransportIntent.oneOf,
+  structure: definitions.StructureIntent.oneOf,
+  music: definitions.MusicIntent.oneOf,
+  harmony: definitions.HarmonyIntent.oneOf,
+  rhythm: definitions.RhythmIntent.oneOf,
+  performance: definitions.PerformanceIntent.oneOf,
+  analysis: definitions.AnalysisIntent.oneOf,
+  timbre: definitions.TimbreIntent.oneOf,
+};
+
+export function whisperVocabulary(lastIntent?: Intent): string {
+  const terms = ['quantize', 'metronome', 'chord progression', 'hihat'];
+  if (lastIntent) {
+    const { domain, intent } = lastIntent;
+    if ('target' in intent && intent.target?.role && roles.has(intent.target.role)) {
+      terms.unshift(intent.target.role.replace(/_/g, ' '));
+    } else if ('role' in intent && intent.role && roles.has(intent.role)) {
+      terms.unshift(intent.role.replace(/_/g, ' '));
+    }
+    if (domain in domainActions) {
+      const actions = domainActions[domain as keyof typeof domainActions];
+      if (actions.some((option) => option.properties.action.const === intent.action)) {
+        terms.unshift(intent.action.replace(/_/g, ' '));
+      }
+    }
+  }
+  return [...new Set(terms)].join(', ') + '.';
+}
+
+export function whisperPrompt(transcriber: PromptTranscriber, text: string) {
+  const { model, tokenizer } = transcriber;
+  const config = model?.generation_config;
+  if (model?.config?.model_type !== 'whisper' || config?.is_multilingual !== false ||
+      typeof config.decoder_start_token_id !== 'number' ||
+      typeof config.no_timestamps_token_id !== 'number' || !tokenizer ||
+      !Array.isArray(tokenizer.all_special_ids) ||
+      typeof tokenizer.convert_tokens_to_ids !== 'function' ||
+      typeof tokenizer.encode !== 'function' || typeof tokenizer.decode !== 'function') return undefined;
+
+  const previous = tokenizer.convert_tokens_to_ids('<|startofprev|>');
+  if (!tokenizer.all_special_ids.includes(previous) ||
+      tokenizer.decode([previous]) !== '<|startofprev|>' ||
+      tokenizer.convert_tokens_to_ids('<|startoftranscript|>') !== config.decoder_start_token_id ||
+      tokenizer.convert_tokens_to_ids('<|notimestamps|>') !== config.no_timestamps_token_id) return undefined;
+  const tokens = tokenizer.encode(` ${text}`, { add_special_tokens: false });
+  if (!tokens.length || tokens.length > 64 || tokens.some((id) => tokenizer.all_special_ids.includes(id))) {
+    return undefined;
+  }
+  const decoded = tokenizer.decode(tokens);
+  if (!decoded.trim()) return undefined;
+  return {
+    decoder_input_ids: [previous, ...tokens, config.decoder_start_token_id, config.no_timestamps_token_id],
+    decoded,
+  };
+}
 
 const downsample = (input: Float32Array, inputRate: number): Float32Array => {
   if (inputRate === SAMPLE_RATE) return input.slice();
@@ -41,7 +118,7 @@ const concat = (chunks: Float32Array[]): Float32Array => {
 
 export class WhisperRecognitionService implements SpeechRecognitionEngine {
   private readonly emitter = new TinyEmitter<RecognitionEvents>();
-  private transcriber: Transcriber | null = null;
+  private transcriber: PromptTranscriber | null = null;
   private stream: MediaStream | null = null;
   private audioContext: AudioContext | null = null;
   private processor: ScriptProcessorNode | null = null;
@@ -55,7 +132,7 @@ export class WhisperRecognitionService implements SpeechRecognitionEngine {
   private startRequest = 0;
   private disposed = false;
 
-  constructor(private readonly options: { model: WhisperModelId }) {}
+  constructor(private readonly options: { model: WhisperModelId; getLastIntent?: () => Intent | undefined }) {}
 
   on = this.emitter.on;
   off = this.emitter.off;
@@ -78,7 +155,10 @@ export class WhisperRecognitionService implements SpeechRecognitionEngine {
     } as Record<string, unknown>);
 
     if (this.disposed) return;
-    this.transcriber = transcriber as unknown as Transcriber;
+    this.transcriber = transcriber;
+    if (!whisperPrompt(this.transcriber, whisperVocabulary())) {
+      console.warn('Whisper contextual prompting is unavailable for this model; using unprompted transcription.');
+    }
     this.emitter.emit('status', { state: 'ready', device });
   }
 
@@ -185,9 +265,27 @@ export class WhisperRecognitionService implements SpeechRecognitionEngine {
     this.busy = true;
     this.emitter.emit('status', { state: 'transcribing' });
     try {
-      const output = await transcriber(audio, { chunk_length_s: 30 });
+      const prompt = audio.length <= SAMPLE_RATE * 30
+        ? whisperPrompt(transcriber, whisperVocabulary(this.options.getLastIntent?.()))
+        : undefined;
+      // Transformers.js exposes decoder prefixes, but its ASR decoder includes their text in the result.
+      const output = await transcriber(audio, {
+        chunk_length_s: 30,
+        ...(prompt ? { decoder_input_ids: prompt.decoder_input_ids } : {}),
+      });
       if (this.disposed) return;
-      const text = (Array.isArray(output) ? output[0]?.text : output.text)?.trim() ?? '';
+      let text = (Array.isArray(output) ? output[0]?.text : output.text) ?? '';
+      if (prompt) {
+        if (!text.startsWith(prompt.decoded)) {
+          console.warn('Whisper did not return the expected prompt prefix; retrying without context.');
+          const fallback = await transcriber(audio, { chunk_length_s: 30 });
+          if (this.disposed) return;
+          text = (Array.isArray(fallback) ? fallback[0]?.text : fallback.text) ?? '';
+        } else {
+          text = text.slice(prompt.decoded.length);
+        }
+      }
+      text = text.trim();
       if (commit) {
         if (text) this.emitter.emit('final', text);
         this.chunks = [];

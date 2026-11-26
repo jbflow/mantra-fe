@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MantraEngine } from "mantra-engine";
+import type { Intent } from "musical-intent-protocol";
 import { MidiRouter } from "@/domains/midi/MidiRouter";
 import { RecognitionService } from "@/domains/speech/RecognitionService";
 import { WhisperRecognitionService } from "@/domains/speech/WhisperRecognitionService";
@@ -81,6 +82,7 @@ export default function AppController() {
   const webSpeechLanguage = recognitionEngine === "web-speech" ? language : undefined;
 
   const engineRef = useRef<MantraEngine | null>(null);
+  const lastIntentRef = useRef<Intent | undefined>(undefined);
   const connectPromiseRef = useRef<Promise<MantraEngine | null> | null>(null);
   const wakeRef = useRef<WakeWordDetector | null>(null);
   const wakeEnabledRef = useRef(wakeEnabled);
@@ -144,6 +146,7 @@ export default function AppController() {
   }, [engineUrl, hydrated, language, midiNote, recognitionEngine, wakePhrase, whisperModel, workflows]);
 
   useEffect(() => {
+    lastIntentRef.current = undefined;
     const engine = new MantraEngine({
       url: engineUrl,
       source: "ui",
@@ -208,6 +211,7 @@ export default function AppController() {
       return false;
     }
     if (result.intents.length === 0) return false;
+    lastIntentRef.current = result.intents[result.intents.length - 1];
     addActivity(`Sent ${result.intents.length} MIP intent${result.intents.length === 1 ? "" : "s"}`, "sent");
     return true;
   };
@@ -313,7 +317,7 @@ export default function AppController() {
     let recognition: SpeechRecognitionEngine;
     try {
       recognition = recognitionEngine === "whisper"
-        ? new WhisperRecognitionService({ model: whisperModel })
+        ? new WhisperRecognitionService({ model: whisperModel, getLastIntent: () => lastIntentRef.current })
         : new RecognitionService({ lang: webSpeechLanguage ?? "en-US", continuous: false });
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "Web Speech API is not available";
