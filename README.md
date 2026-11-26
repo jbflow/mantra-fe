@@ -10,6 +10,11 @@ Mantra FE is a browser-based voice control UI for a DAW. It captures wake-word a
 - Minimal UI to start/stop listening and view transcripts
 - Workflow builder with text and MIDI actions
 
+For final English Web Speech results, Mantra compares similar recognition alternatives using
+engine intents and protocol vocabulary, with a limited bias that respects substantially higher
+recognizer confidence. A few command-specific corrections are applied only when the engine
+recognizes the corrected command. Interim results and other languages are unchanged.
+
 ## MVP checklist (proposed)
 
 - [ ] Start/stop listening UI works consistently

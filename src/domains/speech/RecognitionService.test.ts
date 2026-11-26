@@ -84,6 +84,7 @@ describe('RecognitionService', () => {
 
   it('does not change numbers and uses recognizer order when confidence is missing', () => {
     expect(recognize([['set tempo to 120', 0.7], ['set tempo to 130', 0.9]])).toBe('set tempo to 120');
+    expect(recognize([['transpose bass by -2', 0.7], ['transpose bass by 2', 0.9]])).toBe('transpose bass by -2');
     expect(recognize([['hello world', 0], ['hello word', 0]])).toBe('hello world');
     expect(recognize([['mute the base', 0], ['mute the bass', 0]])).toBe('mute the bass');
   });
@@ -97,5 +98,20 @@ describe('RecognitionService', () => {
     const result = Object.assign([{ transcript: 'mute the base', confidence: 0.8 }, { transcript: 'mute the bass', confidence: 0.79 }], { isFinal: true });
     otherRec.onresult?.({ results: [result] } as unknown as SpeechRecognitionEvent);
     expect(spy).toHaveBeenCalledWith('mute the base');
+  });
+
+  it('corrects command-shaped misrecognitions using engine-valid terminology', () => {
+    expect(recognize([['mute the high hat', 0.8]])).toBe('mute the hihat');
+    expect(recognize([['quant eyes the hi-hat', 0.8]])).toBe('quantize the hihat');
+    expect(recognize([['metro gnome on', 0.8]])).toBe('metronome on');
+    expect(recognize([['cord progression C G Am F', 0.8]])).toBe('chord progression C G Am F');
+  });
+
+  it('does not correct ordinary speech, names, partials, or invalid commands', () => {
+    expect(recognize([['I bought a high hat', 0.8]])).toBe('I bought a high hat');
+    expect(recognize([['rename track one to high hat', 0.8]])).toBe('rename track one to high hat');
+    expect(recognize([['mute the high hat shop', 0.8]])).toBe('mute the high hat shop');
+    expect(recognize([['quant eyes everything', 0.8]])).toBe('quant eyes everything');
+    expect(recognize([['metro gnome on', 0.8]], false)).toBe('metro gnome on');
   });
 });

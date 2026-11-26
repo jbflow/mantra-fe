@@ -50,7 +50,8 @@ function similarTranscripts(a: string, b: string): boolean {
   const left = normalize(a);
   const right = normalize(b);
   if (!left || !right || left.length > 256 || right.length > 256) return false;
-  if ((a.match(/\d+/g) ?? []).join(',') !== (b.match(/\d+/g) ?? []).join(',')) return false;
+  if ((a.match(/[+-]?\d+(?:[.,]\d+)?/g) ?? []).join('|') !==
+      (b.match(/[+-]?\d+(?:[.,]\d+)?/g) ?? []).join('|')) return false;
   let previous = Array.from({ length: right.length + 1 }, (_, index) => index);
   for (let i = 1; i <= left.length; i++) {
     const current = [i];
@@ -83,6 +84,37 @@ function selectTranscript(result: SpeechRecognitionResult): string {
   return selected;
 }
 
+function correctTranscript(text: string): string {
+  let corrected = text;
+  const checks: Array<(intent: ReturnType<typeof parseTextToIntents>['intents'][number]) => boolean> = [];
+
+  if (/^quant(?:\s+eyes|ise)\b/i.test(corrected)) {
+    corrected = corrected.replace(/^quant(?:\s+eyes|ise)\b/i, 'quantize');
+    checks.push(({ domain, intent }) => domain === 'music' && intent.action === 'quantize');
+  }
+  if (/^(?:mute|unmute|solo|unsolo|arm|disarm|quantize)\s+(?:the\s+)?(?:high|hi)[ -]hat(?:\s+track)?[.!?]?\s*$/i.test(corrected)) {
+    corrected = corrected.replace(/\b(?:high|hi)[ -]hat\b/i, 'hihat');
+    checks.push(({ domain, intent }) =>
+      (domain === 'structure' || domain === 'music') &&
+      'target' in intent && intent.target?.role === 'hihat',
+    );
+  }
+  if (/^metro\s+gnome\s+(?:on|off)\b/i.test(corrected)) {
+    corrected = corrected.replace(/^metro\s+gnome\b/i, 'metronome');
+    checks.push(({ domain, intent }) =>
+      domain === 'transport' && (intent.action === 'metronome_on' || intent.action === 'metronome_off'),
+    );
+  }
+  if (/^cord\s+progression\s+/i.test(corrected)) {
+    corrected = corrected.replace(/^cord\b/i, 'chord');
+    checks.push(({ domain, intent }) => domain === 'harmony' && intent.action === 'set_chord_progression');
+  }
+
+  if (!checks.length) return text;
+  const result = parseTextToIntents(corrected);
+  return !result.errors?.length && checks.every((check) => result.intents.some(check)) ? corrected : text;
+}
+
 function getSpeechRecCtor(): SpeechRecCtor | undefined {
   const w = window as unknown as {
     SpeechRecognition?: SpeechRecCtor;
@@ -109,7 +141,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
     this.rec.onresult = (e: SpeechRecognitionEvent) => {
       const last = e.results[e.results.length - 1];
       const text = last.isFinal && /^en(?:-|$)/i.test(this.rec.lang)
-        ? selectTranscript(last)
+        ? correctTranscript(selectTranscript(last))
         : last[0].transcript.trim();
       if (last.isFinal) {
         this.emitter.emit('final', text);
