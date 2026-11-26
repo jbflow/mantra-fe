@@ -18,7 +18,7 @@ export default function Diagnostics() {
   useEffect(() => {
     return () => {
       wakeRef.current?.stop();
-      recRef.current?.stop();
+      recRef.current?.dispose();
     };
   }, []);
 
@@ -50,15 +50,17 @@ export default function Diagnostics() {
     }
   };
 
-  const startSpeechTest = () => {
+  const startSpeechTest = async () => {
     if (!recRef.current) {
       try {
-        const rec = new RecognitionService({ lang: 'en-US', continuous: false });
+        const rec = new RecognitionService({ lang: 'en-US' });
         rec.on('partial', (text) => {
           setTranscript(`(partial) ${text}`);
         });
         rec.on('final', (text) => {
           setTranscript(`(final) ${text}`);
+          setSpeechStatus('Ready');
+          setIsSpeechTesting(false);
           // Test NLP
           const result = parseTextToIntents(text);
           if (result.errors?.length) {
@@ -69,6 +71,7 @@ export default function Diagnostics() {
         });
         rec.on('error', (err) => {
           setSpeechStatus(`❌ Error: ${err.message}`);
+          setIsSpeechTesting(false);
         });
         recRef.current = rec;
       } catch (err) {
@@ -83,7 +86,7 @@ export default function Diagnostics() {
       setIsSpeechTesting(false);
     } else {
       try {
-        recRef.current?.start();
+        await recRef.current?.start();
         setSpeechStatus('Listening... speak a command now');
         setTranscript('');
         setNlpResult('');

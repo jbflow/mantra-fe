@@ -5,6 +5,9 @@ import { mipSchemaV0_1 } from 'musical-intent-protocol';
 
 type SpeechRecCtor = new () => SpeechRecognition;
 
+const SILENCE_COMMIT_MS = 2500;
+const MAX_UNEXPECTED_ENDS = 5;
+
 const definitions = mipSchemaV0_1.definitions;
 const vocabulary = [
   ...definitions.Role.enum,
@@ -126,7 +129,18 @@ function getSpeechRecCtor(): SpeechRecCtor | undefined {
 export class RecognitionService implements SpeechRecognitionEngine {
   private rec: SpeechRecognition;
   private emitter = new TinyEmitter<RecognitionEvents>();
-  private running = false;
+  private listening = false;
+  private nativeActive = false;
+  private stopping = false;
+  private disposed = false;
+  private speechActive = false;
+  private silenceTimer: ReturnType<typeof setTimeout> | null = null;
+  private restartTimer: ReturnType<typeof setTimeout> | null = null;
+  private emptyRestarts = 0;
+  private unexpectedEnds = 0;
+  private noSpeech = false;
+  private carried = '';
+  private sessionText = '';
 
   constructor(opts: { lang?: string; continuous?: boolean } = {}) {
     const RecCtor = getSpeechRecCtor();
@@ -134,31 +148,87 @@ export class RecognitionService implements SpeechRecognitionEngine {
 
     this.rec = new RecCtor();
     this.rec.lang = opts.lang ?? 'en-US';
-    this.rec.continuous = !!opts.continuous;
+    this.rec.continuous = opts.continuous ?? true;
     this.rec.interimResults = true;
     this.rec.maxAlternatives = 5;
 
     this.rec.onresult = (e: SpeechRecognitionEvent) => {
-      const last = e.results[e.results.length - 1];
-      const text = last.isFinal && /^en(?:-|$)/i.test(this.rec.lang)
-        ? correctTranscript(selectTranscript(last))
-        : last[0].transcript.trim();
-      if (last.isFinal) {
-        this.emitter.emit('final', text);
-      } else {
-        this.emitter.emit('partial', text);
+      if (!this.listening && !this.stopping) return;
+      const parts: string[] = [];
+      let hasFinal = false;
+      for (let i = 0; i < e.results.length; i++) {
+        const result = e.results[i];
+        if (!result.length) continue;
+        const text = result.isFinal && /^en(?:-|$)/i.test(this.rec.lang)
+          ? correctTranscript(selectTranscript(result))
+          : result[0].transcript.trim();
+        if (text) parts.push(text);
+        hasFinal ||= result.isFinal;
+      }
+      this.sessionText = parts.join(' ');
+      this.emptyRestarts = 0;
+      this.unexpectedEnds = 0;
+      this.emitter.emit('partial', this.transcript());
+      if (this.listening && !this.speechActive && (hasFinal || this.silenceTimer)) {
+        this.scheduleCommit();
       }
     };
 
+    this.rec.onspeechstart = () => {
+      if (!this.listening) return;
+      this.speechActive = true;
+      this.emptyRestarts = 0;
+      this.unexpectedEnds = 0;
+      this.clearSilenceTimer();
+    };
+
+    this.rec.onspeechend = () => {
+      if (!this.listening) return;
+      this.speechActive = false;
+      this.scheduleCommit();
+    };
+
     this.rec.onerror = (err) => {
-      this.running = false;
+      if (!this.listening) return;
+      if (err.error === 'no-speech') {
+        this.noSpeech = true;
+        if (this.transcript() && !this.silenceTimer) this.scheduleCommit();
+        return;
+      }
+      this.listening = false;
+      this.clearTimers();
       this.emitter.emit('error', new Error(err.error || 'speech-error'));
       this.emitter.emit('status', { state: 'error' });
     };
 
     this.rec.onend = () => {
-      this.running = false;
-      this.emitter.emit('status', { state: 'ready' });
+      this.nativeActive = false;
+      this.speechActive = false;
+      if (this.stopping) {
+        this.stopping = false;
+        this.finish();
+      } else if (this.listening) {
+        this.carried = this.transcript();
+        this.sessionText = '';
+        this.emptyRestarts++;
+        this.unexpectedEnds = this.noSpeech ? 0 : this.unexpectedEnds + 1;
+        if (this.unexpectedEnds > MAX_UNEXPECTED_ENDS) {
+          this.fail(new Error('Speech recognition repeatedly disconnected'));
+          return;
+        }
+        const delay = Math.min(250 * 2 ** (this.emptyRestarts - 1), 2000);
+        this.restartTimer = setTimeout(() => {
+          this.restartTimer = null;
+          if (!this.listening) return;
+          try {
+            this.noSpeech = false;
+            this.rec.start();
+            this.nativeActive = true;
+          } catch (cause) {
+            this.fail(cause instanceof Error ? cause : new Error('Could not restart speech recognition'));
+          }
+        }, delay);
+      }
     };
   }
 
@@ -170,22 +240,82 @@ export class RecognitionService implements SpeechRecognitionEngine {
   }
 
   async start() {
+    if (this.disposed) throw new Error('Speech recognition has been disposed');
+    if (this.listening) return;
+    if (this.nativeActive || this.stopping) throw new Error('Speech recognition is still stopping');
+    this.carried = '';
+    this.sessionText = '';
+    this.emptyRestarts = 0;
+    this.unexpectedEnds = 0;
+    this.noSpeech = false;
+    this.speechActive = false;
     this.rec.start();
-    this.running = true;
+    this.nativeActive = true;
+    this.listening = true;
     this.emitter.emit('status', { state: 'listening' });
   }
 
   stop() {
-    if (!this.running) return;
-    this.running = false;
-    this.rec.stop();
-    this.emitter.emit('status', { state: 'ready' });
+    if (!this.listening) return;
+    this.listening = false;
+    this.clearTimers();
+    if (this.nativeActive) {
+      this.stopping = true;
+      this.rec.stop();
+    } else {
+      this.finish();
+    }
   }
 
   dispose() {
-    this.stop();
+    this.disposed = true;
+    this.listening = false;
+    this.stopping = false;
+    this.clearTimers();
     this.rec.onresult = null;
     this.rec.onerror = null;
     this.rec.onend = null;
+    this.rec.onspeechstart = null;
+    this.rec.onspeechend = null;
+    if (this.nativeActive) this.rec.stop();
+    this.nativeActive = false;
+  }
+
+  private transcript() {
+    return [this.carried, this.sessionText].filter(Boolean).join(' ');
+  }
+
+  private scheduleCommit() {
+    this.clearSilenceTimer();
+    this.silenceTimer = setTimeout(() => {
+      this.silenceTimer = null;
+      if (this.transcript()) this.stop();
+    }, SILENCE_COMMIT_MS);
+  }
+
+  private clearSilenceTimer() {
+    if (this.silenceTimer !== null) clearTimeout(this.silenceTimer);
+    this.silenceTimer = null;
+  }
+
+  private clearTimers() {
+    this.clearSilenceTimer();
+    if (this.restartTimer !== null) clearTimeout(this.restartTimer);
+    this.restartTimer = null;
+  }
+
+  private finish() {
+    const text = this.transcript();
+    this.carried = '';
+    this.sessionText = '';
+    this.emitter.emit('status', { state: 'ready' });
+    if (text) this.emitter.emit('final', text);
+  }
+
+  private fail(error: Error) {
+    this.listening = false;
+    this.clearTimers();
+    this.emitter.emit('error', error);
+    this.emitter.emit('status', { state: 'error' });
   }
 }

@@ -318,7 +318,7 @@ export default function AppController() {
     try {
       recognition = recognitionEngine === "whisper"
         ? new WhisperRecognitionService({ model: whisperModel, getLastIntent: () => lastIntentRef.current })
-        : new RecognitionService({ lang: webSpeechLanguage ?? "en-US", continuous: false });
+        : new RecognitionService({ lang: webSpeechLanguage ?? "en-US" });
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "Web Speech API is not available";
       setError(message);

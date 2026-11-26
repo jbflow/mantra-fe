@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { RecognitionService } from './RecognitionService';
 
 /* ───────────────── Mock Web Speech API ───────────────── */
@@ -10,6 +10,8 @@ class MockRec {
   onresult: ((event: SpeechRecognitionEvent) => void) | null = null;
   onerror: ((event: SpeechRecognitionErrorEvent) => void) | null = null;
   onend: ((event: Event) => void) | null = null;
+  onspeechstart: ((event: Event) => void) | null = null;
+  onspeechend: ((event: Event) => void) | null = null;
   start = vi.fn();
   stop = vi.fn();
 }
@@ -24,17 +26,37 @@ describe('RecognitionService', () => {
   let rec: MockRec;
 
   beforeEach(() => {
+    vi.useFakeTimers();
     svc = new RecognitionService({ continuous: true });
     rec = (svc as unknown as { rec: MockRec }).rec;
+    void svc.start();
   });
+
+  afterEach(() => {
+    svc.dispose();
+    vi.useRealTimers();
+  });
+
+  function end(recognizer = rec) {
+    recognizer.onend?.(new Event('end'));
+  }
+
+  function result(texts: Array<{ text: string; final: boolean }>, recognizer = rec) {
+    recognizer.onresult?.({
+      resultIndex: 0,
+      results: texts.map(({ text, final }) => Object.assign([{ transcript: text, confidence: 0.8 }], { isFinal: final })),
+    } as unknown as SpeechRecognitionEvent);
+  }
 
   it('emits final transcript', () => {
     const spy = vi.fn();
     svc.on('final', spy);
 
     rec.onresult?.({
-      results: [{ isFinal: true, 0: { transcript: 'hello' } }],
+      results: [Object.assign([{ transcript: 'hello' }], { isFinal: true })],
     } as unknown as SpeechRecognitionEvent);
+    vi.advanceTimersByTime(2500);
+    end();
 
     expect(spy).toHaveBeenCalledWith('hello');
   });
@@ -44,7 +66,7 @@ describe('RecognitionService', () => {
     svc.on('partial', spy);
 
     rec.onresult?.({
-      results: [{ isFinal: false, 0: { transcript: 'hel' } }],
+      results: [Object.assign([{ transcript: 'hel' }], { isFinal: false })],
     } as unknown as SpeechRecognitionEvent);
 
     expect(spy).toHaveBeenCalledWith('hel');
@@ -56,14 +78,23 @@ describe('RecognitionService', () => {
   });
 
   function recognize(alternatives: Array<[string, number]>, isFinal = true) {
+    const service = new RecognitionService();
+    const recognizer = (service as unknown as { rec: MockRec }).rec;
+    void service.start();
     const spy = vi.fn();
-    svc.on(isFinal ? 'final' : 'partial', spy);
+    service.on(isFinal ? 'final' : 'partial', spy);
     const result = Object.assign(
       alternatives.map(([transcript, confidence]) => ({ transcript, confidence })),
       { isFinal },
     );
-    rec.onresult?.({ results: [result] } as unknown as SpeechRecognitionEvent);
-    return spy.mock.calls[0][0];
+    recognizer.onresult?.({ results: [result] } as unknown as SpeechRecognitionEvent);
+    if (isFinal) {
+      vi.advanceTimersByTime(2500);
+      end(recognizer);
+    }
+    const text = spy.mock.calls[0][0];
+    service.dispose();
+    return text;
   }
 
   it('prefers a similar actionable alternative with a protocol role', () => {
@@ -95,9 +126,13 @@ describe('RecognitionService', () => {
     const otherRec = (other as unknown as { rec: MockRec }).rec;
     const spy = vi.fn();
     other.on('final', spy);
+    void other.start();
     const result = Object.assign([{ transcript: 'mute the base', confidence: 0.8 }, { transcript: 'mute the bass', confidence: 0.79 }], { isFinal: true });
     otherRec.onresult?.({ results: [result] } as unknown as SpeechRecognitionEvent);
+    vi.advanceTimersByTime(2500);
+    end(otherRec);
     expect(spy).toHaveBeenCalledWith('mute the base');
+    other.dispose();
   });
 
   it('corrects command-shaped misrecognitions using engine-valid terminology', () => {
@@ -113,5 +148,186 @@ describe('RecognitionService', () => {
     expect(recognize([['mute the high hat shop', 0.8]])).toBe('mute the high hat shop');
     expect(recognize([['quant eyes everything', 0.8]])).toBe('quant eyes everything');
     expect(recognize([['metro gnome on', 0.8]], false)).toBe('metro gnome on');
+  });
+
+  it('keeps revised interim and multiple final results together during long speech', () => {
+    const partial = vi.fn();
+    const final = vi.fn();
+    svc.on('partial', partial);
+    svc.on('final', final);
+    rec.onspeechstart?.(new Event('speechstart'));
+    result([{ text: 'set the tempo', final: true }, { text: 'and play', final: false }]);
+    vi.advanceTimersByTime(10000);
+    result([{ text: 'set the tempo', final: true }, { text: 'and play the drums', final: false }]);
+    result([{ text: 'set the tempo', final: true }, { text: 'and play the drums', final: true }]);
+    expect(partial).toHaveBeenLastCalledWith('set the tempo and play the drums');
+    expect(final).not.toHaveBeenCalled();
+    rec.onspeechend?.(new Event('speechend'));
+    vi.advanceTimersByTime(2500);
+    end();
+    expect(final).toHaveBeenCalledExactlyOnceWith('set the tempo and play the drums');
+  });
+
+  it('allows pauses and resumes speaking before committing', () => {
+    const final = vi.fn();
+    svc.on('final', final);
+    rec.onspeechstart?.(new Event('speechstart'));
+    result([{ text: 'play the', final: false }]);
+    rec.onspeechend?.(new Event('speechend'));
+    vi.advanceTimersByTime(2000);
+    rec.onspeechstart?.(new Event('speechstart'));
+    vi.advanceTimersByTime(5000);
+    result([{ text: 'play the bass', final: true }]);
+    expect(rec.stop).not.toHaveBeenCalled();
+    rec.onspeechend?.(new Event('speechend'));
+    vi.advanceTimersByTime(2500);
+    end();
+    expect(final).toHaveBeenCalledExactlyOnceWith('play the bass');
+  });
+
+  it('restarts unexpected endings and preserves interim and final text without duplicating snapshots', () => {
+    const partial = vi.fn();
+    const final = vi.fn();
+    const status = vi.fn();
+    svc.on('partial', partial);
+    svc.on('final', final);
+    result([{ text: 'turn on', final: false }]);
+    end();
+    vi.advanceTimersByTime(250);
+    expect(rec.start).toHaveBeenCalledTimes(2);
+    expect(status).not.toHaveBeenCalledWith({ state: 'ready' });
+    rec.onspeechstart?.(new Event('speechstart'));
+    result([{ text: 'the metronome', final: false }]);
+    result([{ text: 'the metronome', final: true }, { text: 'and play', final: false }]);
+    expect(partial).toHaveBeenLastCalledWith('turn on the metronome and play');
+    end();
+    vi.advanceTimersByTime(250);
+    rec.onspeechstart?.(new Event('speechstart'));
+    result([{ text: 'the drums', final: true }]);
+    rec.onspeechend?.(new Event('speechend'));
+    vi.advanceTimersByTime(2500);
+    end();
+    expect(final).toHaveBeenCalledExactlyOnceWith('turn on the metronome and play the drums');
+  });
+
+  it('preserves late final results on stop and does not restart', () => {
+    const final = vi.fn();
+    svc.on('final', final);
+    result([{ text: 'play the', final: false }]);
+    svc.stop();
+    result([{ text: 'play the bass', final: true }]);
+    end();
+    vi.advanceTimersByTime(5000);
+    expect(final).toHaveBeenCalledExactlyOnceWith('play the bass');
+    expect(rec.start).toHaveBeenCalledOnce();
+  });
+
+  it('commits during a restart delay after genuine speech end', () => {
+    const final = vi.fn();
+    svc.on('final', final);
+    result([{ text: 'play', final: false }]);
+    rec.onspeechend?.(new Event('speechend'));
+    end();
+    vi.advanceTimersByTime(250);
+    end();
+    vi.advanceTimersByTime(500);
+    end();
+    vi.advanceTimersByTime(1000);
+    end();
+    vi.advanceTimersByTime(750);
+    expect(final).toHaveBeenCalledExactlyOnceWith('play');
+    vi.advanceTimersByTime(5000);
+    expect(rec.start).toHaveBeenCalledTimes(4);
+  });
+
+  it('retries no-speech but stops on fatal errors and repeated disconnects', () => {
+    const error = vi.fn();
+    const status = vi.fn();
+    svc.on('error', error);
+    svc.on('status', status);
+    rec.onerror?.({ error: 'no-speech' } as SpeechRecognitionErrorEvent);
+    end();
+    vi.advanceTimersByTime(250);
+    expect(rec.start).toHaveBeenCalledTimes(2);
+    rec.onerror?.({ error: 'not-allowed' } as SpeechRecognitionErrorEvent);
+    end();
+    vi.advanceTimersByTime(5000);
+    expect(error).toHaveBeenCalledExactlyOnceWith(new Error('not-allowed'));
+    expect(status).toHaveBeenLastCalledWith({ state: 'error' });
+    expect(rec.start).toHaveBeenCalledTimes(2);
+  });
+
+  it('continues waiting through repeated no-speech timeouts with bounded backoff', () => {
+    const error = vi.fn();
+    svc.on('error', error);
+    for (const delay of [250, 500, 1000, 2000, 2000, 2000, 2000]) {
+      rec.onerror?.({ error: 'no-speech' } as SpeechRecognitionErrorEvent);
+      end();
+      vi.advanceTimersByTime(delay);
+    }
+    expect(rec.start).toHaveBeenCalledTimes(8);
+    expect(error).not.toHaveBeenCalled();
+  });
+
+  it('commits preserved interim speech after a no-speech timeout', () => {
+    const final = vi.fn();
+    svc.on('final', final);
+    result([{ text: 'play the bass', final: false }]);
+    end();
+    vi.advanceTimersByTime(250);
+    rec.onerror?.({ error: 'no-speech' } as SpeechRecognitionErrorEvent);
+    end();
+    vi.advanceTimersByTime(500);
+    vi.advanceTimersByTime(2000);
+    expect(rec.stop).toHaveBeenCalledOnce();
+    end();
+    expect(final).toHaveBeenCalledExactlyOnceWith('play the bass');
+  });
+
+  it('handles removed interim hypotheses and preserves intentional repeated words', () => {
+    const partial = vi.fn();
+    const final = vi.fn();
+    svc.on('partial', partial);
+    svc.on('final', final);
+    rec.onspeechstart?.(new Event('speechstart'));
+    result([{ text: 'go', final: true }, { text: 'away', final: false }]);
+    result([{ text: 'go', final: true }]);
+    expect(partial).toHaveBeenLastCalledWith('go');
+    end();
+    vi.advanceTimersByTime(250);
+    rec.onspeechstart?.(new Event('speechstart'));
+    result([{ text: 'go', final: true }]);
+    rec.onspeechend?.(new Event('speechend'));
+    vi.advanceTimersByTime(2500);
+    end();
+    expect(final).toHaveBeenCalledExactlyOnceWith('go go');
+  });
+
+  it('limits repeated disconnects and reports restart failures', async () => {
+    const error = vi.fn();
+    svc.on('error', error);
+    for (const delay of [250, 500, 1000, 2000, 2000]) {
+      end();
+      vi.advanceTimersByTime(delay);
+    }
+    end();
+    expect(error).toHaveBeenCalledExactlyOnceWith(new Error('Speech recognition repeatedly disconnected'));
+    await svc.start();
+    rec.start.mockImplementationOnce(() => { throw new Error('restart failed'); });
+    end();
+    vi.advanceTimersByTime(250);
+    expect(error).toHaveBeenLastCalledWith(new Error('restart failed'));
+  });
+
+  it('cancels a pending restart on stop or dispose', () => {
+    end();
+    svc.stop();
+    vi.advanceTimersByTime(5000);
+    expect(rec.start).toHaveBeenCalledOnce();
+    void svc.start();
+    end();
+    svc.dispose();
+    vi.advanceTimersByTime(5000);
+    expect(rec.start).toHaveBeenCalledTimes(2);
   });
 });
