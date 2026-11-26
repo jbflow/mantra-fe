@@ -1,10 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { MantraEngine } from "mantra-engine";
 import { MidiRouter } from "@/domains/midi/MidiRouter";
 import { RecognitionService } from "@/domains/speech/RecognitionService";
+import { WhisperRecognitionService } from "@/domains/speech/WhisperRecognitionService";
+import {
+  WHISPER_MODELS,
+  type RecognitionEngineId,
+  type RecognitionState,
+  type SpeechRecognitionEngine,
+  type WhisperModelId
+} from "@/domains/speech/SpeechRecognitionEngine";
 import { WakeWordDetector } from "@/domains/speech/WakeWordDetector";
 import {
   createWorkflow,
@@ -17,8 +24,6 @@ import {
   type WorkflowAction
 } from "@/domains/workflows";
 import WorkflowBuilder from "@/components/WorkflowBuilder";
-
-const WhisperPOC = dynamic(() => import("@/components/WhisperPOC"), { ssr: false });
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 type VoiceStatus = "idle" | "wake" | "recording" | "processing" | "error";
@@ -52,6 +57,11 @@ export default function AppController() {
   const [hydrated, setHydrated] = useState(false);
   const [wakePhrase, setWakePhrase] = useState<WakePhrase>("bumblebee");
   const [language, setLanguage] = useState("en-US");
+  const [recognitionEngine, setRecognitionEngine] = useState<RecognitionEngineId>("web-speech");
+  const [whisperModel, setWhisperModel] = useState<WhisperModelId>(WHISPER_MODELS[0].id);
+  const [recognitionStatus, setRecognitionStatus] = useState<RecognitionState>("ready");
+  const [modelProgress, setModelProgress] = useState(0);
+  const [recognitionDevice, setRecognitionDevice] = useState("");
   const [wakeEnabled, setWakeEnabled] = useState(false);
   const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>("idle");
   const [isRecording, setIsRecording] = useState(false);
@@ -68,16 +78,19 @@ export default function AppController() {
   const [midiReady, setMidiReady] = useState(false);
   const [midiNote, setMidiNote] = useState(60);
   const [learningMidi, setLearningMidi] = useState(false);
+  const webSpeechLanguage = recognitionEngine === "web-speech" ? language : undefined;
 
   const engineRef = useRef<MantraEngine | null>(null);
   const connectPromiseRef = useRef<Promise<MantraEngine | null> | null>(null);
   const wakeRef = useRef<WakeWordDetector | null>(null);
-  const recognitionRef = useRef<RecognitionService | null>(null);
+  const wakeEnabledRef = useRef(wakeEnabled);
+  const recognitionRef = useRef<SpeechRecognitionEngine | null>(null);
   const midiRouterRef = useRef<MidiRouter | null>(null);
   const learningMidiRef = useRef(false);
   const midiNoteRef = useRef(60);
   const startSpeakingRef = useRef<() => void>(() => undefined);
   const processTranscriptRef = useRef<(text: string) => Promise<void>>(async () => undefined);
+  wakeEnabledRef.current = wakeEnabled;
 
   const addActivity = (label: string, kind: ActivityItem["kind"]) => {
     setActivity((items) => [makeActivity(label, kind), ...items].slice(0, 8));
@@ -93,6 +106,8 @@ export default function AppController() {
       const preferences = JSON.parse(storage.getItem(PREFERENCES_STORAGE_KEY) ?? "null") as {
         wakePhrase?: WakePhrase;
         language?: string;
+        recognitionEngine?: string;
+        whisperModel?: string;
         engineUrl?: string;
         midiNote?: number;
       } | null;
@@ -100,6 +115,12 @@ export default function AppController() {
         setWakePhrase(preferences.wakePhrase);
       }
       if (preferences?.language) setLanguage(preferences.language);
+      if (preferences?.recognitionEngine === "web-speech" || preferences?.recognitionEngine === "whisper") {
+        setRecognitionEngine(preferences.recognitionEngine);
+        setRecognitionStatus(preferences.recognitionEngine === "whisper" ? "loading" : "ready");
+      }
+      const savedWhisperModel = WHISPER_MODELS.find((model) => model.id === preferences?.whisperModel);
+      if (savedWhisperModel) setWhisperModel(savedWhisperModel.id);
       if (preferences?.engineUrl) setEngineUrl(preferences.engineUrl);
       if (typeof preferences?.midiNote === "number") setMidiNote(preferences.midiNote);
     } catch {
@@ -112,8 +133,15 @@ export default function AppController() {
     if (!hydrated) return;
     const storage = getStorage();
     storage.setItem(WORKFLOWS_STORAGE_KEY, JSON.stringify(workflows));
-    storage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify({ wakePhrase, language, engineUrl, midiNote }));
-  }, [engineUrl, hydrated, language, midiNote, wakePhrase, workflows]);
+    storage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify({
+      wakePhrase,
+      language,
+      recognitionEngine,
+      whisperModel,
+      engineUrl,
+      midiNote
+    }));
+  }, [engineUrl, hydrated, language, midiNote, recognitionEngine, wakePhrase, whisperModel, workflows]);
 
   useEffect(() => {
     const engine = new MantraEngine({
@@ -255,18 +283,17 @@ export default function AppController() {
       setVoiceStatus("error");
       return;
     }
+    if (recognitionEngine === "whisper" && recognitionStatus !== "ready") return;
     wakeRef.current?.stop();
     setError(null);
     setVoiceStatus("recording");
     setIsRecording(true);
-    try {
-      recognition.start();
-    } catch (cause) {
+    void recognition.start().catch((cause: unknown) => {
       const message = cause instanceof Error ? cause.message : "Could not start speech recognition";
       setError(message);
       setVoiceStatus("error");
       setIsRecording(false);
-    }
+    });
   };
   startSpeakingRef.current = startSpeaking;
 
@@ -282,24 +309,26 @@ export default function AppController() {
   };
 
   useEffect(() => {
-    let recognition: RecognitionService;
-    const wake = new WakeWordDetector({ hotword: wakePhrase });
+    if (!hydrated) return;
+    let recognition: SpeechRecognitionEngine;
     try {
-      recognition = new RecognitionService({ lang: language, continuous: false });
+      recognition = recognitionEngine === "whisper"
+        ? new WhisperRecognitionService({ model: whisperModel })
+        : new RecognitionService({ lang: webSpeechLanguage ?? "en-US", continuous: false });
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "Web Speech API is not available";
       setError(message);
+      setRecognitionStatus("error");
       setVoiceStatus("error");
-      return () => wake.stop();
+      return;
     }
 
-    const onWake = () => startSpeakingRef.current();
     const onPartial = (text: string) => setPartialTranscript(text);
     const onFinal = (text: string) => {
       recognition.stop();
       setIsRecording(false);
       void processTranscriptRef.current(text).finally(() => {
-        if (wakeEnabled) {
+        if (wakeEnabledRef.current) {
           wakeRef.current?.start();
           setVoiceStatus("wake");
         } else {
@@ -312,32 +341,60 @@ export default function AppController() {
       setVoiceStatus("error");
       setIsRecording(false);
     };
-    const onWakeError = (cause: Error) => setError(cause.message);
+    const onRecognitionStatus = (status: { state: RecognitionState; progress?: number; device?: string }) => {
+      setRecognitionStatus(status.state);
+      if (status.progress !== undefined) setModelProgress(status.progress);
+      if (status.device !== undefined) setRecognitionDevice(status.device);
+    };
 
-    wake.on("wake", onWake);
-    wake.on("error", onWakeError);
     recognition.on("partial", onPartial);
     recognition.on("final", onFinal);
     recognition.on("error", onSpeechError);
-    wakeRef.current = wake;
+    recognition.on("status", onRecognitionStatus);
     recognitionRef.current = recognition;
-    if (wakeEnabled) {
-      wake.start();
-      setVoiceStatus("wake");
+    let cancelled = false;
+    void recognition.initialize().catch((cause: unknown) => {
+      if (cancelled) return;
+      const message = cause instanceof Error ? cause.message : "Could not initialize speech recognition";
+      setError(message);
+      setRecognitionStatus("error");
+      setVoiceStatus("error");
+    });
+
+    return () => {
+      recognition.off("partial", onPartial);
+      recognition.off("final", onFinal);
+      recognition.off("error", onSpeechError);
+      recognition.off("status", onRecognitionStatus);
+      cancelled = true;
+      recognition.dispose();
+      if (recognitionRef.current === recognition) recognitionRef.current = null;
+    };
+  }, [hydrated, recognitionEngine, webSpeechLanguage, whisperModel]);
+
+  useEffect(() => {
+    if (!wakeEnabled) {
+      wakeRef.current?.stop();
+      wakeRef.current = null;
+      return;
     }
+
+    const wake = new WakeWordDetector({ hotword: wakePhrase });
+    const onWake = () => startSpeakingRef.current();
+    const onWakeError = (cause: Error) => setError(cause.message);
+    wake.on("wake", onWake);
+    wake.on("error", onWakeError);
+    wakeRef.current = wake;
+    wake.start();
+    setVoiceStatus("wake");
 
     return () => {
       wake.off("wake", onWake);
       wake.off("error", onWakeError);
-      recognition.off("partial", onPartial);
-      recognition.off("final", onFinal);
-      recognition.off("error", onSpeechError);
       wake.stop();
-      recognition.stop();
       if (wakeRef.current === wake) wakeRef.current = null;
-      if (recognitionRef.current === recognition) recognitionRef.current = null;
     };
-  }, [language, wakeEnabled, wakePhrase]);
+  }, [wakeEnabled, wakePhrase]);
 
   useEffect(() => () => {
     midiRouterRef.current?.detachInput();
@@ -489,6 +546,23 @@ export default function AppController() {
         : voiceStatus === "error"
           ? "Voice input needs attention"
           : "Press to speak";
+  const recognitionStatusLabel = recognitionEngine === "whisper"
+    ? recognitionStatus === "loading"
+      ? `Loading ${WHISPER_MODELS.find((model) => model.id === whisperModel)?.label ?? "Whisper"} model (${modelProgress}%)`
+      : recognitionStatus === "ready"
+        ? `Local Whisper ready${recognitionDevice ? ` (${recognitionDevice})` : ""}`
+        : recognitionStatus === "listening"
+          ? "Listening with local Whisper"
+          : recognitionStatus === "transcribing"
+            ? "Transcribing locally…"
+            : "Local Whisper needs attention"
+    : recognitionStatus === "ready"
+      ? "Browser speech recognition ready"
+      : recognitionStatus === "listening"
+        ? "Listening with browser speech recognition"
+        : recognitionStatus === "error"
+          ? "Browser speech recognition needs attention"
+          : "Preparing browser speech recognition";
 
   return (
     <div className="app-shell">
@@ -535,6 +609,48 @@ export default function AppController() {
               <option value="en-CA">English (Canada)</option>
               <option value="en-AU">English (Australia)</option>
             </select>
+            <label className="field-label" htmlFor="speech-engine">Speech recognition engine</label>
+            <select
+              id="speech-engine"
+              value={recognitionEngine}
+              onChange={(event) => {
+                setError(null);
+                setIsRecording(false);
+                setPartialTranscript("");
+                setVoiceStatus(wakeEnabled ? "wake" : "idle");
+                const selectedEngine = event.target.value;
+                if (selectedEngine === "web-speech" || selectedEngine === "whisper") {
+                  setRecognitionEngine(selectedEngine);
+                  setRecognitionStatus(selectedEngine === "whisper" ? "loading" : "ready");
+                }
+              }}
+            >
+              <option value="web-speech">Browser (Web Speech API)</option>
+              <option value="whisper">Local Whisper (on this device)</option>
+            </select>
+            {recognitionEngine === "whisper" && (
+              <>
+                <label className="field-label" htmlFor="whisper-model">Whisper model</label>
+                <select
+                  id="whisper-model"
+                  value={whisperModel}
+                  onChange={(event) => {
+                    const selectedModel = WHISPER_MODELS.find((model) => model.id === event.target.value);
+                    if (selectedModel) {
+                      setError(null);
+                      setIsRecording(false);
+                      setPartialTranscript("");
+                      setVoiceStatus(wakeEnabled ? "wake" : "idle");
+                      setRecognitionStatus("loading");
+                      setWhisperModel(selectedModel.id);
+                    }
+                  }}
+                >
+                  {WHISPER_MODELS.map((model) => <option key={model.id} value={model.id}>{model.label}</option>)}
+                </select>
+              </>
+            )}
+            <p className="quiet-copy" role="status">{recognitionStatusLabel}</p>
 
             <button
               className={`speak-button ${isRecording ? "speak-button-active" : ""}`}
@@ -542,6 +658,7 @@ export default function AppController() {
               aria-label={isRecording ? "Stop speaking" : "Press to speak"}
               aria-pressed={isRecording}
               onClick={isRecording ? stopSpeaking : startSpeaking}
+              disabled={!hydrated || (!isRecording && recognitionEngine === "whisper" && recognitionStatus !== "ready")}
             >
               <span className="speak-button-core" aria-hidden="true">{isRecording ? "■" : "●"}</span>
               <span>{isRecording ? "Stop capture" : "Press to speak"}</span>
@@ -576,8 +693,6 @@ export default function AppController() {
               </div>
             </form>
           </section>
-
-          <WhisperPOC />
 
           <section className="control-section device-section" aria-labelledby="device-heading">
             <div className="section-title-row">
