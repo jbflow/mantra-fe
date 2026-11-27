@@ -6,7 +6,8 @@ import { musicalContextAnchor, musicalVocabulary, normalizeSpeechTranscript, sta
 
 type SpeechRecCtor = new () => SpeechRecognition;
 
-const SILENCE_COMMIT_MS = 2500;
+const SILENCE_COMMIT_MS = 300;
+const SPEECH_END_COMMIT_MS = 100;
 const MAX_UNEXPECTED_ENDS = 5;
 
 const definitions = mipSchemaV0_1.definitions;
@@ -134,7 +135,6 @@ export class RecognitionService implements SpeechRecognitionEngine {
     this.rec.onresult = (e: SpeechRecognitionEvent) => {
       if (!this.listening && !this.stopping) return;
       const parts: string[] = [];
-      let hasFinal = false;
       for (let i = 0; i < e.results.length; i++) {
         const result = e.results[i];
         if (!result.length) continue;
@@ -142,14 +142,14 @@ export class RecognitionService implements SpeechRecognitionEngine {
           ? normalizeSpeechTranscript(selectTranscript(result))
           : result[0].transcript.trim();
         if (text) parts.push(text);
-        hasFinal ||= result.isFinal;
       }
       this.sessionText = parts.join(' ');
       this.emptyRestarts = 0;
       this.unexpectedEnds = 0;
       this.emitter.emit('partial', this.transcript());
-      if (this.listening && !this.speechActive && (hasFinal || this.silenceTimer)) {
-        this.scheduleCommit();
+      // Each new result resets the fallback; a pending post-speechend commit is left alone.
+      if (this.listening && this.sessionText && (this.speechActive || !this.silenceTimer)) {
+        this.scheduleCommit(SILENCE_COMMIT_MS);
       }
     };
 
@@ -164,18 +164,19 @@ export class RecognitionService implements SpeechRecognitionEngine {
     this.rec.onspeechend = () => {
       if (!this.listening) return;
       this.speechActive = false;
-      this.scheduleCommit();
+      this.scheduleCommit(SPEECH_END_COMMIT_MS);
     };
 
     this.rec.onerror = (err) => {
       if (!this.listening) return;
       if (err.error === 'no-speech') {
         this.noSpeech = true;
-        if (this.transcript() && !this.silenceTimer) this.scheduleCommit();
+        if (this.transcript() && !this.silenceTimer) this.scheduleCommit(SPEECH_END_COMMIT_MS);
         return;
       }
       this.listening = false;
       this.clearTimers();
+      this.finish();
       this.emitter.emit('error', new Error(err.error || 'speech-error'));
       this.emitter.emit('status', { state: 'error' });
     };
@@ -264,12 +265,12 @@ export class RecognitionService implements SpeechRecognitionEngine {
     return [this.carried, this.sessionText].filter(Boolean).join(' ');
   }
 
-  private scheduleCommit() {
+  private scheduleCommit(delay: number) {
     this.clearSilenceTimer();
     this.silenceTimer = setTimeout(() => {
       this.silenceTimer = null;
       if (this.transcript()) this.stop();
-    }, SILENCE_COMMIT_MS);
+    }, delay);
   }
 
   private clearSilenceTimer() {
