@@ -297,6 +297,7 @@ export default function AppController() {
   const handleTranscript = async (text: string) => {
     const transcript = text.trim();
     if (!transcript) return;
+    setError(null);
     setFinalTranscript(transcript);
     setPartialTranscript("");
     setVoiceStatus("processing");

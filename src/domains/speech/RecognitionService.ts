@@ -1,8 +1,7 @@
 import { TinyEmitter } from '@/domains/shared/TinyEmitter';
 import type { RecognitionEvents, SpeechRecognitionEngine } from '@/domains/speech/SpeechRecognitionEngine';
 import { parseTextToIntents } from 'mantra-engine';
-import { mipSchemaV0_1 } from 'musical-intent-protocol';
-import { musicalContextAnchor, musicalVocabulary, normalizeSpeechTranscript, startsMusicalCommand } from './musicalNormalization';
+import { musicalContextAnchor, musicalVocabulary, normalizeSpeechTranscript, protocolActions, protocolDefinitions, startsMusicalCommand } from './musicalNormalization';
 
 type SpeechRecCtor = new () => SpeechRecognition;
 
@@ -10,7 +9,7 @@ const SILENCE_COMMIT_MS = 300;
 const SPEECH_END_COMMIT_MS = 100;
 const MAX_UNEXPECTED_ENDS = 5;
 
-const definitions = mipSchemaV0_1.definitions;
+const definitions = protocolDefinitions;
 const vocabulary = [...new Set([
   ...definitions.Role.enum,
   ...definitions.ScaleType.enum,
@@ -19,16 +18,7 @@ const vocabulary = [...new Set([
   ...musicalVocabulary,
 ].map((term) => term.replace(/_/g, ' ')))].sort((a, b) => b.length - a.length);
 
-const commandWords = new Set([
-  ...definitions.TransportIntent.oneOf,
-  ...definitions.StructureIntent.oneOf,
-  ...definitions.MusicIntent.oneOf,
-  ...definitions.HarmonyIntent.oneOf,
-  ...definitions.RhythmIntent.oneOf,
-  ...definitions.PerformanceIntent.oneOf,
-  ...definitions.AnalysisIntent.oneOf,
-  ...definitions.TimbreIntent.oneOf,
-].map((option) => option.properties.action.const.split('_')[0]));
+const commandWords = new Set([...protocolActions].map((action) => action.split('_')[0]));
 
 function vocabularyMatches(text: string): number {
   let remaining = ` ${text.toLowerCase().replace(/[^a-z0-9]+/g, ' ')} `;
@@ -114,6 +104,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
   private stopping = false;
   private disposed = false;
   private speechActive = false;
+  private speechEnded = false;
   private silenceTimer: ReturnType<typeof setTimeout> | null = null;
   private restartTimer: ReturnType<typeof setTimeout> | null = null;
   private emptyRestarts = 0;
@@ -147,8 +138,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
       this.emptyRestarts = 0;
       this.unexpectedEnds = 0;
       this.emitter.emit('partial', this.transcript());
-      // Each new result resets the fallback; a pending post-speechend commit is left alone.
-      if (this.listening && this.sessionText && (this.speechActive || !this.silenceTimer)) {
+      if (this.listening && !this.speechActive && !this.speechEnded && this.sessionText) {
         this.scheduleCommit(SILENCE_COMMIT_MS);
       }
     };
@@ -156,6 +146,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
     this.rec.onspeechstart = () => {
       if (!this.listening) return;
       this.speechActive = true;
+      this.speechEnded = false;
       this.emptyRestarts = 0;
       this.unexpectedEnds = 0;
       this.clearSilenceTimer();
@@ -164,6 +155,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
     this.rec.onspeechend = () => {
       if (!this.listening) return;
       this.speechActive = false;
+      this.speechEnded = true;
       this.scheduleCommit(SPEECH_END_COMMIT_MS);
     };
 
@@ -229,6 +221,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
     this.unexpectedEnds = 0;
     this.noSpeech = false;
     this.speechActive = false;
+    this.speechEnded = false;
     this.rec.start();
     this.nativeActive = true;
     this.listening = true;
@@ -269,7 +262,7 @@ export class RecognitionService implements SpeechRecognitionEngine {
     this.clearSilenceTimer();
     this.silenceTimer = setTimeout(() => {
       this.silenceTimer = null;
-      if (this.transcript()) this.stop();
+      if (!this.speechActive && this.transcript()) this.stop();
     }, delay);
   }
 

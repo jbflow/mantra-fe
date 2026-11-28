@@ -13,8 +13,8 @@
   "dependencies": {
     "@huggingface/transformers": "^4.3.2",
     "bumblebee-hotword": "github:jaxcore/bumblebee-hotword",
-    "mantra-engine": "git+https://github.com/jbflow/mantra-engine.git#main",
-    "musical-intent-protocol": "git+https://github.com/jbflow/musical-intent-protocol.git#main",
+    "mantra-engine": "git+https://github.com/jbflow/mantra-engine.git#04d098b12efbc96cc580c153aefbcb1eed9a2461",
+    "musical-intent-protocol": "git+https://github.com/jbflow/musical-intent-protocol.git#28fbdd26433a2a3f0e1e88bfd54dd33e87abb059",
     "next": "^16.4.6",
     "pako": "^2.1.0",
     "react": "^19.0.0",

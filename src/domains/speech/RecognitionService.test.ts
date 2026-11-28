@@ -121,6 +121,17 @@ describe('RecognitionService', () => {
     expect(recognize([['move the base', 0.8], ['move the bass', 0.79]])).toBe('move the base');
   });
 
+  it('uses v0.3 parameter and parameter-series commands to rank alternatives', () => {
+    expect(recognize([
+      ['increase attack on base by 5 ms', 0.8],
+      ['increase attack on bass by 5 ms', 0.79],
+    ])).toBe('increase attack on bass by 5 ms');
+    expect(recognize([
+      ['map pitch from base to lead', 0.8],
+      ['map pitch from bass to lead', 0.79],
+    ])).toBe('map pitch from bass to lead');
+  });
+
   it('normalizes contextual musical terms only in final English results', () => {
     expect(recognize([['add a saw tooth oscillator to the synth', 0.8]])).toBe('add a sawtooth oscillator to the synth');
     expect(recognize([['add a saw tooth oscillator to the synth', 0.8]], false)).toBe('add a saw tooth oscillator to the synth');
@@ -171,6 +182,7 @@ describe('RecognitionService', () => {
     rec.onspeechstart?.(new Event('speechstart'));
     result([{ text: 'set the tempo', final: true }, { text: 'and play', final: false }]);
     vi.advanceTimersByTime(10000);
+    expect(rec.stop).not.toHaveBeenCalled();
     result([{ text: 'set the tempo', final: true }, { text: 'and play the drums', final: false }]);
     result([{ text: 'set the tempo', final: true }, { text: 'and play the drums', final: true }]);
     expect(partial).toHaveBeenLastCalledWith('set the tempo and play the drums');
@@ -181,13 +193,43 @@ describe('RecognitionService', () => {
     expect(final).toHaveBeenCalledExactlyOnceWith('set the tempo and play the drums');
   });
 
+  it('finalizes promptly after speech ends', () => {
+    const final = vi.fn();
+    svc.on('final', final);
+    rec.onspeechstart?.(new Event('speechstart'));
+    result([{ text: 'mute bass and solo drums', final: true }]);
+    rec.onspeechend?.(new Event('speechend'));
+    vi.advanceTimersByTime(99);
+    expect(rec.stop).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(rec.stop).toHaveBeenCalledOnce();
+    end();
+    expect(final).toHaveBeenCalledExactlyOnceWith('mute bass and solo drums');
+  });
+
+  it('resets the fallback while results arrive without speech events', () => {
+    const final = vi.fn();
+    svc.on('final', final);
+    result([{ text: 'mute bass', final: false }]);
+    vi.advanceTimersByTime(200);
+    result([{ text: 'mute bass and', final: false }]);
+    vi.advanceTimersByTime(200);
+    result([{ text: 'mute bass and solo drums', final: true }]);
+    expect(rec.stop).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(299);
+    expect(rec.stop).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    end();
+    expect(final).toHaveBeenCalledExactlyOnceWith('mute bass and solo drums');
+  });
+
   it('allows pauses and resumes speaking before committing', () => {
     const final = vi.fn();
     svc.on('final', final);
     rec.onspeechstart?.(new Event('speechstart'));
     result([{ text: 'play the', final: false }]);
     rec.onspeechend?.(new Event('speechend'));
-    vi.advanceTimersByTime(2000);
+    vi.advanceTimersByTime(50);
     rec.onspeechstart?.(new Event('speechstart'));
     vi.advanceTimersByTime(5000);
     result([{ text: 'play the bass', final: true }]);
@@ -250,7 +292,7 @@ describe('RecognitionService', () => {
     vi.advanceTimersByTime(750);
     expect(final).toHaveBeenCalledExactlyOnceWith('play');
     vi.advanceTimersByTime(5000);
-    expect(rec.start).toHaveBeenCalledTimes(4);
+    expect(rec.start).toHaveBeenCalledOnce();
   });
 
   it('retries no-speech but stops on fatal errors and repeated disconnects', () => {
@@ -292,8 +334,7 @@ describe('RecognitionService', () => {
     end();
     vi.advanceTimersByTime(500);
     vi.advanceTimersByTime(2000);
-    expect(rec.stop).toHaveBeenCalledOnce();
-    end();
+    expect(rec.stop).not.toHaveBeenCalled();
     expect(final).toHaveBeenCalledExactlyOnceWith('play the bass');
   });
 

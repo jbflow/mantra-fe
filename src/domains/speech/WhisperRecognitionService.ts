@@ -4,8 +4,8 @@ import type {
   SpeechRecognitionEngine,
   WhisperModelId,
 } from '@/domains/speech/SpeechRecognitionEngine';
-import { mipSchemaV0_1, type Intent } from 'musical-intent-protocol';
-import { normalizeSpeechTranscript } from './musicalNormalization';
+import type { Intent } from 'musical-intent-protocol';
+import { normalizeSpeechTranscript, protocolActions, protocolDefinitions } from './musicalNormalization';
 
 type Transcriber = (
   audio: Float32Array,
@@ -35,33 +35,19 @@ const TICK_MS = 1000;
 const SILENCE_COMMIT_MS = 1200;
 const MAX_SEGMENT_S = 20;
 
-const definitions = mipSchemaV0_1.definitions;
-const roles = new Set<string>(definitions.Role.enum);
-const domainActions = {
-  transport: definitions.TransportIntent.oneOf,
-  structure: definitions.StructureIntent.oneOf,
-  music: definitions.MusicIntent.oneOf,
-  harmony: definitions.HarmonyIntent.oneOf,
-  rhythm: definitions.RhythmIntent.oneOf,
-  performance: definitions.PerformanceIntent.oneOf,
-  analysis: definitions.AnalysisIntent.oneOf,
-  timbre: definitions.TimbreIntent.oneOf,
-};
+const roles = new Set<string>(protocolDefinitions.Role.enum);
 
 export function whisperVocabulary(lastIntent?: Intent): string {
   const terms = ['quantize', 'metronome', 'chord progression', 'hihat'];
   if (lastIntent) {
-    const { domain, intent } = lastIntent;
+    const { intent } = lastIntent;
     if ('target' in intent && intent.target?.role && roles.has(intent.target.role)) {
       terms.unshift(intent.target.role.replace(/_/g, ' '));
     } else if ('role' in intent && intent.role && roles.has(intent.role)) {
       terms.unshift(intent.role.replace(/_/g, ' '));
     }
-    if (domain in domainActions) {
-      const actions = domainActions[domain as keyof typeof domainActions];
-      if (actions.some((option) => option.properties.action.const === intent.action)) {
-        terms.unshift(intent.action.replace(/_/g, ' '));
-      }
+    if (protocolActions.has(intent.action)) {
+      terms.unshift(intent.action.replace(/_/g, ' '));
     }
   }
   return [...new Set(terms)].join(', ') + '.';

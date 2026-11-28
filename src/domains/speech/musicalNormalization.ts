@@ -1,7 +1,20 @@
 import { musicalCorrections, musicalNouns, musicalVerbs, productionContext } from './musicalVocabulary';
 import { parseTextToIntents } from 'mantra-engine';
+import { mipSchemaV0_3 } from 'musical-intent-protocol';
 
 export { musicalContextAnchor } from './musicalVocabulary';
+
+export const protocolDefinitions = mipSchemaV0_3.definitions;
+export const protocolActions = new Set(
+  Object.values(protocolDefinitions).flatMap((definition) => {
+    if (!('oneOf' in definition)) return [];
+    return definition.oneOf.flatMap((option) => {
+      if (!('properties' in option) || !('action' in option.properties) ||
+          !('const' in option.properties.action)) return [];
+      return [option.properties.action.const];
+    });
+  }),
+);
 
 const commandVerbs = new Set<string>(musicalVerbs);
 

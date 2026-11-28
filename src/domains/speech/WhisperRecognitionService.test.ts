@@ -56,6 +56,12 @@ describe('WhisperRecognitionService', () => {
     expect(focused.length).toBeLessThan(100);
     expect(whisperVocabulary({ domain: 'harmony', intent: { action: 'set_chord_progression', progression: ['C', 'G'] } }))
       .toContain('chord progression');
+    expect(whisperVocabulary({
+      domain: 'parameters',
+      intent: { action: 'increase', target: { role: 'bass', parameter_name: 'attack' }, amount: 5 },
+    })).toMatch(/^increase, bass, /);
+    expect(whisperVocabulary({ domain: 'pitch', intent: { action: 'transform_series', operation: 'rotate' } }))
+      .toContain('transform series');
   });
 
   it('builds Whisper decoder context and declines unsupported tokenizers or models', () => {
