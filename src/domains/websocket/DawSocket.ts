@@ -1,5 +1,5 @@
 import { TinyEmitter } from "@/domains/shared/TinyEmitter";
-import { DawMessage } from "./MessageTypes";
+import type { DawMessage, DawRequest } from "./MessageTypes";
 
 /**
  * Event types emitted by DawSocket.
@@ -19,6 +19,10 @@ export class DawSocket {
   private ws?: WebSocket;
   private port: number;
   private emitter = new TinyEmitter<Events>();
+  private retryTimer?: ReturnType<typeof setTimeout>;
+  private stopped = true;
+  private connectionPromise?: Promise<void>;
+  private pendingConnection?: { resolve: () => void; reject: (error: Error) => void };
 
   /**
    * Create a new DawSocket instance.
@@ -42,17 +46,35 @@ export class DawSocket {
   /** Unsubscribe from WebSocket events. */
   off = this.emitter.off;
 
-  /** Begin the WebSocket connection. */
-  connect() {
-    this.open();
+  /** Begin connecting and resolve when a connection opens. */
+  connect(): Promise<void> {
+    if (this.isOpen()) return Promise.resolve();
+    this.stopped = false;
+    if (!this.connectionPromise) {
+      this.connectionPromise = new Promise<void>((resolve, reject) => {
+        this.pendingConnection = { resolve, reject };
+      });
+    }
+    if (!this.ws && this.retryTimer === undefined) this.open();
+    return this.connectionPromise;
   }
 
-  /**
-   * Send a string message through the socket.
-   * @throws If the socket is not currently open.
-   */
-  send(msg: string) {
-    this.sendMsg(msg);
+  /** Stop reconnecting and close the current connection. */
+  disconnect() {
+    this.stopped = true;
+    if (this.retryTimer !== undefined) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = undefined;
+    }
+    const ws = this.ws;
+    this.ws = undefined;
+    this.rejectPendingConnection(new Error("WebSocket disconnected before connecting"));
+    ws?.close();
+  }
+
+  /** Send a request using the remote script's JSON protocol. */
+  send(message: DawRequest) {
+    this.sendMsg(JSON.stringify(message));
   }
 
   /** Check if the WebSocket is currently open. */
@@ -66,29 +88,42 @@ export class DawSocket {
   private open() {
     const url = `${this.baseUrl}:${this.port}`;
     console.log(`[WS] connecting → ${url}`);
-    this.ws = new WebSocket(url);
+    let ws: WebSocket;
+    try {
+      ws = new WebSocket(url);
+    } catch (cause) {
+      this.emitter.emit("error", cause instanceof Error ? cause : new Error("WebSocket connection error"));
+      this.rotatePortAndRetry();
+      return;
+    }
+    this.ws = ws;
 
-    this.ws.onopen = () => {
+    ws.onopen = () => {
       this.emitter.emit("connected", undefined);
+      this.pendingConnection?.resolve();
+      this.pendingConnection = undefined;
+      this.connectionPromise = undefined;
     };
 
-    this.ws.onmessage = (e) => {
+    ws.onmessage = (e) => {
       try {
-        const msg = JSON.parse(e.data as string) as DawMessage;
+        const msg = JSON.parse(String(e.data)) as DawMessage;
         this.emitter.emit("message", msg);
-      } catch (err) {
-        this.emitter.emit("error", err as Error);
+      } catch (cause) {
+        this.emitter.emit("error", cause instanceof Error ? cause : new Error("Invalid WebSocket message"));
       }
     };
 
-    this.ws.onerror = () => {
+    ws.onerror = () => {
       this.emitter.emit("error", new Error("WebSocket error"));
     };
 
-    this.ws.onclose = (e) => {
+    ws.onclose = (e) => {
+      if (this.ws !== ws) return;
       console.warn(`[WS] disconnected (${e.code})`);
+      this.ws = undefined;
       this.emitter.emit("disconnected", { code: e.code, reason: e.reason });
-      this.rotatePortAndRetry();
+      if (!this.stopped) this.rotatePortAndRetry();
     };
   }
 
@@ -105,7 +140,17 @@ export class DawSocket {
    * Rotate to the next port and schedule a reconnect after `retryMs`.
    */
   private rotatePortAndRetry() {
+    if (this.stopped || this.retryTimer !== undefined) return;
     this.port = this.port < this.endPort ? this.port + 1 : this.startPort;
-    setTimeout(() => this.open(), this.retryMs);
+    this.retryTimer = setTimeout(() => {
+      this.retryTimer = undefined;
+      this.open();
+    }, this.retryMs);
+  }
+
+  private rejectPendingConnection(error: Error) {
+    this.pendingConnection?.reject(error);
+    this.pendingConnection = undefined;
+    this.connectionPromise = undefined;
   }
 }

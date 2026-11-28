@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DawSocket } from "./DawSocket";
 
 /* -------------------------------------------------- *
@@ -14,6 +14,7 @@ type MockWebSocketEventData = Record<string, unknown>;
 class MockWebSocket {
   static instances: MockWebSocket[] = [];
   static OPEN = 1;
+  static CLOSED = 3;
 
   readyState = 0;
   onopen: () => void = () => {};
@@ -26,6 +27,7 @@ class MockWebSocket {
   }
 
   send = vi.fn();
+  close = vi.fn(() => this.$close());
 
   /** Simulate opening the socket. */
   $open() {
@@ -40,6 +42,7 @@ class MockWebSocket {
 
   /** Simulate socket closing. */
   $close() {
+    this.readyState = MockWebSocket.CLOSED;
     this.onclose({ code: 1000, reason: "bye" });
   }
 }
@@ -57,8 +60,13 @@ describe("DawSocket (minimal)", () => {
   beforeEach(() => {
     MockWebSocket.instances.length = 0;
     socket = new DawSocket("ws://127.0.0.1");
-    socket.connect();
+    void socket.connect().catch(() => undefined);
     wsMock = MockWebSocket.instances[0]!;
+  });
+
+  afterEach(() => {
+    socket.disconnect();
+    vi.useRealTimers();
   });
 
   it("emits connected event", async () => {
@@ -71,18 +79,27 @@ describe("DawSocket (minimal)", () => {
   it("emits message event with parsed JSON", async () => {
     await new Promise<void>((resolve) => {
       socket.on("message", (msg) => {
-        expect(msg).toEqual({ type: "confirmation", id: "1", status: "ok" });
+        expect(msg).toEqual({ type: "ack", ids: ["one"], status: "accepted" });
         resolve();
       });
       wsMock.$open();
-      wsMock.$msg({ type: "confirmation", id: "1", status: "ok" });
+      wsMock.$msg({ type: "ack", ids: ["one"], status: "accepted" });
     });
   });
 
-  it("send() forwards string when open", () => {
+  it("resolves connect when the WebSocket opens and sends protocol JSON", async () => {
+    const connected = socket.connect();
     wsMock.$open();
-    socket.send("hello");
-    expect(wsMock.send).toHaveBeenCalledWith("hello");
+    await connected;
+    socket.send({ type: "intent", payload: { domain: "transport", intent: { action: "play" } } });
+    expect(wsMock.send).toHaveBeenCalledWith(JSON.stringify({
+      type: "intent",
+      payload: { domain: "transport", intent: { action: "play" } },
+    }));
+  });
+
+  it("throws when sending before the socket opens", () => {
+    expect(() => socket.send({ type: "ping" })).toThrow(/WebSocket not open/);
   });
 
   it("rotatePortAndRetry() advances port and reconnects", async () => {
@@ -92,12 +109,9 @@ describe("DawSocket (minimal)", () => {
     wsMock.$close(); // triggers rotate+retry
     vi.advanceTimersByTime(10_000); // fast-forward the retry timer
 
-    await vi.runAllTimersAsync(); // let everything resolve
-
     const newWs = MockWebSocket.instances[1];
     expect(newWs).toBeDefined();
     expect(newWs.url).not.toBe(firstUrl);
-
-    vi.useRealTimers();
+    newWs!.$open();
   });
 });

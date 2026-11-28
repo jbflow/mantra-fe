@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MantraEngine } from "mantra-engine";
+import { parseTextToIntents } from "mantra-engine";
 import type { Intent } from "musical-intent-protocol";
 import { MidiRouter } from "@/domains/midi/MidiRouter";
+import { DawSocket, type DawMessage } from "@/domains/websocket";
 import { RecognitionService } from "@/domains/speech/RecognitionService";
 import { WhisperRecognitionService } from "@/domains/speech/WhisperRecognitionService";
 import {
@@ -70,7 +71,7 @@ export default function AppController() {
   const [finalTranscript, setFinalTranscript] = useState("");
   const [typedCommand, setTypedCommand] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [engineUrl, setEngineUrl] = useState("ws://localhost:1979");
+  const [engineUrl, setEngineUrl] = useState("ws://localhost:39031");
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("disconnected");
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [midiInputs, setMidiInputs] = useState<string[]>([]);
@@ -81,9 +82,9 @@ export default function AppController() {
   const [learningMidi, setLearningMidi] = useState(false);
   const webSpeechLanguage = recognitionEngine === "web-speech" ? language : undefined;
 
-  const engineRef = useRef<MantraEngine | null>(null);
+  const dawSocketRef = useRef<DawSocket | null>(null);
   const lastIntentRef = useRef<Intent | undefined>(undefined);
-  const connectPromiseRef = useRef<Promise<MantraEngine | null> | null>(null);
+  const connectPromiseRef = useRef<Promise<boolean> | null>(null);
   const wakeRef = useRef<WakeWordDetector | null>(null);
   const wakeEnabledRef = useRef(wakeEnabled);
   const recognitionRef = useRef<SpeechRecognitionEngine | null>(null);
@@ -147,80 +148,139 @@ export default function AppController() {
 
   useEffect(() => {
     lastIntentRef.current = undefined;
-    const engine = new MantraEngine({
-      url: engineUrl,
-      source: "ui",
-      handlers: {
-        onOpen: () => {
-          setConnectionStatus("connected");
-          setError(null);
-          addActivity("Engine connection opened", "received");
-        },
-        onClose: () => {
-          setConnectionStatus("disconnected");
-          addActivity("Engine connection closed", "received");
-        },
-        onAck: (message) => addActivity(`Accepted ${message.ids.length} action${message.ids.length === 1 ? "" : "s"}`, "received"),
-        onResult: (message) => addActivity(`Interpreter ${message.status}: ${message.id}`, message.status === "ok" ? "received" : "error"),
-        onError: (message) => {
-          setError(message.message);
-          addActivity(message.message, "error");
-        }
+    let endpoint: URL;
+    try {
+      endpoint = new URL(engineUrl);
+      if (endpoint.protocol !== "ws:" && endpoint.protocol !== "wss:") {
+        throw new Error("Use a ws:// or wss:// URL.");
       }
-    });
-    engineRef.current = engine;
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : "Invalid WebSocket endpoint";
+      setConnectionStatus("error");
+      setError(message);
+      return;
+    }
+
+    const port = endpoint.port ? Number(endpoint.port) : 39031;
+    const baseUrl = `${endpoint.protocol}//${endpoint.hostname}`;
+    const socket = new DawSocket(baseUrl, port, port === 39031 ? 39038 : port);
+    const onConnected = () => {
+      setConnectionStatus("connected");
+      setError(null);
+      addActivity("Ableton connection opened", "received");
+    };
+    const onDisconnected = ({ code }: { code: number }) => {
+      setConnectionStatus("connecting");
+      addActivity(`Ableton connection closed (${code}); reconnecting`, "received");
+    };
+    const onSocketError = (cause: Error) => {
+      setConnectionStatus(socket.isOpen() ? "connected" : "error");
+      setError(cause.message);
+      addActivity(cause.message, "error");
+    };
+    const onMessage = (message: DawMessage) => {
+      if (message.type === "ack") {
+        addActivity(`Accepted ${message.ids.length} action${message.ids.length === 1 ? "" : "s"}`, "received");
+      } else if (message.type === "result") {
+        const details = message.details === undefined
+          ? ""
+          : `: ${typeof message.details === "string" ? message.details : JSON.stringify(message.details)}`;
+        const label = `Ableton result ${message.status}: ${message.id}${details}`;
+        if (message.status === "error") setError(label);
+        addActivity(label, message.status === "ok" ? "received" : "error");
+      } else if (message.type === "error") {
+        const label = `${message.code}: ${message.message}`;
+        setError(label);
+        addActivity(label, "error");
+      }
+    };
+
+    socket.on("connected", onConnected);
+    socket.on("disconnected", onDisconnected);
+    socket.on("error", onSocketError);
+    socket.on("message", onMessage);
+    dawSocketRef.current = socket;
     setConnectionStatus("disconnected");
     return () => {
-      engine.disconnect();
-      if (engineRef.current === engine) engineRef.current = null;
+      socket.off("connected", onConnected);
+      socket.off("disconnected", onDisconnected);
+      socket.off("error", onSocketError);
+      socket.off("message", onMessage);
+      socket.disconnect();
+      if (dawSocketRef.current === socket) dawSocketRef.current = null;
       connectPromiseRef.current = null;
     };
   }, [engineUrl]);
 
-  const ensureEngineConnected = async (): Promise<MantraEngine | null> => {
-    const engine = engineRef.current;
-    if (!engine) return null;
-    if (connectionStatus === "connected") return engine;
+  const ensureDawConnected = async (): Promise<boolean> => {
+    const socket = dawSocketRef.current;
+    if (!socket) return false;
+    if (socket.isOpen()) {
+      setConnectionStatus("connected");
+      return true;
+    }
     if (connectPromiseRef.current) return connectPromiseRef.current;
 
     setConnectionStatus("connecting");
     setError(null);
-    const pending = engine.connect()
-      .then(() => engine)
+    const pending = socket.connect()
+      .then(() => {
+        if (dawSocketRef.current !== socket) return false;
+        setConnectionStatus("connected");
+        setError(null);
+        return true;
+      })
       .catch((cause: unknown) => {
-        const message = cause instanceof Error ? cause.message : "Unable to connect to the engine";
+        if (dawSocketRef.current !== socket) return false;
+        const message = cause instanceof Error ? cause.message : "Unable to connect to Ableton";
         setConnectionStatus("error");
         setError(message);
         addActivity(message, "error");
-        return null;
+        return false;
       })
       .finally(() => {
-        connectPromiseRef.current = null;
+        if (dawSocketRef.current === socket) connectPromiseRef.current = null;
       });
     connectPromiseRef.current = pending;
     return pending;
   };
 
-  const runTextAction = (engine: MantraEngine, text: string) => {
+  const runTextAction = (socket: DawSocket, text: string) => {
     if (!text.trim()) return false;
-    const result = engine.sendText(text);
-    if (result.errors?.length) {
-      const message = result.errors.join("; ");
+    try {
+      const result = parseTextToIntents(text);
+      if (result.errors?.length) {
+        const missingTrackRole = result.errors.some((issue) =>
+          /^Unrecognized intent: "(?:create|add|new)\s+(?:(?:a|an)\s+)?(?:(?:midi|audio)\s+)?track"$/i.test(issue)
+        );
+        const message = `${result.errors.join("; ")}${missingTrackRole ? ". Which track role? For example: create MIDI bass track." : ""}`;
+        setError(message);
+        addActivity(message, "error");
+        return false;
+      }
+      if (result.intents.length === 0) {
+        const message = "No actionable command recognized.";
+        setError(message);
+        addActivity(message, "error");
+        return false;
+      }
+      socket.send({ type: "intent", payload: result.intents, source: "ui" });
+      lastIntentRef.current = result.intents[result.intents.length - 1];
+      addActivity(`Sent ${result.intents.length} MIP intent${result.intents.length === 1 ? "" : "s"}`, "sent");
+      return true;
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : "Unable to send command";
       setError(message);
       addActivity(message, "error");
       return false;
     }
-    if (result.intents.length === 0) return false;
-    lastIntentRef.current = result.intents[result.intents.length - 1];
-    addActivity(`Sent ${result.intents.length} MIP intent${result.intents.length === 1 ? "" : "s"}`, "sent");
-    return true;
   };
 
-  const runWorkflow = async (engine: MantraEngine, workflow: Workflow) => {
+  const runWorkflow = async (socket: DawSocket, workflow: Workflow) => {
     addActivity(`Workflow fired: ${workflow.trigger}`, "sent");
     for (const action of workflow.actions) {
       if (action.type === "text") {
-        runTextAction(engine, action.text);
+        runTextAction(socket, action.text);
         continue;
       }
       if (!action.port.trim()) {
@@ -228,32 +288,9 @@ export default function AppController() {
         addActivity("MIDI action has no output port", "error");
         continue;
       }
-      try {
-        const midiEngine = engine as unknown as {
-          sendMidiAction?: (payload: {
-            port: string;
-            message: "note_on" | "note_off" | "control_change" | "program_change";
-            channel: number;
-            data: number;
-            value: number;
-          }) => void;
-        };
-        if (!midiEngine.sendMidiAction) {
-          throw new Error("This Mantra Engine version does not support MIDI actions");
-        }
-        midiEngine.sendMidiAction({
-          port: action.port,
-          message: action.message,
-          channel: action.channel,
-          data: action.data,
-          value: action.value
-        });
-        addActivity(`${action.message.replaceAll("_", " ")} → ${action.port}`, "midi");
-      } catch (cause) {
-        const message = cause instanceof Error ? cause.message : "Unable to send MIDI action";
-        setError(message);
-        addActivity(message, "error");
-      }
+      const message = "MIDI workflow actions are not supported yet.";
+      setError(message);
+      addActivity(message, "error");
     }
   };
 
@@ -263,8 +300,9 @@ export default function AppController() {
     setFinalTranscript(transcript);
     setPartialTranscript("");
     setVoiceStatus("processing");
-    const engine = await ensureEngineConnected();
-    if (!engine) {
+    const connected = await ensureDawConnected();
+    const socket = dawSocketRef.current;
+    if (!connected || !socket) {
       setVoiceStatus("error");
       return;
     }
@@ -272,9 +310,9 @@ export default function AppController() {
     const normalized = normalizeTrigger(transcript);
     const workflow = workflows.find((item) => item.enabled && normalizeTrigger(item.trigger) === normalized);
     if (workflow) {
-      await runWorkflow(engine, workflow);
+      await runWorkflow(socket, workflow);
     } else {
-      runTextAction(engine, transcript);
+      runTextAction(socket, transcript);
     }
     setVoiceStatus(wakeEnabled ? "wake" : "idle");
   };
@@ -507,38 +545,14 @@ export default function AppController() {
       : workflow));
   };
 
-  const connectEngine = async () => {
-    const engine = engineRef.current;
-    if (!engine) return;
-    if (connectionStatus === "connected") return;
-    if (connectPromiseRef.current) {
-      await connectPromiseRef.current;
-      return;
-    }
-
-    setConnectionStatus("connecting");
-    setError(null);
-    const pending = engine.connect()
-      .then(() => engine)
-      .catch((cause: unknown) => {
-        const message = cause instanceof Error ? cause.message : "Could not connect to the Mantra engine";
-        setConnectionStatus("error");
-        setError(message);
-        addActivity(message, "error");
-        return null;
-      })
-      .finally(() => {
-        connectPromiseRef.current = null;
-      });
-    connectPromiseRef.current = pending;
-    await pending;
-  };
-
   const handleManualConnect = async () => {
-    engineRef.current?.disconnect();
-    setConnectionStatus("disconnected");
-    connectPromiseRef.current = null;
-    await connectEngine();
+    const socket = dawSocketRef.current;
+    if (socket?.isOpen()) {
+      socket.disconnect();
+      connectPromiseRef.current = null;
+      setConnectionStatus("disconnected");
+    }
+    await ensureDawConnected();
   };
 
   const voiceStatusLabel = voiceStatus === "wake"
@@ -577,11 +591,11 @@ export default function AppController() {
         </a>
         <div className="topbar-status" aria-live="polite">
           <span className={`status-dot status-${connectionStatus}`} aria-hidden="true" />
-          <span>ENGINE</span>
+          <span>ABLETON</span>
           <strong>{connectionStatus}</strong>
         </div>
         <div className="endpoint-control">
-          <label htmlFor="engine-url">WebSocket</label>
+          <label htmlFor="engine-url">Ableton WebSocket</label>
           <input id="engine-url" value={engineUrl} onChange={(event) => setEngineUrl(event.target.value)} />
           <button className="button button-dark" type="button" onClick={handleManualConnect} disabled={connectionStatus === "connecting"}>
             {connectionStatus === "connecting" ? "Connecting…" : connectionStatus === "connected" ? "Reconnect" : "Connect"}

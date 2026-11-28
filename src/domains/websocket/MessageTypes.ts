@@ -1,9 +1,11 @@
-export interface DawCommand {
-  id: string;
-  verb: string;
-  args: Record<string, unknown>;
-}
+import type { Intent, Source } from "musical-intent-protocol";
+
+export type DawRequest =
+  | { type: "intent"; payload: Intent | Intent[]; source?: Source }
+  | { type: "ping" };
 
 export type DawMessage =
-  | { type: "confirmation"; id: string; status: "ok" | "error" }
-  | { type: "error"; message: string };
+  | { type: "ack"; ids: string[]; status: "accepted" }
+  | { type: "result"; id: string; status: "ok" | "error"; details?: unknown }
+  | { type: "error"; code: "BAD_REQUEST" | "INTERNAL_ERROR"; message: string }
+  | { type: "pong" };

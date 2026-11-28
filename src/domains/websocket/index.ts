@@ -1,2 +1,2 @@
 export { DawSocket } from "./DawSocket";
-export type { DawCommand, DawMessage } from "./MessageTypes";
+export type { DawMessage, DawRequest } from "./MessageTypes";
